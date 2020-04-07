@@ -75,6 +75,13 @@ a   e          t
 the rule, "tea" , "ate" will have the same key.
 ```
 
+**Time complexity**: 
+```
+    O(NK)
+    N - the length of string array strs.
+    K - the avg size of each string in strs. 
+```
+
 ```java
 class Solution {
     public List<List<String>> groupAnagrams(String[] strs) {
