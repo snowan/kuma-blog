@@ -45,7 +45,9 @@ In this solution, we build a new string after backspace.
 - return newString.
 - Compare new build string from S and T.
 
-For example as pic: 
+For example: 
+
+
 ![backspace string compare](../../assets/leetcode/backspace-string-compare.png)
 
 #### Complexity Analysis
@@ -96,6 +98,8 @@ This solution is to compare char on the fly.
 - If complete loop S and T, return true.
 
 for example:
+
+
 ![backspace string compare follow up](../../assets/leetcode/backspace-string-comparing-follow-up.png)
 
 
