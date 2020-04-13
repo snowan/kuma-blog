@@ -50,7 +50,7 @@ For example:
 - N - the length of array stones.
 
 #### Code
-
+**Java code**
 ```java
 class Solution {
     public int lastStoneWeight(int[] stones) {
@@ -69,6 +69,7 @@ class Solution {
 }
 ```
 
+**Python code**
 ```python
 class Solution:
     def lastStoneWeight(self, stones: List[int]) -> int:
