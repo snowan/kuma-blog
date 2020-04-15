@@ -7,7 +7,7 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 
 ## Leetcode
 
-### 30DayChallenge
+### [30DayChallenge](https://snowan.gitbook.io/study-notes/leetcode/30daychallenge)
 
 ## Google
 
