@@ -7,6 +7,8 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 
 ## Leetcode
 
+### 30DayChallenge
+
 ## Google
 
 ## System Design
