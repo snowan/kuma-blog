@@ -63,8 +63,9 @@ For example:
 
 #### Code
 
+**iterative solution**
+
 ```java
-// iterative solution
 class Solution {
     public boolean checkValidString(String s) {
         // keep track of `*` index
@@ -101,8 +102,11 @@ class Solution {
         }
     }
 }
+```
 
-// recursive solution
+**recursive solution**
+
+```java
 class Solution {
     public boolean checkValidString(String s) {
         return helper(s, 0, 0);
