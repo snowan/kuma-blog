@@ -2,7 +2,7 @@
 
 A repo use to record study notes journey, including Data Structures/Algorithms, System Design, Paper notes etc.
 
-## Leetcode
+## [Leetcode](https://snowan.gitbook.io/study-notes/leetcode)
 
 ### [30DayChallenge](https://snowan.gitbook.io/study-notes/leetcode/30daychallenge)
 
