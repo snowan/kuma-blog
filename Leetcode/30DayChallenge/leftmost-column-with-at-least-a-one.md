@@ -105,6 +105,7 @@ For example:
 
 - M - the number of rows in binaryMatrix
 - N - the number of columns in binaryMatrix
+
 ```java
 /**
  * // This is the BinaryMatrix's API interface.
@@ -132,5 +133,4 @@ class Solution {
         return res;
     }
 }
-
 ```
