@@ -17,8 +17,22 @@ Output: 0
 
 ## Solution
 
+This is a Bit operation problem, and I feel helpless every time when I see bit operation...
+anyway, look at this problem, we can find out that it needed to bit AND to all the number for given range,
+for example [4,5], it asking we do `4 (100) AND 5 (101) = 100 4(100)`, bit AND, only 1 & 1 = 1, otherwise is 0. 
+for we can see we need to find out the highest common 1s(left most common 1s) in the range. 
 
+i.e. [4,6] -- the left most common 1s is 100 = 4. 
+```
+ 4     5    6
+100   101  110
+```
 
+How to find the highest common 1s. 
+- if `m != n`, left shift m and n, `m>>=1, n>>=1`
+- count shifts for each shift
+- until `m==n`, found left most common 1s, 
+- the result is left most common 1s right shift shiftCounts.
 
 
 #### Code
