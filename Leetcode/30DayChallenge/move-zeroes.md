@@ -22,7 +22,6 @@ then do swap(left, right).
 Continue the process until the end of array nums.
 
 For example: 
- 
 
 ![Move Zeroes](../../assets/leetcode/move-zeroes.png)
 
