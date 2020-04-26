@@ -47,8 +47,11 @@ class Solution {
         int len = nums.length;
         int max = 0;
         for (int i = 0; i < len; i++) {
+            // check whether previous jump to current index, if not, cannot continue, return false, exit
             if (i > max) return false;
+            // update current max jumping index
             max = Math.max(max, i + nums[i]);
+            // check whether already jump to last index, if yes, then return true.
             if (max >= len - 1) return true;
         }
         return max >= len - 1;
