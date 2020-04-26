@@ -24,6 +24,14 @@ Explanation: You will always arrive at index 3 no matter what. Its maximum
 
 ## Solution
 
+To check whether can jump to the last index, we can iterate through each steps, and keep track of the max index for each jump, 
+- for each jump, check whether current index can be jumped from previous steps
+    - if not, then terminate early. 
+    - if yes, then continue.
+- for each jump, use max to track the max index position, and update max = max(max, i + nums[i])
+    - check whether already jumped to the last index, if yes, then return true, terminate earlier. 
+    - if not, then continue
+
 
 For example: 
  
