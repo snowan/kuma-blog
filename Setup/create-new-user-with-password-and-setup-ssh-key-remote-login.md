@@ -87,4 +87,8 @@ Host snowwan
 
 - now go to terminal, `ssh snowan`, and you should ssh into remote server
 
+
+![ssh remote user](../assets/setup/ssh-remote-user.png)
+
+
 Congrates, you've already added a new user and ssh into remote server! :) 
