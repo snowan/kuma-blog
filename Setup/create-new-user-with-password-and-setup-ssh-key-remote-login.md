@@ -46,7 +46,7 @@ i.e. `su - snowan` and enter password you added for this user
 
 for example: `snowan` is sudo user and `snowan.test` is not user, 
 
-![sudo user priviledges](../../assets/setup/verify-sudo-user-priviledges.png)
+![sudo user priviledges](../assets/setup/verify-sudo-user-priviledges.png)
 
 Now you want to be able to `ssh` into remote server without password. you need to create private and public key. 
 
