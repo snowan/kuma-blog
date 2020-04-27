@@ -43,7 +43,7 @@ repeat until computed the whole string, dp[m][n] is the answer.
 For example: 
  
 
-![Longest Common Subsequence](../../assets/leetcode/move-zeroes.png)
+![Longest Common Subsequence](../../assets/leetcode/longest-common-subsequence.png)
 
 ####Complexity Analysis
 
