@@ -28,7 +28,7 @@ DP problem, the hard part is to come up with formular function, first we init dp
 
 dp formular function:
 
-![](../../asserts/leetcode/maximal-sqaure-dp.png)
+![](../../assets/leetcode/maximal-sqaure-dp.png)
 
 for each `matrix[i-1][j-1]='1'`, update max, `max=max(max, dp[i][j]`
 
