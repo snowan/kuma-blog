@@ -88,7 +88,7 @@ There are other solutions like using LRU/LFU problem, using doubly linkedlist + 
 
 For example: 
 
-![First Unique Number](../../assets/leetcode/move-zeroes.png)
+![First Unique Number](../../assets/leetcode/first-unique-number.png)
 
 ####Complexity Analysis
 
