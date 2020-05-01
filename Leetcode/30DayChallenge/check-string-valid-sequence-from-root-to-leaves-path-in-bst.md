@@ -50,8 +50,11 @@ Constraints:
 
 ## Solution
 
+DFS, check root to leaf every path, compare with arr, if found return true. otherwise return false.
 
-![](../../assets/leetcode/move-zeroes.png)
+for example: 
+
+![Valid String Sequence from Root to Leaves DFS](../../assets/leetcode/valid-string-seq-dfs.png)
 
 ####Complexity Analysis
 
@@ -60,12 +63,6 @@ Constraints:
 - N - Number of nodes 
 
 #### Code
-DFS, check root to leaf every path, compare with arr, if found return true. otherwise return false.
-
-for example: 
-
-![Valid String Sequence from Root to Leaves DFS](../../assets/leetcode/valid-string-seq-dfs.png)
-
 **DFS Java code**
 
 ```
