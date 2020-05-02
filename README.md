@@ -5,6 +5,7 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 ## [Leetcode](https://snowan.gitbook.io/study-notes/leetcode)
 
 - [30DayChallenge](https://snowan.gitbook.io/study-notes/leetcode/30daychallenge)
+- [May2020Challenge](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge)
 
 ## Google
 
