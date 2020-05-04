@@ -26,6 +26,10 @@ Using Map to keep char and frequency as <key, value> pair in map.
 - For each visit, in map, put frequency - 1 back into map, continue
 - when done iterate ransomNote, all chars in map (in magazine)
 
+For example:
+
+![Ransom Note](../../assets/leetcode/ransom-note.png)
+
 ####Complexity Analysis
 
 **Time Complexity:** `O(N)`
