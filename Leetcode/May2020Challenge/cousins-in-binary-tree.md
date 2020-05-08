@@ -65,6 +65,10 @@ BFS -- level by level check whether current level encounter both x and y node, i
     - if only found x or y, then return false.
 - after traverse all nodes, then return fase. 
 
+For example
+
+![Cousins in Binary Tree](../../assets/leetcode/cousins-in-binary-tree.png)
+
 ####Complexity Analysis
 
 **Time Complexity:** `O(N)`
