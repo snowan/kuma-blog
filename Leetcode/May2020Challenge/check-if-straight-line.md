@@ -33,7 +33,7 @@ Then this problem can seen as calculate every two points slope and compare all t
 
 For example:
 
-![Check If It is a Straight Line](../../assets/leetcode/check-straight-line.md)
+![Check If It is a Straight Line](../../assets/leetcode/check-straight-line.png)
 
 ####Complexity Analysis
 
