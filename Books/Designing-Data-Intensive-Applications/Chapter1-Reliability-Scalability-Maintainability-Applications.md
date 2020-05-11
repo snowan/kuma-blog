@@ -1,4 +1,4 @@
-#第一章 — 可靠性，可扩展性，可维护性的应用程序(Reliable, Scalable, and Maintainable Applications)
+# 第一章 — 可靠性，可扩展性，可维护性的应用程序(Reliable, Scalable, and Maintainable Applications)
 
 | The Internet was done so well that most people think of it as a natural resource like the Pacific Ocean, rather than something that was man-made. When was the last time a technology with a scale like that was so error-free?
 | —Alan Kay, in interview with Dr Dobb’s Journal (2012)
