@@ -3,9 +3,20 @@
 A repo use to record study notes journey, including Data Structures/Algorithms, System Design, Paper notes etc.
 
 ## [Leetcode](https://snowan.gitbook.io/study-notes/leetcode)
+---
+#### [English Solutions](https://snowan.gitbook.io/study-notes/leetcode/english-solution)
+- [25.reverse-nodes-in-k-groups](https://snowan.gitbook.io/study-notes/leetcode/english-solution/25.reverse-nodes-in-k-groups-en)
+- [53.maximum-sum-subarray](https://snowan.gitbook.io/study-notes/leetcode/english-solution/53.maximum-sum-subarray-en)
+- [79.word-search](https://snowan.gitbook.io/study-notes/leetcode/english-solution/79.word-search-en)
+- [474.ones-and-zeros](https://snowan.gitbook.io/study-notes/leetcode/english-solution/474.ones-and-zeros-en)
+- [547.friend-circles](https://snowan.gitbook.io/study-notes/leetcode/english-solution/547.friend-circles-en)
+- [1168.optimize-water-distribution-in-a-village](https://snowan.gitbook.io/study-notes/leetcode/english-solution/1168.optimize-water-distribution-in-a-village-en)
+- [1171.remove-zero-sum-consecutive-nodes-from-linked-list](https://snowan.gitbook.io/study-notes/leetcode/english-solution/1171.remove-zero-sum-consecutive-nodes-from-linked-list-en)
+- [1177.can-make-palindrome-from-substring](https://snowan.gitbook.io/study-notes/leetcode/english-solution/1177.can-make-palindrome-from-substring-en)
+- [1343.number-of-avg-subarr-sizek-greater-or-equal-threshold](https://snowan.gitbook.io/study-notes/leetcode/english-solution/1343.number-of-avg-subarr-sizek-greater-or-equal-threshold)
+#### [30DayChallenge](https://snowan.gitbook.io/study-notes/leetcode/30daychallenge)
 
-- [30DayChallenge](https://snowan.gitbook.io/study-notes/leetcode/30daychallenge)
-- [May2020Challenge](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge)
+#### [May2020Challenge](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge)
 
 ## Google
 
