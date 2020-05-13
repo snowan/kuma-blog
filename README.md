@@ -18,6 +18,12 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 #### [30DayChallenge](https://snowan.gitbook.io/study-notes/leetcode/30daychallenge)
 
 #### [May2020Challenge](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge)
+- [cousins in a binary tree](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/cousins-in-binary-tree)
+- [check if it is a straight line](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/check-if-straight-line)
+- [valid a perfect square](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/valid-perfect-square)
+- [find a town judge](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/find-town-judge)
+- [flood fill](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/flood-fill)
+- [single element in a sorted array](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/single-element-in-sorted-array)
 
 ## Google
 
