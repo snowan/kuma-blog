@@ -24,6 +24,7 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 - [find a town judge](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/find-town-judge)
 - [flood fill](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/flood-fill)
 - [single element in a sorted array](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/single-element-in-sorted-array)
+- [remove k digits](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/remove-k-digits)
 
 ## Google
 
