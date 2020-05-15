@@ -26,7 +26,7 @@ Now define TrieNode with char, isWord, children.
 
 For example:
 
-![Implement Trie](../../assets/leetcode/implement-trie.png)
+![Implement Trie](../../assets/leetcode/impement-trie.png)
 
 ####Complexity Analysis
 
