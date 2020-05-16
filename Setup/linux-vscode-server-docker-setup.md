@@ -2,6 +2,7 @@
 If you want to code anywhere, with vscode codespace, you can. and if you want to host your own vscode on remote server, this is for you. it is easy to set up with docker.
 - In your linux, create a new bash script file name: `run_code_server.sh`. 
 - copy and paste below code snipper into `run_code_server.sh`
+
 ```
 #!/bin/bash
 
@@ -32,11 +33,16 @@ docker start code-server
 ```
 - save script
 - run script (make sure you have docker installed.)
+
 `./run_code_server.sh ~/.code-server/config ~/Project password password`
+
 - now check whether docker container is up. 
+
 `docker ps -a`
+
 You will see container name: `code-server` up and running with port: `8443`
 - now you can access vscode in your browser
+
 `http://<your-server-ip>:8443` ie. `http://127.0.0.1:8443`
 
 For example: my up and running vscode opened in browser
@@ -52,9 +58,11 @@ For example: my up and running vscode opened in browser
 ### Common issues when run bash script
 1. If you don't have Docker installed, install docker [here](https://runnable.com/docker/install-docker-on-linux)
 2. If you run into bash script permission denied on Linux, run below command
+
 `chmod +x <your bash script>` 
 
 For example, code server script:
+
 `chmod +x ./run-code-server.sh`
 
 3. If you see below errors
