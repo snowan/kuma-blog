@@ -26,6 +26,7 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 - [single element in a sorted array](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/single-element-in-sorted-array)
 - [remove k digits](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/remove-k-digits)
 - [implement trie](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/implement-trie)
+- [maximum sum circular subarray](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/maximum-sum-circular-subarray)
 
 ## Google
 
