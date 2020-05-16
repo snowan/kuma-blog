@@ -41,4 +41,4 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 - [设计数据密集型应用程序 (Designing Data-Intensive Application)](https://snowan.gitbook.io/study-notes/books/designing-data-intensive-applications) -- Martin Kleppmann
 
 ## Setups
-- [Linux Setup vscode in remote server with docker access in browser]()
+- [Linux Setup vscode in remote server with docker access in browser](https://snowan.gitbook.io/study-notes/setup/linux-vscode-server-docker-setup)
