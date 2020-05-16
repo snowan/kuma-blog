@@ -2,7 +2,7 @@
 If you want to code anywhere, with vscode codespace, you can. and if you want to host your own vscode on remote server, this is for you. it is easy to set up with docker.
 - In your linux, create a new bash script file name: `run_code_server.sh`. 
 - copy and paste below code snipper into `run_code_server.sh`
-```sh
+```
 #!/bin/bash
 
 # example: ./run_code_server.sh ~/.code-server/config ~/Project password password
