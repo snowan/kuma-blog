@@ -39,3 +39,6 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 ## Books
 整理一些读书笔记，这本设计数据密集型应用程序书太好，所以想要完整的翻译试试。
 - [设计数据密集型应用程序 (Designing Data-Intensive Application)](https://snowan.gitbook.io/study-notes/books/designing-data-intensive-applications) -- Martin Kleppmann
+
+## Setups
+- [Linux Setup vscode in remote server with docker access in browser]()
