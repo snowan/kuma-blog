@@ -24,6 +24,23 @@ Note:
 ```
 
 ## Solution
+This problem is intuitive, gather all odd nodes together, and all even nodes together. then odd list point to even node list.
+
+List Node is a bit not intuitive to implement, so you need to understand pointer for list node. Will using an example below to demonstrate how pointer works
+and how to gather all odd and even nodes.
+
+- will need 3 new heads,
+    - odd -- point to odd nodes, while iterate through list nodes.
+    - even -- point to even nodes
+    - evenHead -- need to remember the start position for even head.
+- init, `odd = head` and `even = head.next` and `evenHead = even`
+- After init, traverse through list nodes, here head and evenHead  will remain, not move, instead, odd and even will move to corresponding position. 
+- each traverse, `odd = odd.next.next` (by pass even node), and `even = even.next.next` (by passing odd node)
+- until `even == null || even.next == null`, done scanning all nodes, evenHead is in the even list nodes head.
+- point `odd.next = evenHead`.
+- now head is the result.
+
+
 For example:
 
 ![Odd Even Linked List](../../assets/leetcode/odd-even-linkedlist.png)
