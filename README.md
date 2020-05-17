@@ -27,6 +27,7 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 - [remove k digits](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/remove-k-digits)
 - [implement trie](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/implement-trie)
 - [maximum sum circular subarray](https://snowan.gitbook.io/study-notes/leetcode/may2020challenge/maximum-sum-circular-subarray)
+- [odd even list node]()
 
 ## Google
 
@@ -40,5 +41,5 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 - [设计数据密集型应用程序 (Designing Data-Intensive Application)](https://snowan.gitbook.io/study-notes/books/designing-data-intensive-applications) -- Martin Kleppmann
 
 ## [Setups](https://snowan.gitbook.io/study-notes/setup)
-- [Linux Setup vscode in remote server with docker access in browser](https://snowan.gitbook.io/study-notes/setup/linux-vscode-server-docker-setup)
+- [Linux Setup vscode in remote server with docker access in browser](https://github.com/snowan/study-notes/blob/master/Setup/linux-vscode-server-docker-setup.md)
 - [Linux create new user nad setup SSH key](https://snowan.gitbook.io/study-notes/setup/create-new-user-with-password-and-setup-ssh-key-remote-login)
