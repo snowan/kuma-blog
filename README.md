@@ -4,7 +4,7 @@ A repo use to record study notes journey, including Data Structures/Algorithms, 
 
 ## [Leetcode](https://snowan.gitbook.io/study-notes/leetcode)
 
-## [Python code](https://snowan.gitbook.io/study-notes/leetcode/python)
+## [Python code](https://snowan.gitbook.io/study-notes/Leetcode/python)
 
 #### [English Solutions](https://snowan.gitbook.io/study-notes/leetcode/english-solution)
 - [25.reverse-nodes-in-k-groups](https://snowan.gitbook.io/study-notes/leetcode/english-solution/25.reverse-nodes-in-k-groups-en)
