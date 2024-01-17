@@ -1,4 +1,4 @@
-# [study-notes](https://snowan.gitbook.io/study-notes/)
+# [Kuma Blog](https://snowan.gitbook.io/kuma-blog/)
 
 A repo use to record study notes journey, including Data Structures/Algorithms, System Design, Paper notes etc.
 
