@@ -21,5 +21,33 @@ The Learning objectives of this chapter:
 
 ## Models
 ### System Under Test
-![2.1 Block diagram of system uder test](../../assets/books/system-performance/figure_2.1.png)
+![2.1 Block diagram of system uder test](./assets/figure_2.1.png)
 
+### Queueing System
+![2.2 Simple queueing model](./assets/figure_2.2.png)
+
+## Concepts
+### Latency
+![2.3 Network connection latency](./assets/figure_2.3.png)
+
+The latency is the time spent waiting before an operation is performed.
+
+### Time Scales
+![Table 2.2 Example time scale of system latencies](./assets/table_2.2.png)
+
+### Trade-Offs
+The good/fast/cheap "pick two" trade-off.
+![Trade-offs: pick two](./assets/fiture_2.4.png)
+
+A common trade-off in performance tuning is the one between CPU and memory, as memory can be used to cache results, reducing CPU usage.
+
+Tunable parameters often come with trade-offs. Examoles:
+- File system record size (or block size): 
+    - Small reocrd sizes, close to the application I/O size, will perform better for random I/O workloads and make more efficient use of the file system cache while the application is running. 
+    - Large record sizes will improve streaming workloads, including file system backups.
+
+- Network buffer size: 
+    - Small buffer sizes will reduce the memory overhead per connection, helping the system scale. 
+    - Large sizes will improve network throughput.
+
+### Tunning Efforts
