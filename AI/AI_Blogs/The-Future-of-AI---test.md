@@ -1,1 +1,0 @@
-{{ $json[0].fileContent }}
