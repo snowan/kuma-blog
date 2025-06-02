@@ -1,0 +1,324 @@
+{
+  "name": "Video To Post",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Youtube Video Transcriber",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Youtube Video Url",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "189b1f3e-c7fd-4430-a6b2-5cab55444048",
+      "name": "YoutubeVideoURL",
+      "type": "n8n-nodes-base.formTrigger",
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "156a04c8-917d-4624-a46e-8fbcab89d16b",
+      "typeVersion": 2.2
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "7653a859-556d-4e00-bafa-6f70f90de0d7",
+              "name": "transcript",
+              "type": "string",
+              "value": "={{ $json.cleanedTranscript }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4e7fa7f9-cf32-45bf-b220-b76264298ad0",
+      "name": "cleanedTranscript",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        880,
+        0
+      ],
+      "typeVersion": 3.4
+    },
+    {
+      "parameters": {
+        "functionCode": "// Extract and process the transcript\nconst data = $input.first().json;\n\nif (!data.transcript && !data.text) {\n  return {\n    json: {\n      success: false,\n      message: 'No transcript available for this video',\n      videoUrl: $input.first().json.body?.videoUrl || 'Unknown'\n    }\n  };\n}\n\n// Process the transcript text\nlet transcriptText = '';\n\n// Handle different API response formats\nif (data.transcript) {\n  // Format for array of transcript segments\n  if (Array.isArray(data.transcript)) {\n    data.transcript.forEach(segment => {\n      if (segment.text) {\n        transcriptText += segment.text + ' ';\n      }\n    });\n  } else if (typeof data.transcript === 'string') {\n    transcriptText = data.transcript;\n  }\n} else if (data.text) {\n  // Format for single transcript object with text property\n  transcriptText = data.text;\n}\n\n// Clean up the transcript (remove extra spaces, normalize punctuation)\nconst cleanedTranscript = transcriptText\n  .replace(/\\s+/g, ' ')\n  .replace(/\\s([.,!?])/g, '$1')\n  .trim();\n\nreturn {\n  json: {\n    success: true,\n    videoUrl: $input.first().json.body?.videoUrl || 'From transcript',\n    rawTranscript: data.text || data.transcript,\n    cleanedTranscript,\n    duration: data.duration,\n    offset: data.offset,\n    language: data.lang\n  }\n};"
+      },
+      "id": "4ed0d8a1-71e4-4d70-8983-1bdeaca310e7",
+      "name": "processTranscript",
+      "type": "n8n-nodes-base.function",
+      "position": [
+        660,
+        0
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://youtube-transcript3.p.rapidapi.com/api/transcript",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "videoId",
+              "value": "={{ $json.videoId }}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "x-rapidapi-host",
+              "value": "youtube-transcript3.p.rapidapi.com"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "url",
+              "value": "={{ $json['Youtube Video Url'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6a151bde-12d0-4836-b23e-d196890c93ec",
+      "name": "extractTranscript",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [
+        440,
+        0
+      ],
+      "typeVersion": 3,
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "ILqJ0Ss2E6N7bzva",
+          "name": "RapidAPI"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-nano"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        1128,
+        220
+      ],
+      "id": "15c2fa8f-15b1-4f6a-859a-52059755aaf6",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "L6yK8rSOf4Ez4Te2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n\t\"post-content\": \"only post content here\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.2,
+      "position": [
+        1248,
+        220
+      ],
+      "id": "f3cc9081-8b41-407f-844c-53e0999ac5f6",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "jsCode": "const youtubeUrl = $input.first().json['Youtube Video Url'];\n\nfunction getYouTubeVideoId(url) {\n  const regex = /(?:youtube\\.com\\/(?:.*v=|v\\/|embed\\/)|youtu\\.be\\/)([^&?\\/\\s]+)/;\n  const match = url.match(regex);\n  return match ? match[1] : '';\n}\n\nconst videoId = getYouTubeVideoId(youtubeUrl);\nreturn {videoId}"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "id": "c63b23ac-73aa-4224-9da5-e0f4bba99efc",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "## Youtube URL Input\nSupports both type of URL formats from Youtube",
+        "height": 380,
+        "width": 480
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -120,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "066b6f92-6b8f-4b43-bc98-4dda02eb733b",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Clean and Process Script",
+        "height": 380,
+        "width": 640,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        380,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "a04da1f8-2ced-4d7d-a2f6-4bfc4e373087",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Generate Post",
+        "height": 580,
+        "width": 420,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1040,
+        -140
+      ],
+      "typeVersion": 1,
+      "id": "a3641da8-688f-464f-ba52-6ce373b50ae2",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Video Transcript - \n\n{{ $json.transcript }}",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "You are a Social Media content expert.\nYou will be provided with a transcript taken out from a video.\n\nYou need to understand write about it as a social media post.\n\nDon't overuse emojis\n\nYou must think it step by step. You need to first categorise the video type. Based on it decide the type of post you will make. Structure a post which attracts users with it's first line. And keep the post engaging.\n\nAt the end give the final output with below format strictly\n\npost-content: "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.9,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "10e6fa5a-f986-4651-b1af-c862110f8c75",
+      "name": "Content Agent"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "YoutubeVideoURL": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "extractTranscript": {
+      "main": [
+        [
+          {
+            "node": "processTranscript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "processTranscript": {
+      "main": [
+        [
+          {
+            "node": "cleanedTranscript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cleanedTranscript": {
+      "main": [
+        [
+          {
+            "node": "Content Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Content Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "extractTranscript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "35cb7931-3208-41d6-b0c5-162115e7eca2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "933df83c84196d70ce3ffd0bf5d3e1aca31b7366f2f84e1f3482640096e4a3a9"
+  },
+  "id": "E0QzOPg8rsmLHWjV",
+  "tags": []
+}
