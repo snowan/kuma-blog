@@ -1,3 +1,5 @@
+.vscode/
+**/.env
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
@@ -27,3 +29,4 @@ out/
 /.factorypath
 .DS_Store
 lib/
+.venv/
