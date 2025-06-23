@@ -1,3 +1,10 @@
+"""
+this is from huggingface agents learning course 
+
+agent couse: https://huggingface.co/learn/agents-course/
+
+notebook: https://huggingface.co/agents-course/notebooks/blob/main/unit1/dummy_agent_library.ipynb
+"""
 import os
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
