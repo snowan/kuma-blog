@@ -3,6 +3,9 @@
 target/
 !.mvn/wrapper/maven-wrapper.jar
 
+*CLAUDE.md
+.cursorrules/
+.cursorrules
 ### STS ###
 .apt_generated
 .classpath
