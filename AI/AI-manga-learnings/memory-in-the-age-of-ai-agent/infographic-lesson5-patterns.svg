@@ -1,0 +1,185 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550">
+  <style>
+    .title { font-family: 'Comic Sans MS', cursive; font-size: 20px; font-weight: bold; }
+    .subtitle { font-family: 'Comic Sans MS', cursive; font-size: 14px; font-weight: bold; }
+    .label { font-family: 'Comic Sans MS', cursive; font-size: 11px; }
+    .small { font-family: 'Comic Sans MS', cursive; font-size: 9px; }
+    .sketch { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-thin { fill: none; stroke: #000; stroke-width: 1.5; stroke-linecap: round; }
+    .fill-white { fill: #fff; }
+  </style>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" class="title">Lesson 5: Architecture Patterns</text>
+  <text x="450" y="48" text-anchor="middle" class="label">"How to build memory systems"</text>
+
+  <!-- Pattern 1: Simple RAG -->
+  <g transform="translate(150, 150)">
+    <!-- Small cat head (simplified) -->
+    <circle cx="0" cy="0" r="22" class="sketch fill-white"/>
+    <path d="M-15,-12 L-13,-28 L-5,-14" class="sketch fill-white"/>
+    <path d="M15,-12 L13,-28 L5,-14" class="sketch fill-white"/>
+    <circle cx="-7" cy="-2" r="3" fill="#000"/>
+    <circle cx="7" cy="-2" r="3" fill="#000"/>
+    <ellipse cx="0" cy="8" rx="3" ry="2" class="sketch-thin"/>
+    <path d="M-4,14 Q0,18 4,14" class="sketch-thin"/>
+
+    <!-- Arrow down to DB -->
+    <path d="M0,25 L0,50" class="sketch-thin"/>
+    <path d="M-4,46 L0,52 L4,46" class="sketch-thin"/>
+
+    <!-- Database cylinder -->
+    <ellipse cx="0" cy="70" rx="30" ry="10" class="sketch fill-white"/>
+    <path d="M-30,70 L-30,100" class="sketch"/>
+    <path d="M30,70 L30,100" class="sketch"/>
+    <ellipse cx="0" cy="100" rx="30" ry="10" class="sketch fill-white"/>
+    <text x="0" y="88" text-anchor="middle" class="small">Facts DB</text>
+
+    <!-- Arrow back up -->
+    <path d="M35,85 Q55,50 25,25" class="sketch-thin"/>
+    <path d="M27,30 L25,23 L31,26" class="sketch-thin"/>
+
+    <!-- Query label -->
+    <text x="-25" y="40" class="small">query</text>
+    <text x="50" y="55" class="small">retrieve</text>
+  </g>
+
+  <text x="150" y="280" text-anchor="middle" class="subtitle">Pattern 1: Simple RAG</text>
+  <text x="150" y="298" text-anchor="middle" class="small">Token-Level + Factual</text>
+  <text x="150" y="315" text-anchor="middle" class="small">Good for: Q&A, Support</text>
+
+  <!-- Pattern 2: Reflective Agent -->
+  <g transform="translate(450, 150)">
+    <!-- Cat with thinking pose -->
+    <circle cx="0" cy="0" r="22" class="sketch fill-white"/>
+    <path d="M-15,-12 L-13,-28 L-5,-14" class="sketch fill-white"/>
+    <path d="M15,-12 L13,-28 L5,-14" class="sketch fill-white"/>
+    <!-- Thinking eyes looking up -->
+    <ellipse cx="-7" cy="-3" rx="4" ry="5" class="sketch-thin"/>
+    <ellipse cx="7" cy="-3" rx="4" ry="5" class="sketch-thin"/>
+    <circle cx="-7" cy="-5" r="2" fill="#000"/>
+    <circle cx="7" cy="-5" r="2" fill="#000"/>
+    <ellipse cx="0" cy="8" rx="3" ry="2" class="sketch-thin"/>
+    <path d="M-3,14 L3,14" class="sketch-thin"/>
+
+    <!-- Two databases -->
+    <!-- Facts DB (left) -->
+    <ellipse cx="-45" cy="70" rx="22" ry="8" class="sketch fill-white"/>
+    <path d="M-67,70 L-67,95" class="sketch"/>
+    <path d="M-23,70 L-23,95" class="sketch"/>
+    <ellipse cx="-45" cy="95" rx="22" ry="8" class="sketch fill-white"/>
+    <text x="-45" y="85" text-anchor="middle" class="small">Facts</text>
+
+    <!-- Experience DB (right) -->
+    <ellipse cx="45" cy="70" rx="22" ry="8" class="sketch fill-white"/>
+    <path d="M23,70 L23,95" class="sketch"/>
+    <path d="M67,70 L67,95" class="sketch"/>
+    <ellipse cx="45" cy="95" rx="22" ry="8" class="sketch fill-white"/>
+    <text x="45" y="85" text-anchor="middle" class="small">Exp</text>
+
+    <!-- Arrows -->
+    <path d="M-15,20 L-35,55" class="sketch-thin"/>
+    <path d="M15,20 L35,55" class="sketch-thin"/>
+
+    <!-- Action arrow and feedback loop -->
+    <path d="M0,25 L0,45" class="sketch-thin"/>
+    <rect x="-15" y="45" width="30" height="18" class="sketch fill-white"/>
+    <text x="0" y="57" text-anchor="middle" class="small">Action</text>
+
+    <!-- Feedback arrow to experience -->
+    <path d="M18,55 Q60,45 55,65" class="sketch-thin" stroke-dasharray="3,2"/>
+    <text x="55" y="50" class="small">learn</text>
+  </g>
+
+  <text x="450" y="280" text-anchor="middle" class="subtitle">Pattern 2: Reflective</text>
+  <text x="450" y="298" text-anchor="middle" class="small">+ Experiential Memory</text>
+  <text x="450" y="315" text-anchor="middle" class="small">Good for: Coding Agents</text>
+
+  <!-- Pattern 3: MemGPT-Style -->
+  <g transform="translate(750, 150)">
+    <!-- Cat with multiple connections -->
+    <circle cx="0" cy="0" r="22" class="sketch fill-white"/>
+    <path d="M-15,-12 L-13,-28 L-5,-14" class="sketch fill-white"/>
+    <path d="M15,-12 L13,-28 L5,-14" class="sketch fill-white"/>
+    <!-- Busy/multitasking eyes -->
+    <line x1="-10" y1="-3" x2="-4" y2="-3" class="sketch-thin"/>
+    <line x1="4" y1="-3" x2="10" y2="-3" class="sketch-thin"/>
+    <circle cx="-7" cy="0" r="2" fill="#000"/>
+    <circle cx="7" cy="0" r="2" fill="#000"/>
+    <ellipse cx="0" cy="8" rx="3" ry="2" class="sketch-thin"/>
+    <path d="M-5,14 Q0,18 5,14" class="sketch-thin"/>
+
+    <!-- Working memory (active) -->
+    <rect x="-65" y="-20" width="28" height="22" class="sketch fill-white"/>
+    <text x="-51" y="-5" text-anchor="middle" class="small">Work</text>
+    <line x1="-37" y1="-8" x2="-25" y2="-5" class="sketch-thin"/>
+
+    <!-- Hierarchical storage -->
+    <!-- Hot (small, close) -->
+    <rect x="-50" y="50" width="25" height="15" class="sketch fill-white"/>
+    <text x="-37" y="61" text-anchor="middle" class="small">Hot</text>
+
+    <!-- Warm (medium) -->
+    <rect x="-12" y="65" width="25" height="15" class="sketch fill-white"/>
+    <text x="1" y="76" text-anchor="middle" class="small">Warm</text>
+
+    <!-- Cold (large, far) -->
+    <rect x="25" y="50" width="35" height="20" class="sketch fill-white"/>
+    <text x="42" y="64" text-anchor="middle" class="small">Archive</text>
+
+    <!-- Connections -->
+    <path d="M-10,22 L-37,48" class="sketch-thin"/>
+    <path d="M0,22 L1,62" class="sketch-thin"/>
+    <path d="M10,22 L35,48" class="sketch-thin"/>
+
+    <!-- Paging arrows -->
+    <path d="M-25,57 L-15,68" class="sketch-thin" stroke-dasharray="2,2"/>
+    <path d="M13,72 L22,65" class="sketch-thin" stroke-dasharray="2,2"/>
+  </g>
+
+  <text x="750" y="280" text-anchor="middle" class="subtitle">Pattern 3: MemGPT</text>
+  <text x="750" y="298" text-anchor="middle" class="small">+ Hierarchical Working Memory</text>
+  <text x="750" y="315" text-anchor="middle" class="small">Good for: Long Tasks</text>
+
+  <!-- Bottom comparison -->
+  <g transform="translate(100, 380)">
+    <rect x="0" y="0" width="700" height="130" class="sketch fill-white" rx="10"/>
+
+    <text x="350" y="25" text-anchor="middle" class="subtitle">Choosing Your Pattern</text>
+
+    <!-- Simple table -->
+    <line x1="20" y1="40" x2="680" y2="40" class="sketch-thin"/>
+    <line x1="200" y1="35" x2="200" y2="120" class="sketch-thin"/>
+    <line x1="400" y1="35" x2="400" y2="120" class="sketch-thin"/>
+
+    <text x="110" y="60" text-anchor="middle" class="label">Simple RAG</text>
+    <text x="110" y="80" text-anchor="middle" class="small">Need: Just facts</text>
+    <text x="110" y="95" text-anchor="middle" class="small">Complexity: Low</text>
+    <text x="110" y="110" text-anchor="middle" class="small">Example: FAQ bot</text>
+
+    <text x="300" y="60" text-anchor="middle" class="label">Reflective</text>
+    <text x="300" y="80" text-anchor="middle" class="small">Need: Learn from actions</text>
+    <text x="300" y="95" text-anchor="middle" class="small">Complexity: Medium</text>
+    <text x="300" y="110" text-anchor="middle" class="small">Example: Code assistant</text>
+
+    <text x="540" y="60" text-anchor="middle" class="label">MemGPT-Style</text>
+    <text x="540" y="80" text-anchor="middle" class="small">Need: Long context + hierarchy</text>
+    <text x="540" y="95" text-anchor="middle" class="small">Complexity: High</text>
+    <text x="540" y="110" text-anchor="middle" class="small">Example: Life sim agent</text>
+  </g>
+
+  <!-- Cat at bottom giving advice -->
+  <g transform="translate(820, 470)">
+    <circle cx="0" cy="0" r="18" class="sketch fill-white"/>
+    <path d="M-12,-10 L-10,-22 L-4,-12" class="sketch fill-white"/>
+    <path d="M12,-10 L10,-22 L4,-12" class="sketch fill-white"/>
+    <path d="M-10,0 Q-6,-5 -2,0" class="sketch-thin"/>
+    <path d="M2,0 Q6,-5 10,0" class="sketch-thin"/>
+    <ellipse cx="0" cy="8" rx="3" ry="2" class="sketch-thin"/>
+    <!-- Speech bubble -->
+    <ellipse cx="-55" cy="-10" rx="35" ry="18" class="sketch fill-white"/>
+    <path d="M-25,-5 L-18,5 L-22,-8" class="sketch fill-white"/>
+    <text x="-55" y="-12" text-anchor="middle" class="small">Start simple,</text>
+    <text x="-55" y="-1" text-anchor="middle" class="small">add as needed!</text>
+  </g>
+</svg>

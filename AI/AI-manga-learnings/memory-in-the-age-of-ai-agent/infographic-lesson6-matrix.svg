@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550">
+  <style>
+    .title { font-family: 'Comic Sans MS', cursive; font-size: 20px; font-weight: bold; }
+    .subtitle { font-family: 'Comic Sans MS', cursive; font-size: 13px; font-weight: bold; }
+    .label { font-family: 'Comic Sans MS', cursive; font-size: 11px; }
+    .small { font-family: 'Comic Sans MS', cursive; font-size: 9px; }
+    .tiny { font-family: 'Comic Sans MS', cursive; font-size: 8px; }
+    .sketch { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-thin { fill: none; stroke: #000; stroke-width: 1.5; stroke-linecap: round; }
+    .fill-white { fill: #fff; }
+    .cell { fill: #fff; stroke: #000; stroke-width: 1.5; }
+  </style>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" class="title">Lesson 6: The Forms-Functions Matrix</text>
+  <text x="450" y="48" text-anchor="middle" class="label">"Audit any memory system with this grid"</text>
+
+  <!-- Matrix -->
+  <g transform="translate(150, 90)">
+    <!-- Header row -->
+    <rect x="0" y="0" width="120" height="40" class="cell" fill="#f5f5f5"/>
+    <text x="60" y="25" text-anchor="middle" class="subtitle">Form / Function</text>
+
+    <rect x="120" y="0" width="150" height="40" class="cell" fill="#f0f0f0"/>
+    <text x="195" y="25" text-anchor="middle" class="subtitle">TOKEN-LEVEL</text>
+
+    <rect x="270" y="0" width="150" height="40" class="cell" fill="#f0f0f0"/>
+    <text x="345" y="25" text-anchor="middle" class="subtitle">PARAMETRIC</text>
+
+    <rect x="420" y="0" width="150" height="40" class="cell" fill="#f0f0f0"/>
+    <text x="495" y="25" text-anchor="middle" class="subtitle">LATENT</text>
+
+    <!-- Row 1: Factual -->
+    <rect x="0" y="40" width="120" height="80" class="cell" fill="#f0f0f0"/>
+    <text x="60" y="75" text-anchor="middle" class="subtitle">FACTUAL</text>
+    <text x="60" y="95" text-anchor="middle" class="small">"To Know"</text>
+
+    <rect x="120" y="40" width="150" height="80" class="cell"/>
+    <text x="195" y="65" text-anchor="middle" class="label">RAG</text>
+    <text x="195" y="80" text-anchor="middle" class="small">Knowledge graphs</text>
+    <text x="195" y="95" text-anchor="middle" class="small">User profiles</text>
+    <!-- Mini cat icon -->
+    <circle cx="195" cy="108" r="8" class="sketch-thin fill-white"/>
+    <circle cx="192" cy="106" r="1.5" fill="#000"/>
+    <circle cx="198" cy="106" r="1.5" fill="#000"/>
+
+    <rect x="270" y="40" width="150" height="80" class="cell"/>
+    <text x="345" y="65" text-anchor="middle" class="label">Pre-training</text>
+    <text x="345" y="80" text-anchor="middle" class="small">World knowledge</text>
+    <text x="345" y="95" text-anchor="middle" class="small">Language patterns</text>
+    <circle cx="345" cy="108" r="8" class="sketch-thin fill-white"/>
+    <circle cx="342" cy="106" r="1.5" fill="#000"/>
+    <circle cx="348" cy="106" r="1.5" fill="#000"/>
+
+    <rect x="420" y="40" width="150" height="80" class="cell"/>
+    <text x="495" y="65" text-anchor="middle" class="label">Embeddings</text>
+    <text x="495" y="80" text-anchor="middle" class="small">Vector stores</text>
+    <text x="495" y="95" text-anchor="middle" class="small">Semantic search</text>
+    <circle cx="495" cy="108" r="8" class="sketch-thin fill-white"/>
+    <circle cx="492" cy="106" r="1.5" fill="#000"/>
+    <circle cx="498" cy="106" r="1.5" fill="#000"/>
+
+    <!-- Row 2: Experiential -->
+    <rect x="0" y="120" width="120" height="80" class="cell" fill="#f0f0f0"/>
+    <text x="60" y="155" text-anchor="middle" class="subtitle">EXPERIENTIAL</text>
+    <text x="60" y="175" text-anchor="middle" class="small">"To Improve"</text>
+
+    <rect x="120" y="120" width="150" height="80" class="cell"/>
+    <text x="195" y="145" text-anchor="middle" class="label">Action logs</text>
+    <text x="195" y="160" text-anchor="middle" class="small">Success/fail records</text>
+    <text x="195" y="175" text-anchor="middle" class="small">Reflection notes</text>
+    <circle cx="195" cy="188" r="8" class="sketch-thin fill-white"/>
+    <path d="M192,186 Q195,183 198,186" class="sketch-thin"/>
+
+    <rect x="270" y="120" width="150" height="80" class="cell"/>
+    <text x="345" y="145" text-anchor="middle" class="label">Fine-tuning</text>
+    <text x="345" y="160" text-anchor="middle" class="small">RLHF trajectories</text>
+    <text x="345" y="175" text-anchor="middle" class="small">Skill acquisition</text>
+    <circle cx="345" cy="188" r="8" class="sketch-thin fill-white"/>
+    <path d="M342,186 Q345,183 348,186" class="sketch-thin"/>
+
+    <rect x="420" y="120" width="150" height="80" class="cell"/>
+    <text x="495" y="145" text-anchor="middle" class="label">Skill vectors</text>
+    <text x="495" y="160" text-anchor="middle" class="small">Learned behaviors</text>
+    <text x="495" y="175" text-anchor="middle" class="small">Pattern encodings</text>
+    <circle cx="495" cy="188" r="8" class="sketch-thin fill-white"/>
+    <path d="M492,186 Q495,183 498,186" class="sketch-thin"/>
+
+    <!-- Row 3: Working -->
+    <rect x="0" y="200" width="120" height="80" class="cell" fill="#f0f0f0"/>
+    <text x="60" y="235" text-anchor="middle" class="subtitle">WORKING</text>
+    <text x="60" y="255" text-anchor="middle" class="small">"To Think"</text>
+
+    <rect x="120" y="200" width="150" height="80" class="cell"/>
+    <text x="195" y="225" text-anchor="middle" class="label">Scratchpad</text>
+    <text x="195" y="240" text-anchor="middle" class="small">Context window</text>
+    <text x="195" y="255" text-anchor="middle" class="small">Task state</text>
+    <circle cx="195" cy="268" r="8" class="sketch-thin fill-white"/>
+    <line x1="190" y1="266" x2="200" y2="266" class="sketch-thin"/>
+
+    <rect x="270" y="200" width="150" height="80" class="cell"/>
+    <text x="345" y="225" text-anchor="middle" class="label">LoRA adapters</text>
+    <text x="345" y="240" text-anchor="middle" class="small">Task-specific</text>
+    <text x="345" y="255" text-anchor="middle" class="small">Lightweight tuning</text>
+    <circle cx="345" cy="268" r="8" class="sketch-thin fill-white"/>
+    <line x1="340" y1="266" x2="350" y2="266" class="sketch-thin"/>
+
+    <rect x="420" y="200" width="150" height="80" class="cell"/>
+    <text x="495" y="225" text-anchor="middle" class="label">KV-cache</text>
+    <text x="495" y="240" text-anchor="middle" class="small">Attention states</text>
+    <text x="495" y="255" text-anchor="middle" class="small">Hidden activations</text>
+    <circle cx="495" cy="268" r="8" class="sketch-thin fill-white"/>
+    <line x1="490" y1="266" x2="500" y2="266" class="sketch-thin"/>
+  </g>
+
+  <!-- Audit Questions Section -->
+  <g transform="translate(150, 400)">
+    <rect x="0" y="0" width="570" height="120" class="sketch fill-white" rx="8"/>
+    <text x="285" y="25" text-anchor="middle" class="subtitle">Self-Audit Checklist</text>
+
+    <!-- Cat teacher -->
+    <g transform="translate(500, 60)">
+      <circle cx="0" cy="0" r="25" class="sketch fill-white"/>
+      <path d="M-18,-15 L-15,-35 L-6,-18" class="sketch fill-white"/>
+      <path d="M18,-15 L15,-35 L6,-18" class="sketch fill-white"/>
+      <!-- Glasses -->
+      <circle cx="-8" cy="-2" r="8" class="sketch-thin"/>
+      <circle cx="8" cy="-2" r="8" class="sketch-thin"/>
+      <line x1="0" y1="-2" x2="0" y2="-2" class="sketch-thin"/>
+      <circle cx="-8" cy="-2" r="3" fill="#000"/>
+      <circle cx="8" cy="-2" r="3" fill="#000"/>
+      <ellipse cx="0" cy="10" rx="4" ry="3" class="sketch-thin"/>
+      <path d="M-5,17 Q0,22 5,17" class="sketch-thin"/>
+      <!-- Pointer stick -->
+      <line x1="-35" y1="10" x2="-60" y2="-20" class="sketch"/>
+    </g>
+
+    <!-- Questions -->
+    <text x="30" y="50" class="label">1. FORM: "What container holds this memory?"</text>
+    <text x="50" y="65" class="small">(Token-level / Parametric / Latent)</text>
+
+    <text x="30" y="85" class="label">2. FUNCTION: "Why does the agent need this?"</text>
+    <text x="50" y="100" class="small">(Factual / Experiential / Working)</text>
+
+    <text x="280" y="50" class="label">3. DYNAMICS: "How does it change?"</text>
+    <text x="300" y="65" class="small">(Formation / Evolution / Retrieval)</text>
+
+    <text x="280" y="85" class="label">4. GAP: "What's missing?"</text>
+    <text x="300" y="100" class="small">(Check each cell in the matrix)</text>
+  </g>
+
+  <!-- Bottom insight with cat -->
+  <g transform="translate(450, 540)">
+    <text x="0" y="0" text-anchor="middle" class="label">Use this matrix to find gaps in your system and identify improvement areas!</text>
+  </g>
+</svg>

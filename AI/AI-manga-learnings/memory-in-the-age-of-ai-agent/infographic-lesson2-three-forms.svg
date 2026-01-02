@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450">
+  <style>
+    .title { font-family: 'Comic Sans MS', cursive; font-size: 22px; font-weight: bold; }
+    .subtitle { font-family: 'Comic Sans MS', cursive; font-size: 16px; font-weight: bold; }
+    .label { font-family: 'Comic Sans MS', cursive; font-size: 12px; }
+    .small { font-family: 'Comic Sans MS', cursive; font-size: 10px; }
+    .sketch { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-thin { fill: none; stroke: #000; stroke-width: 1.5; stroke-linecap: round; }
+    .fill-white { fill: #fff; }
+  </style>
+
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" class="title">Lesson 2: The Three Forms of Memory</text>
+  <text x="450" y="55" text-anchor="middle" class="label">"What carries the memory?"</text>
+
+  <!-- Form 1: Token-Level Memory - Cat reading a notebook -->
+  <g transform="translate(150, 200)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="70" rx="40" ry="30" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="35" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-25,-20 L-22,-45 L-8,-25" class="sketch fill-white"/>
+    <path d="M25,-20 L22,-45 L8,-25" class="sketch fill-white"/>
+    <!-- Eyes looking at book -->
+    <circle cx="-12" cy="5" r="4" class="sketch-thin"/>
+    <circle cx="12" cy="5" r="4" class="sketch-thin"/>
+    <circle cx="-11" cy="6" r="2" fill="#000"/>
+    <circle cx="13" cy="6" r="2" fill="#000"/>
+    <!-- Nose and mouth -->
+    <ellipse cx="0" cy="18" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M0,21 L0,26 M-5,28 Q0,32 5,28" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-30" y1="15" x2="-48" y2="10" class="sketch-thin"/>
+    <line x1="-30" y1="22" x2="-48" y2="25" class="sketch-thin"/>
+    <line x1="30" y1="15" x2="48" y2="10" class="sketch-thin"/>
+    <line x1="30" y1="22" x2="48" y2="25" class="sketch-thin"/>
+    <!-- Notebook/Document in front -->
+    <rect x="-50" y="90" width="100" height="70" class="sketch fill-white"/>
+    <line x1="-40" y1="105" x2="40" y2="105" class="sketch-thin"/>
+    <line x1="-40" y1="118" x2="40" y2="118" class="sketch-thin"/>
+    <line x1="-40" y1="131" x2="30" y2="131" class="sketch-thin"/>
+    <line x1="-40" y1="144" x2="35" y2="144" class="sketch-thin"/>
+    <!-- Paw pointing -->
+    <ellipse cx="-30" cy="85" rx="12" ry="8" class="sketch fill-white"/>
+  </g>
+
+  <text x="150" y="310" text-anchor="middle" class="subtitle">TOKEN-LEVEL</text>
+  <text x="150" y="330" text-anchor="middle" class="label">Explicit text, JSON, graphs</text>
+  <text x="150" y="350" text-anchor="middle" class="small">Human-readable</text>
+  <text x="150" y="365" text-anchor="middle" class="small">Easy to edit</text>
+  <text x="150" y="395" text-anchor="middle" class="label" style="font-style: italic;">"I can read this!"</text>
+
+  <!-- Form 2: Parametric Memory - Cat with brain/neural pattern -->
+  <g transform="translate(450, 200)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="70" rx="40" ry="30" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="35" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-25,-20 L-22,-45 L-8,-25" class="sketch fill-white"/>
+    <path d="M25,-20 L22,-45 L8,-25" class="sketch fill-white"/>
+    <!-- Wise/knowing eyes -->
+    <path d="M-18,3 Q-12,-3 -6,3" class="sketch-thin"/>
+    <path d="M6,3 Q12,-3 18,3" class="sketch-thin"/>
+    <!-- Nose and smile -->
+    <ellipse cx="0" cy="18" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M-8,28 Q0,35 8,28" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-30" y1="15" x2="-48" y2="10" class="sketch-thin"/>
+    <line x1="-30" y1="22" x2="-48" y2="25" class="sketch-thin"/>
+    <line x1="30" y1="15" x2="48" y2="10" class="sketch-thin"/>
+    <line x1="30" y1="22" x2="48" y2="25" class="sketch-thin"/>
+    <!-- Brain with neural connections above head -->
+    <ellipse cx="0" cy="-65" rx="35" ry="25" class="sketch fill-white"/>
+    <circle cx="-15" cy="-70" r="4" class="sketch-thin"/>
+    <circle cx="10" cy="-75" r="4" class="sketch-thin"/>
+    <circle cx="15" cy="-55" r="4" class="sketch-thin"/>
+    <circle cx="-10" cy="-55" r="4" class="sketch-thin"/>
+    <circle cx="0" cy="-65" r="4" class="sketch-thin"/>
+    <line x1="-15" y1="-70" x2="0" y2="-65" class="sketch-thin"/>
+    <line x1="10" y1="-75" x2="0" y2="-65" class="sketch-thin"/>
+    <line x1="15" y1="-55" x2="0" y2="-65" class="sketch-thin"/>
+    <line x1="-10" y1="-55" x2="0" y2="-65" class="sketch-thin"/>
+    <line x1="-15" y1="-70" x2="-10" y2="-55" class="sketch-thin"/>
+    <line x1="10" y1="-75" x2="15" y2="-55" class="sketch-thin"/>
+  </g>
+
+  <text x="450" y="310" text-anchor="middle" class="subtitle">PARAMETRIC</text>
+  <text x="450" y="330" text-anchor="middle" class="label">Encoded in model weights</text>
+  <text x="450" y="350" text-anchor="middle" class="small">Implicit knowledge</text>
+  <text x="450" y="365" text-anchor="middle" class="small">Slow to update</text>
+  <text x="450" y="395" text-anchor="middle" class="label" style="font-style: italic;">"It's in my neurons!"</text>
+
+  <!-- Form 3: Latent Memory - Cat with floating vectors/embeddings -->
+  <g transform="translate(750, 200)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="70" rx="40" ry="30" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="35" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-25,-20 L-22,-45 L-8,-25" class="sketch fill-white"/>
+    <path d="M25,-20 L22,-45 L8,-25" class="sketch fill-white"/>
+    <!-- Curious eyes -->
+    <circle cx="-12" cy="5" r="5" class="sketch-thin"/>
+    <circle cx="12" cy="5" r="5" class="sketch-thin"/>
+    <circle cx="-12" cy="5" r="2" fill="#000"/>
+    <circle cx="12" cy="5" r="2" fill="#000"/>
+    <!-- Nose and mouth -->
+    <ellipse cx="0" cy="18" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M0,21 L0,26" class="sketch-thin"/>
+    <path d="M-5,28 L0,32 L5,28" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-30" y1="15" x2="-48" y2="10" class="sketch-thin"/>
+    <line x1="-30" y1="22" x2="-48" y2="25" class="sketch-thin"/>
+    <line x1="30" y1="15" x2="48" y2="10" class="sketch-thin"/>
+    <line x1="30" y1="22" x2="48" y2="25" class="sketch-thin"/>
+    <!-- Floating vector arrows around cat -->
+    <path d="M-55,-30 L-45,-45" class="sketch-thin"/>
+    <path d="M-47,-43 L-45,-45 L-43,-41" class="sketch-thin"/>
+    <path d="M55,-20 L65,-35" class="sketch-thin"/>
+    <path d="M63,-33 L65,-35 L61,-35" class="sketch-thin"/>
+    <path d="M-50,30 L-60,15" class="sketch-thin"/>
+    <path d="M-58,17 L-60,15 L-56,15" class="sketch-thin"/>
+    <path d="M50,40 L65,25" class="sketch-thin"/>
+    <path d="M63,27 L65,25 L61,27" class="sketch-thin"/>
+    <!-- Binary/numbers floating -->
+    <text x="-65" y="-50" class="small">0.72</text>
+    <text x="55" y="-45" class="small">0.31</text>
+    <text x="-70" y="10" class="small">0.89</text>
+    <text x="60" y="15" class="small">0.45</text>
+  </g>
+
+  <text x="750" y="310" text-anchor="middle" class="subtitle">LATENT</text>
+  <text x="750" y="330" text-anchor="middle" class="label">Hidden states, KV-cache</text>
+  <text x="750" y="350" text-anchor="middle" class="small">Machine-native</text>
+  <text x="750" y="365" text-anchor="middle" class="small">Efficient but opaque</text>
+  <text x="750" y="395" text-anchor="middle" class="label" style="font-style: italic;">"Vectors everywhere!"</text>
+
+  <!-- Bottom note -->
+  <text x="450" y="435" text-anchor="middle" class="small">Each form has trade-offs: readability vs efficiency vs flexibility</text>
+</svg>

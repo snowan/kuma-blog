@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500">
+  <style>
+    .title { font-family: 'Comic Sans MS', cursive; font-size: 22px; font-weight: bold; }
+    .subtitle { font-family: 'Comic Sans MS', cursive; font-size: 15px; font-weight: bold; }
+    .label { font-family: 'Comic Sans MS', cursive; font-size: 12px; }
+    .small { font-family: 'Comic Sans MS', cursive; font-size: 10px; }
+    .sketch { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-thin { fill: none; stroke: #000; stroke-width: 1.5; stroke-linecap: round; }
+    .fill-white { fill: #fff; }
+    .arrow { fill: none; stroke: #000; stroke-width: 2.5; }
+  </style>
+
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" class="title">Lesson 4: Memory Dynamics - The Lifecycle</text>
+  <text x="450" y="55" text-anchor="middle" class="label">"How does memory change over time?"</text>
+
+  <!-- Stage 1: Formation - Cat catching/creating memories -->
+  <g transform="translate(150, 200)">
+    <!-- Cat body sitting -->
+    <ellipse cx="0" cy="65" rx="35" ry="25" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="30" class="sketch fill-white"/>
+    <!-- Ears alert -->
+    <path d="M-20,-15 L-18,-40 L-6,-18" class="sketch fill-white"/>
+    <path d="M20,-15 L18,-40 L6,-18" class="sketch fill-white"/>
+    <!-- Wide alert eyes -->
+    <ellipse cx="-10" cy="5" rx="7" ry="8" class="sketch-thin"/>
+    <ellipse cx="10" cy="5" rx="7" ry="8" class="sketch-thin"/>
+    <circle cx="-10" cy="5" r="4" fill="#000"/>
+    <circle cx="10" cy="5" r="4" fill="#000"/>
+    <!-- Sparkle in eyes -->
+    <circle cx="-12" cy="3" r="1.5" fill="#fff"/>
+    <circle cx="8" cy="3" r="1.5" fill="#fff"/>
+    <!-- Nose and open mouth (catching) -->
+    <ellipse cx="0" cy="18" rx="4" ry="3" class="sketch-thin"/>
+    <ellipse cx="0" cy="28" rx="6" ry="4" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-25" y1="15" x2="-40" y2="10" class="sketch-thin"/>
+    <line x1="-25" y1="20" x2="-40" y2="22" class="sketch-thin"/>
+    <line x1="25" y1="15" x2="40" y2="10" class="sketch-thin"/>
+    <line x1="25" y1="20" x2="40" y2="22" class="sketch-thin"/>
+    <!-- Paws reaching up -->
+    <ellipse cx="-25" cy="45" rx="10" ry="8" class="sketch fill-white"/>
+    <ellipse cx="25" cy="45" rx="10" ry="8" class="sketch fill-white"/>
+    <!-- Floating experience/data being caught -->
+    <circle cx="-35" cy="-30" r="8" class="sketch fill-white"/>
+    <text x="-35" y="-27" text-anchor="middle" class="small">exp</text>
+    <circle cx="0" cy="-50" r="10" class="sketch fill-white"/>
+    <text x="0" y="-47" text-anchor="middle" class="small">data</text>
+    <circle cx="40" cy="-25" r="7" class="sketch fill-white"/>
+    <text x="40" y="-22" text-anchor="middle" class="small">info</text>
+    <!-- Motion lines -->
+    <path d="M-30,-40 L-25,-35" class="sketch-thin"/>
+    <path d="M5,-55 L5,-50" class="sketch-thin"/>
+    <path d="M45,-30 L42,-27" class="sketch-thin"/>
+  </g>
+
+  <text x="150" y="310" text-anchor="middle" class="subtitle">FORMATION</text>
+  <text x="150" y="330" text-anchor="middle" class="label">"Creating memories"</text>
+  <text x="150" y="355" text-anchor="middle" class="small">Extract what's important</text>
+  <text x="150" y="370" text-anchor="middle" class="small">Encode into format</text>
+  <text x="150" y="385" text-anchor="middle" class="small">Organize structure</text>
+
+  <!-- Arrow 1 to 2 -->
+  <g transform="translate(280, 200)">
+    <path d="M0,0 Q40,-30 80,0" class="arrow"/>
+    <path d="M75,-5 L82,0 L75,5" class="sketch" fill="#000"/>
+  </g>
+
+  <!-- Stage 2: Evolution - Cat sorting/organizing memories, some fading -->
+  <g transform="translate(450, 200)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="65" rx="35" ry="25" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="30" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-20,-15 L-18,-40 L-6,-18" class="sketch fill-white"/>
+    <path d="M20,-15 L18,-40 L6,-18" class="sketch fill-white"/>
+    <!-- Focused eyes -->
+    <ellipse cx="-10" cy="5" rx="5" ry="6" class="sketch-thin"/>
+    <ellipse cx="10" cy="5" rx="5" ry="6" class="sketch-thin"/>
+    <circle cx="-10" cy="6" r="3" fill="#000"/>
+    <circle cx="10" cy="6" r="3" fill="#000"/>
+    <!-- Nose and slight smile -->
+    <ellipse cx="0" cy="18" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M-5,26 Q0,30 5,26" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-25" y1="15" x2="-40" y2="10" class="sketch-thin"/>
+    <line x1="-25" y1="20" x2="-40" y2="22" class="sketch-thin"/>
+    <line x1="25" y1="15" x2="40" y2="10" class="sketch-thin"/>
+    <line x1="25" y1="20" x2="40" y2="22" class="sketch-thin"/>
+    <!-- Boxes being sorted -->
+    <rect x="-55" y="35" width="20" height="18" class="sketch fill-white"/>
+    <text x="-45" y="48" text-anchor="middle" class="small">keep</text>
+    <rect x="35" y="35" width="20" height="18" class="sketch fill-white" stroke-dasharray="4,2"/>
+    <text x="45" y="48" text-anchor="middle" class="small" opacity="0.5">fade</text>
+    <!-- Memory being consolidated (star/important) -->
+    <path d="M-45,-45 L-42,-35 L-32,-35 L-40,-28 L-37,-18 L-45,-25 L-53,-18 L-50,-28 L-58,-35 L-48,-35 Z" class="sketch fill-white"/>
+    <!-- Memory fading away -->
+    <circle cx="45" cy="-35" r="12" class="sketch-thin" stroke-dasharray="3,3" opacity="0.4"/>
+    <!-- Paws sorting -->
+    <ellipse cx="-20" cy="50" rx="8" ry="6" class="sketch fill-white"/>
+    <ellipse cx="20" cy="50" rx="8" ry="6" class="sketch fill-white"/>
+  </g>
+
+  <text x="450" y="310" text-anchor="middle" class="subtitle">EVOLUTION</text>
+  <text x="450" y="330" text-anchor="middle" class="label">"Updating memories"</text>
+  <text x="450" y="355" text-anchor="middle" class="small">Consolidate important</text>
+  <text x="450" y="370" text-anchor="middle" class="small">Update with new info</text>
+  <text x="450" y="385" text-anchor="middle" class="small">Forget irrelevant</text>
+
+  <!-- Arrow 2 to 3 -->
+  <g transform="translate(580, 200)">
+    <path d="M0,0 Q40,-30 80,0" class="arrow"/>
+    <path d="M75,-5 L82,0 L75,5" class="sketch" fill="#000"/>
+  </g>
+
+  <!-- Stage 3: Retrieval - Cat finding/pulling out specific memory -->
+  <g transform="translate(750, 200)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="65" rx="35" ry="25" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="30" class="sketch fill-white"/>
+    <!-- Ears perked -->
+    <path d="M-20,-15 L-18,-40 L-6,-18" class="sketch fill-white"/>
+    <path d="M20,-15 L18,-40 L6,-18" class="sketch fill-white"/>
+    <!-- Happy found-it eyes -->
+    <path d="M-15,3 Q-10,-3 -5,3" class="sketch-thin"/>
+    <path d="M5,3 Q10,-3 15,3" class="sketch-thin"/>
+    <!-- Nose and big smile -->
+    <ellipse cx="0" cy="18" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M-8,25 Q0,35 8,25" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-25" y1="15" x2="-40" y2="10" class="sketch-thin"/>
+    <line x1="-25" y1="20" x2="-40" y2="22" class="sketch-thin"/>
+    <line x1="25" y1="15" x2="40" y2="10" class="sketch-thin"/>
+    <line x1="25" y1="20" x2="40" y2="22" class="sketch-thin"/>
+    <!-- Filing cabinet/storage -->
+    <rect x="-55" y="20" width="30" height="50" class="sketch fill-white"/>
+    <line x1="-55" y1="35" x2="-25" y2="35" class="sketch-thin"/>
+    <line x1="-55" y1="50" x2="-25" y2="50" class="sketch-thin"/>
+    <!-- Drawer pulled out with memory -->
+    <rect x="-50" y="38" width="35" height="10" class="sketch fill-white"/>
+    <circle cx="-20" cy="43" r="4" class="sketch-thin"/>
+    <!-- Found memory (lightbulb moment) -->
+    <circle cx="45" cy="-30" r="15" class="sketch fill-white"/>
+    <path d="M45,-38 L45,-28" class="sketch-thin"/>
+    <path d="M38,-35 L52,-35" class="sketch-thin"/>
+    <text x="45" y="-25" text-anchor="middle" class="small">!</text>
+    <!-- Paw pulling drawer -->
+    <ellipse cx="-10" cy="48" rx="10" ry="7" class="sketch fill-white"/>
+  </g>
+
+  <text x="750" y="310" text-anchor="middle" class="subtitle">RETRIEVAL</text>
+  <text x="750" y="330" text-anchor="middle" class="label">"Accessing memories"</text>
+  <text x="750" y="355" text-anchor="middle" class="small">Query what's needed</text>
+  <text x="750" y="370" text-anchor="middle" class="small">Score relevance</text>
+  <text x="750" y="385" text-anchor="middle" class="small">Integrate with context</text>
+
+  <!-- Circular arrow back to formation -->
+  <g transform="translate(450, 420)">
+    <path d="M-280,0 Q-280,50 0,50 Q280,50 280,0" class="arrow" stroke-dasharray="8,4"/>
+    <text x="0" y="70" text-anchor="middle" class="small">The cycle continues...</text>
+  </g>
+
+  <!-- Bottom insight -->
+  <text x="450" y="485" text-anchor="middle" class="label">Key Challenge: Balance STABILITY (don't forget) vs PLASTICITY (keep learning)</text>
+</svg>

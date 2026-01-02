@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400">
+  <style>
+    .title { font-family: 'Comic Sans MS', cursive; font-size: 24px; font-weight: bold; }
+    .label { font-family: 'Comic Sans MS', cursive; font-size: 14px; }
+    .small { font-family: 'Comic Sans MS', cursive; font-size: 11px; }
+    .sketch { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-thin { fill: none; stroke: #000; stroke-width: 1.5; stroke-linecap: round; }
+    .fill-white { fill: #fff; }
+  </style>
+
+  <!-- Title -->
+  <text x="400" y="35" text-anchor="middle" class="title">Lesson 1: Why Memory Matters</text>
+
+  <!-- Left side: Cat WITHOUT memory (confused) -->
+  <g transform="translate(120, 180)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="60" rx="45" ry="35" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="0" r="40" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-30,-30 L-25,-55 L-10,-35" class="sketch fill-white"/>
+    <path d="M30,-30 L25,-55 L10,-35" class="sketch fill-white"/>
+    <!-- Confused spiral eyes -->
+    <path d="M-15,-5 Q-10,-10 -15,-15 Q-20,-10 -15,-5 Q-10,0 -15,5" class="sketch-thin"/>
+    <path d="M15,-5 Q10,-10 15,-15 Q20,-10 15,-5 Q10,0 15,5" class="sketch-thin"/>
+    <!-- Wobbly mouth -->
+    <path d="M-8,15 Q0,20 8,15" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-35" y1="5" x2="-55" y2="0" class="sketch-thin"/>
+    <line x1="-35" y1="12" x2="-55" y2="15" class="sketch-thin"/>
+    <line x1="35" y1="5" x2="55" y2="0" class="sketch-thin"/>
+    <line x1="35" y1="12" x2="55" y2="15" class="sketch-thin"/>
+    <!-- Question marks floating -->
+    <text x="-50" y="-50" class="label">?</text>
+    <text x="45" y="-45" class="label">?</text>
+    <text x="55" y="-20" class="label">?</text>
+    <!-- Tail -->
+    <path d="M40,70 Q70,50 60,90" class="sketch"/>
+  </g>
+
+  <!-- Label for left cat -->
+  <text x="120" y="300" text-anchor="middle" class="label">Without Memory</text>
+  <text x="120" y="320" text-anchor="middle" class="small">"Who are you again?"</text>
+  <text x="120" y="340" text-anchor="middle" class="small">"What were we doing?"</text>
+
+  <!-- Arrow in middle -->
+  <g transform="translate(400, 200)">
+    <text x="0" y="-30" text-anchor="middle" class="label">vs</text>
+    <path d="M-60,0 L60,0" class="sketch" stroke-dasharray="8,4"/>
+  </g>
+
+  <!-- Right side: Cat WITH memory (smart, remembering) -->
+  <g transform="translate(680, 180)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="60" rx="45" ry="35" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="0" r="40" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-30,-30 L-25,-55 L-10,-35" class="sketch fill-white"/>
+    <path d="M30,-30 L25,-55 L10,-35" class="sketch fill-white"/>
+    <!-- Happy confident eyes (closed happy) -->
+    <path d="M-20,-5 Q-15,-12 -10,-5" class="sketch-thin"/>
+    <path d="M10,-5 Q15,-12 20,-5" class="sketch-thin"/>
+    <!-- Happy smile -->
+    <path d="M-10,12 Q0,22 10,12" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-35" y1="5" x2="-55" y2="0" class="sketch-thin"/>
+    <line x1="-35" y1="12" x2="-55" y2="15" class="sketch-thin"/>
+    <line x1="35" y1="5" x2="55" y2="0" class="sketch-thin"/>
+    <line x1="35" y1="12" x2="55" y2="15" class="sketch-thin"/>
+    <!-- Memory bubble with lightbulb -->
+    <ellipse cx="-55" cy="-50" rx="30" ry="25" class="sketch fill-white"/>
+    <path d="M-55,-60 L-55,-45 M-60,-52 L-50,-52" class="sketch-thin"/>
+    <circle cx="-55" cy="-55" r="8" class="sketch-thin"/>
+    <!-- Tail up happy -->
+    <path d="M40,60 Q80,30 70,70" class="sketch"/>
+  </g>
+
+  <!-- Label for right cat -->
+  <text x="680" y="300" text-anchor="middle" class="label">With Memory</text>
+  <text x="680" y="320" text-anchor="middle" class="small">"I remember you prefer Python!"</text>
+  <text x="680" y="340" text-anchor="middle" class="small">"Last time this approach worked"</text>
+
+  <!-- Bottom note -->
+  <text x="400" y="385" text-anchor="middle" class="small">Memory transforms static LLMs into adaptive, evolving agents</text>
+</svg>

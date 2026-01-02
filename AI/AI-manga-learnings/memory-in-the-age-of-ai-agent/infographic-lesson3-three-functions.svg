@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 450">
+  <style>
+    .title { font-family: 'Comic Sans MS', cursive; font-size: 22px; font-weight: bold; }
+    .subtitle { font-family: 'Comic Sans MS', cursive; font-size: 16px; font-weight: bold; }
+    .label { font-family: 'Comic Sans MS', cursive; font-size: 12px; }
+    .small { font-family: 'Comic Sans MS', cursive; font-size: 10px; }
+    .sketch { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-thin { fill: none; stroke: #000; stroke-width: 1.5; stroke-linecap: round; }
+    .fill-white { fill: #fff; }
+  </style>
+
+  <!-- Title -->
+  <text x="450" y="35" text-anchor="middle" class="title">Lesson 3: The Three Functions of Memory</text>
+  <text x="450" y="55" text-anchor="middle" class="label">"Why does the agent need memory?"</text>
+
+  <!-- Function 1: Factual Memory - Cat as librarian with books -->
+  <g transform="translate(150, 190)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="70" rx="38" ry="28" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="32" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-22,-18 L-20,-42 L-7,-22" class="sketch fill-white"/>
+    <path d="M22,-18 L20,-42 L7,-22" class="sketch fill-white"/>
+    <!-- Glasses (scholarly look) -->
+    <circle cx="-12" cy="5" r="10" class="sketch-thin"/>
+    <circle cx="12" cy="5" r="10" class="sketch-thin"/>
+    <line x1="-2" y1="5" x2="2" y2="5" class="sketch-thin"/>
+    <line x1="-22" y1="5" x2="-28" y2="2" class="sketch-thin"/>
+    <line x1="22" y1="5" x2="28" y2="2" class="sketch-thin"/>
+    <!-- Eyes behind glasses -->
+    <circle cx="-12" cy="5" r="3" fill="#000"/>
+    <circle cx="12" cy="5" r="3" fill="#000"/>
+    <!-- Nose and mouth -->
+    <ellipse cx="0" cy="20" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M-5,28 Q0,33 5,28" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-28" y1="18" x2="-42" y2="14" class="sketch-thin"/>
+    <line x1="-28" y1="24" x2="-42" y2="27" class="sketch-thin"/>
+    <line x1="28" y1="18" x2="42" y2="14" class="sketch-thin"/>
+    <line x1="28" y1="24" x2="42" y2="27" class="sketch-thin"/>
+    <!-- Stack of books beside cat -->
+    <rect x="45" y="50" width="35" height="8" class="sketch fill-white"/>
+    <rect x="45" y="58" width="35" height="8" class="sketch fill-white"/>
+    <rect x="45" y="66" width="35" height="8" class="sketch fill-white"/>
+    <!-- Book cat is holding -->
+    <rect x="-25" y="85" width="50" height="35" class="sketch fill-white"/>
+    <line x1="-20" y1="95" x2="20" y2="95" class="sketch-thin"/>
+    <line x1="-20" y1="105" x2="15" y2="105" class="sketch-thin"/>
+    <!-- Paws holding book -->
+    <ellipse cx="-20" cy="95" rx="8" ry="6" class="sketch fill-white"/>
+    <ellipse cx="20" cy="95" rx="8" ry="6" class="sketch fill-white"/>
+  </g>
+
+  <text x="150" y="315" text-anchor="middle" class="subtitle">FACTUAL</text>
+  <text x="150" y="335" text-anchor="middle" class="label">"To Know Things"</text>
+  <text x="150" y="360" text-anchor="middle" class="small">User prefers Python</text>
+  <text x="150" y="375" text-anchor="middle" class="small">API needs OAuth2</text>
+  <text x="150" y="405" text-anchor="middle" class="label" style="font-style: italic;">Encyclopedia</text>
+
+  <!-- Function 2: Experiential Memory - Cat with bandage learning from mistake -->
+  <g transform="translate(450, 190)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="70" rx="38" ry="28" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="32" class="sketch fill-white"/>
+    <!-- Ears (one with bandage) -->
+    <path d="M-22,-18 L-20,-42 L-7,-22" class="sketch fill-white"/>
+    <path d="M22,-18 L20,-42 L7,-22" class="sketch fill-white"/>
+    <!-- Small bandage on ear -->
+    <rect x="15" y="-38" width="12" height="5" class="sketch fill-white" transform="rotate(-20 21 -35)"/>
+    <line x1="17" y1="-36" x2="17" y2="-33" class="sketch-thin" transform="rotate(-20 21 -35)"/>
+    <line x1="21" y1="-36" x2="21" y2="-33" class="sketch-thin" transform="rotate(-20 21 -35)"/>
+    <line x1="25" y1="-36" x2="25" y2="-33" class="sketch-thin" transform="rotate(-20 21 -35)"/>
+    <!-- Thoughtful eyes (looking up remembering) -->
+    <ellipse cx="-12" cy="2" rx="6" ry="8" class="sketch-thin"/>
+    <ellipse cx="12" cy="2" rx="6" ry="8" class="sketch-thin"/>
+    <circle cx="-12" cy="-1" r="3" fill="#000"/>
+    <circle cx="12" cy="-1" r="3" fill="#000"/>
+    <!-- Nose and thinking mouth -->
+    <ellipse cx="0" cy="20" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M-3,28 L3,28" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-28" y1="18" x2="-42" y2="14" class="sketch-thin"/>
+    <line x1="-28" y1="24" x2="-42" y2="27" class="sketch-thin"/>
+    <line x1="28" y1="18" x2="42" y2="14" class="sketch-thin"/>
+    <line x1="28" y1="24" x2="42" y2="27" class="sketch-thin"/>
+    <!-- Thought bubble showing past experience -->
+    <ellipse cx="55" cy="-40" rx="40" ry="30" class="sketch fill-white"/>
+    <circle cx="30" cy="-5" r="5" class="sketch fill-white"/>
+    <circle cx="40" cy="-15" r="4" class="sketch fill-white"/>
+    <!-- X mark in thought bubble (failure memory) -->
+    <line x1="45" y1="-50" x2="65" y2="-30" class="sketch-thin"/>
+    <line x1="65" y1="-50" x2="45" y2="-30" class="sketch-thin"/>
+    <!-- Checkmark next to it -->
+    <path d="M70,-45 L75,-38 L85,-55" class="sketch-thin"/>
+  </g>
+
+  <text x="450" y="315" text-anchor="middle" class="subtitle">EXPERIENTIAL</text>
+  <text x="450" y="335" text-anchor="middle" class="label">"To Improve"</text>
+  <text x="450" y="360" text-anchor="middle" class="small">This approach failed before</text>
+  <text x="450" y="375" text-anchor="middle" class="small">That tool worked well</text>
+  <text x="450" y="405" text-anchor="middle" class="label" style="font-style: italic;">Lessons Learned</text>
+
+  <!-- Function 3: Working Memory - Cat at desk actively thinking -->
+  <g transform="translate(750, 190)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="70" rx="38" ry="28" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="32" class="sketch fill-white"/>
+    <!-- Ears -->
+    <path d="M-22,-18 L-20,-42 L-7,-22" class="sketch fill-white"/>
+    <path d="M22,-18 L20,-42 L7,-22" class="sketch fill-white"/>
+    <!-- Focused eyes (intense thinking) -->
+    <line x1="-18" y1="2" x2="-6" y2="2" class="sketch-thin"/>
+    <line x1="6" y1="2" x2="18" y2="2" class="sketch-thin"/>
+    <circle cx="-12" cy="6" r="3" fill="#000"/>
+    <circle cx="12" cy="6" r="3" fill="#000"/>
+    <!-- Concentrated brow -->
+    <path d="M-18,-5 L-8,-8" class="sketch-thin"/>
+    <path d="M18,-5 L8,-8" class="sketch-thin"/>
+    <!-- Nose and focused mouth -->
+    <ellipse cx="0" cy="20" rx="4" ry="3" class="sketch-thin"/>
+    <path d="M-4,28 Q0,30 4,28" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-28" y1="18" x2="-42" y2="14" class="sketch-thin"/>
+    <line x1="-28" y1="24" x2="-42" y2="27" class="sketch-thin"/>
+    <line x1="28" y1="18" x2="42" y2="14" class="sketch-thin"/>
+    <line x1="28" y1="24" x2="42" y2="27" class="sketch-thin"/>
+    <!-- Whiteboard/scratchpad -->
+    <rect x="-70" y="-60" width="55" height="45" class="sketch fill-white"/>
+    <!-- Scribbles on whiteboard -->
+    <path d="M-65,-50 L-50,-50 L-45,-45" class="sketch-thin"/>
+    <path d="M-65,-40 L-40,-40" class="sketch-thin"/>
+    <text x="-55" y="-28" class="small">TODO</text>
+    <!-- Paw pointing at board -->
+    <ellipse cx="-35" cy="-10" rx="10" ry="7" class="sketch fill-white"/>
+    <!-- Gear/thinking symbols -->
+    <circle cx="50" cy="-30" r="12" class="sketch-thin"/>
+    <circle cx="50" cy="-30" r="6" class="sketch-thin"/>
+    <line x1="50" y1="-42" x2="50" y2="-45" class="sketch-thin"/>
+    <line x1="50" y1="-18" x2="50" y2="-15" class="sketch-thin"/>
+    <line x1="38" y1="-30" x2="35" y2="-30" class="sketch-thin"/>
+    <line x1="62" y1="-30" x2="65" y2="-30" class="sketch-thin"/>
+  </g>
+
+  <text x="750" y="315" text-anchor="middle" class="subtitle">WORKING</text>
+  <text x="750" y="335" text-anchor="middle" class="label">"To Think Now"</text>
+  <text x="750" y="360" text-anchor="middle" class="small">Current task context</text>
+  <text x="750" y="375" text-anchor="middle" class="small">Active variables</text>
+  <text x="750" y="405" text-anchor="middle" class="label" style="font-style: italic;">Whiteboard</text>
+
+  <!-- Bottom note -->
+  <text x="450" y="435" text-anchor="middle" class="small">All three functions work together: Know facts + Learn from experience + Think actively</text>
+</svg>
