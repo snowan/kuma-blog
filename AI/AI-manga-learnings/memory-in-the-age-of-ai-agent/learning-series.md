@@ -1,8 +1,21 @@
 # Memory in the Age of AI Agents: A Learning Series
 
-**Paper:** [Memory in the Age of AI Agents: A Survey](https://arxiv.org/pdf/2512.13564)
+**Paper:** [Memory in the Age of AI Agents: A Survey](https://arxiv.org/abs/2512.13564) ([PDF](https://arxiv.org/pdf/2512.13564))
 **Authors:** Yuyang Hu et al. (47 researchers from NUS, OPPO, and others)
 **Published:** December 2025
+
+---
+
+## Table of Contents
+
+1. [Why Memory Matters for AI Agents](#lesson-1-why-memory-matters-for-ai-agents)
+2. [The Three Forms of Memory](#lesson-2-the-three-forms-of-memory)
+3. [The Three Functions of Memory](#lesson-3-the-three-functions-of-memory)
+4. [Memory Dynamics - The Lifecycle](#lesson-4-memory-dynamics---the-lifecycle)
+5. [Practical Architecture Patterns](#lesson-5-practical-architecture-patterns)
+6. [The Forms-Functions Matrix](#lesson-6-the-forms-functions-matrix)
+7. [Future Frontiers](#lesson-7-future-frontiers)
+8. [Key Takeaways](#key-takeaways)
 
 ---
 
@@ -105,7 +118,7 @@ Memory needs a **purpose**. The paper defines three functional categories:
 ```
 Examples:
 - "The user's name is Alice"
-- "Python 3.12 was released in October 2023"
+- "The latest stable Python version is 3.13"
 - "This API requires OAuth2 authentication"
 ```
 
@@ -286,6 +299,8 @@ The paper identifies emerging research directions:
 - Preventing memory poisoning attacks
 - Privacy-preserving memory systems
 
+![Lesson 7: Future Frontiers](infographic-lesson7-future.svg)
+
 ---
 
 ## Key Takeaways
@@ -333,9 +348,12 @@ Start asking: "How does the agent metabolize this experience into wisdom?"
 
 ## Resources
 
-- **Paper:** [arXiv:2512.13564](https://arxiv.org/pdf/2512.13564)
-- **Paper List:** [GitHub - Agent-Memory-Paper-List](https://github.com/Shichun-Liu/Agent-Memory-Paper-List)
-- **Related Systems:** MemGPT, Generative Agents, TiM (Think-in-Memory)
+- **Paper:** [arXiv:2512.13564](https://arxiv.org/abs/2512.13564) - The full survey with 200+ references
+- **Paper List:** [Agent-Memory-Paper-List](https://github.com/Shichun-Liu/Agent-Memory-Paper-List) - Curated collection of agent memory research papers
+- **Related Systems:**
+  - **MemGPT** - OS-inspired memory management for LLMs with virtual context
+  - **Generative Agents** - Stanford's "Smallville" simulation with memory streams
+  - **TiM (Think-in-Memory)** - Episodic memory for multi-turn reasoning
 
 ---
 

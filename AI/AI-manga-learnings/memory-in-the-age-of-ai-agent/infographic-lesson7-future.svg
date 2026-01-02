@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 550">
+  <style>
+    .title { font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 20px; font-weight: bold; }
+    .subtitle { font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 13px; font-weight: bold; }
+    .label { font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 11px; }
+    .small { font-family: 'Comic Sans MS', cursive, sans-serif; font-size: 9px; }
+    .sketch { fill: none; stroke: #000; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .sketch-thin { fill: none; stroke: #000; stroke-width: 1.5; stroke-linecap: round; }
+    .fill-white { fill: #fff; }
+  </style>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" class="title">Lesson 7: Future Frontiers</text>
+  <text x="450" y="50" text-anchor="middle" class="label">"Where is agent memory research heading?"</text>
+
+  <!-- Central cat looking through telescope at stars/future -->
+  <g transform="translate(450, 150)">
+    <!-- Cat body -->
+    <ellipse cx="0" cy="70" rx="40" ry="30" class="sketch fill-white"/>
+    <!-- Cat head -->
+    <circle cx="0" cy="10" r="35" class="sketch fill-white"/>
+    <!-- Ears alert/curious -->
+    <path d="M-25,-20 L-22,-48 L-8,-24" class="sketch fill-white"/>
+    <path d="M25,-20 L22,-48 L8,-24" class="sketch fill-white"/>
+    <!-- One eye closed (looking through telescope), one open -->
+    <line x1="-18" y1="5" x2="-8" y2="5" class="sketch-thin"/>
+    <ellipse cx="15" cy="5" rx="6" ry="7" class="sketch-thin"/>
+    <circle cx="15" cy="5" r="3" fill="#000"/>
+    <!-- Nose -->
+    <ellipse cx="0" cy="20" rx="4" ry="3" class="sketch-thin"/>
+    <!-- Curious smile -->
+    <path d="M-6,28 Q0,34 6,28" class="sketch-thin"/>
+    <!-- Whiskers -->
+    <line x1="-30" y1="18" x2="-48" y2="12" class="sketch-thin"/>
+    <line x1="-30" y1="25" x2="-48" y2="28" class="sketch-thin"/>
+    <line x1="30" y1="18" x2="48" y2="12" class="sketch-thin"/>
+    <line x1="30" y1="25" x2="48" y2="28" class="sketch-thin"/>
+    <!-- Telescope -->
+    <rect x="-70" y="-15" width="50" height="15" rx="3" class="sketch fill-white"/>
+    <ellipse cx="-75" cy="-7" rx="8" ry="10" class="sketch fill-white"/>
+    <!-- Paw holding telescope -->
+    <ellipse cx="-35" cy="45" rx="12" ry="8" class="sketch fill-white"/>
+    <!-- Stars visible through telescope -->
+    <path d="M-95,-10 L-92,-3 L-85,-3 L-90,2 L-88,10 L-95,5 L-102,10 L-100,2 L-105,-3 L-98,-3 Z" class="sketch-thin" transform="scale(0.5) translate(-100, 10)"/>
+  </g>
+
+  <!-- 5 Future Frontiers arranged in arc around cat -->
+
+  <!-- 1. Memory Automation (top left) -->
+  <g transform="translate(120, 180)">
+    <circle cx="0" cy="0" r="45" class="sketch fill-white"/>
+    <!-- Gear with brain -->
+    <circle cx="0" cy="-5" r="20" class="sketch-thin"/>
+    <circle cx="0" cy="-5" r="10" class="sketch-thin"/>
+    <!-- Gear teeth -->
+    <line x1="0" y1="-25" x2="0" y2="-30" class="sketch-thin"/>
+    <line x1="0" y1="15" x2="0" y2="20" class="sketch-thin"/>
+    <line x1="-20" y1="-5" x2="-25" y2="-5" class="sketch-thin"/>
+    <line x1="20" y1="-5" x2="25" y2="-5" class="sketch-thin"/>
+    <!-- Auto symbol -->
+    <text x="0" y="0" text-anchor="middle" class="small">AUTO</text>
+    <!-- Sparkles -->
+    <text x="25" y="-30" class="small">*</text>
+    <text x="-30" y="20" class="small">*</text>
+  </g>
+  <text x="120" y="245" text-anchor="middle" class="subtitle">1. Automation</text>
+  <text x="120" y="260" text-anchor="middle" class="small">Self-deciding what</text>
+  <text x="120" y="273" text-anchor="middle" class="small">to remember/forget</text>
+
+  <!-- 2. RL Integration (top right) -->
+  <g transform="translate(780, 180)">
+    <circle cx="0" cy="0" r="45" class="sketch fill-white"/>
+    <!-- Reward signal graph -->
+    <path d="M-25,15 L-15,5 L-5,10 L5,-10 L15,-5 L25,-20" class="sketch-thin"/>
+    <!-- Arrow up -->
+    <path d="M22,-17 L25,-22 L28,-17" class="sketch-thin"/>
+    <!-- Plus signs for reward -->
+    <text x="-20" y="-15" class="small">+</text>
+    <text x="10" y="-25" class="small">++</text>
+  </g>
+  <text x="780" y="245" text-anchor="middle" class="subtitle">2. RL Integration</text>
+  <text x="780" y="260" text-anchor="middle" class="small">Learning memory</text>
+  <text x="780" y="273" text-anchor="middle" class="small">via rewards</text>
+
+  <!-- 3. Multimodal Memory (bottom left) -->
+  <g transform="translate(180, 400)">
+    <circle cx="0" cy="0" r="45" class="sketch fill-white"/>
+    <!-- Image icon -->
+    <rect x="-30" y="-20" width="25" height="20" class="sketch-thin"/>
+    <circle cx="-22" cy="-12" r="4" class="sketch-thin"/>
+    <path d="M-28,0 L-20,-8 L-12,0" class="sketch-thin"/>
+    <!-- Audio waves -->
+    <path d="M8,-15 Q15,-10 8,-5" class="sketch-thin"/>
+    <path d="M12,-18 Q22,-10 12,-2" class="sketch-thin"/>
+    <!-- Video play button -->
+    <path d="M-5,10 L10,18 L-5,26 Z" class="sketch-thin"/>
+  </g>
+  <text x="180" y="465" text-anchor="middle" class="subtitle">3. Multimodal</text>
+  <text x="180" y="480" text-anchor="middle" class="small">Images, audio, video</text>
+  <text x="180" y="493" text-anchor="middle" class="small">memory storage</text>
+
+  <!-- 4. Multi-Agent Memory (bottom center) -->
+  <g transform="translate(450, 420)">
+    <circle cx="0" cy="0" r="45" class="sketch fill-white"/>
+    <!-- Multiple small cat heads -->
+    <circle cx="-15" cy="-10" r="12" class="sketch-thin"/>
+    <circle cx="-18" cy="-14" r="1.5" fill="#000"/>
+    <circle cx="-12" cy="-14" r="1.5" fill="#000"/>
+
+    <circle cx="15" cy="-10" r="12" class="sketch-thin"/>
+    <circle cx="12" cy="-14" r="1.5" fill="#000"/>
+    <circle cx="18" cy="-14" r="1.5" fill="#000"/>
+
+    <circle cx="0" cy="12" r="12" class="sketch-thin"/>
+    <circle cx="-3" cy="8" r="1.5" fill="#000"/>
+    <circle cx="3" cy="8" r="1.5" fill="#000"/>
+
+    <!-- Connecting lines (shared memory) -->
+    <line x1="-8" y1="-5" x2="8" y2="-5" class="sketch-thin" stroke-dasharray="2,2"/>
+    <line x1="-10" y1="0" x2="-3" y2="5" class="sketch-thin" stroke-dasharray="2,2"/>
+    <line x1="10" y1="0" x2="3" y2="5" class="sketch-thin" stroke-dasharray="2,2"/>
+  </g>
+  <text x="450" y="485" text-anchor="middle" class="subtitle">4. Multi-Agent</text>
+  <text x="450" y="500" text-anchor="middle" class="small">Shared memory</text>
+  <text x="450" y="513" text-anchor="middle" class="small">between agents</text>
+
+  <!-- 5. Trustworthiness (bottom right) -->
+  <g transform="translate(720, 400)">
+    <circle cx="0" cy="0" r="45" class="sketch fill-white"/>
+    <!-- Shield with checkmark -->
+    <path d="M0,-25 L20,-15 L20,5 Q20,20 0,28 Q-20,20 -20,5 L-20,-15 Z" class="sketch-thin"/>
+    <path d="M-8,0 L-2,8 L12,-10" class="sketch-thin"/>
+    <!-- Lock icon small -->
+    <rect x="8" y="-22" width="10" height="8" rx="1" class="sketch-thin"/>
+    <path d="M10,-22 L10,-26 Q13,-30 16,-26 L16,-22" class="sketch-thin"/>
+  </g>
+  <text x="720" y="465" text-anchor="middle" class="subtitle">5. Trustworthy</text>
+  <text x="720" y="480" text-anchor="middle" class="small">Provenance, privacy</text>
+  <text x="720" y="493" text-anchor="middle" class="small">poison prevention</text>
+
+  <!-- Connecting dotted lines from cat to each frontier -->
+  <path d="M400,150 Q260,150 160,160" class="sketch-thin" stroke-dasharray="4,3"/>
+  <path d="M500,150 Q640,150 740,160" class="sketch-thin" stroke-dasharray="4,3"/>
+  <path d="M420,200 Q300,320 200,370" class="sketch-thin" stroke-dasharray="4,3"/>
+  <path d="M450,220 L450,370" class="sketch-thin" stroke-dasharray="4,3"/>
+  <path d="M480,200 Q600,320 700,370" class="sketch-thin" stroke-dasharray="4,3"/>
+
+  <!-- Bottom insight -->
+  <text x="450" y="540" text-anchor="middle" class="label">The future of agent memory: autonomous, adaptive, multimodal, collaborative, and trustworthy</text>
+</svg>
