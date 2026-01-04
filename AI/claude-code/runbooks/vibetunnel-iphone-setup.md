@@ -57,7 +57,7 @@ brew install --cask tailscale
    ```bash
    tailscale status
    ```
-   Note the IP address (e.g., `100.78.240.84`).
+   Note the IP address (e.g., `100.x.x.x`).
 
 ### Step 4: Start VibeTunnel
 
@@ -96,12 +96,12 @@ This starts Claude Code with VibeTunnel monitoring, making it visible in the das
    ```
    http://<your-tailscale-ip>:4020
    ```
-   Example: `http://100.78.240.84:4020`
+   Example: `http://100.x.x.x:4020`
 
 ### Step 7: Authenticate
 
 When prompted for credentials:
-- **Username:** Your Mac username (e.g., `xiaowei.wan`)
+- **Username:** Your Mac username (e.g., `<username>`)
 - **Password:** Your Mac login password
 
 ---
