@@ -1,0 +1,382 @@
+// AI Agent Memory Systems - Knowledge Architecture Graph
+// Comprehensive visualization of memory types, architectures, and implementations
+
+digraph AIAgentMemory {
+    // Global Settings
+    graph [
+        rankdir=TB
+        bgcolor="#fdfdf5"
+        fontname="Arial Unicode MS"
+        fontsize=14
+        label="AI Agent Memory Systems\nComprehensive Architecture Overview"
+        labelloc=t
+        labelfontsize=24
+        pad=0.5
+        nodesep=0.6
+        ranksep=0.8
+        splines=ortho
+        compound=true
+    ]
+
+    node [
+        fontname="Arial Unicode MS"
+        fontsize=11
+        style="rounded,filled"
+        shape=box
+    ]
+
+    edge [
+        fontname="Arial Unicode MS"
+        fontsize=9
+    ]
+
+    // ===========================================
+    // CLUSTER: Memory Types (Cognitive Classification)
+    // ===========================================
+    subgraph cluster_memory_types {
+        label="Memory Types (Cognitive Model)"
+        style="rounded,filled"
+        fillcolor="#e8f4f8"
+        color="#2c5282"
+        fontcolor="#2c5282"
+        fontsize=14
+
+        // Short-term Memory
+        subgraph cluster_stm {
+            label="Short-Term Memory"
+            style="rounded,filled"
+            fillcolor="#bee3f8"
+            color="#3182ce"
+
+            working_memory [
+                label="Working Memory\n━━━━━━━━━━━━\n• Current context window\n• Active task state\n• Immediate inputs\n• Limited capacity"
+                fillcolor="#90cdf4"
+            ]
+        }
+
+        // Long-term Memory
+        subgraph cluster_ltm {
+            label="Long-Term Memory"
+            style="rounded,filled"
+            fillcolor="#c6f6d5"
+            color="#276749"
+
+            semantic_memory [
+                label="Semantic Memory\n━━━━━━━━━━━━\n• Facts & knowledge\n• Definitions & rules\n• World knowledge\n• RAG integration"
+                fillcolor="#9ae6b4"
+            ]
+
+            episodic_memory [
+                label="Episodic Memory\n━━━━━━━━━━━━\n• Past experiences\n• User interactions\n• Conversation history\n• Autobiographical"
+                fillcolor="#9ae6b4"
+            ]
+
+            procedural_memory [
+                label="Procedural Memory\n━━━━━━━━━━━━\n• How to do tasks\n• Model weights\n• Agent prompts\n• Tool usage patterns"
+                fillcolor="#9ae6b4"
+            ]
+        }
+    }
+
+    // ===========================================
+    // CLUSTER: Memory Architectures
+    // ===========================================
+    subgraph cluster_architectures {
+        label="Memory Architectures"
+        style="rounded,filled"
+        fillcolor="#fed7e2"
+        color="#97266d"
+        fontcolor="#97266d"
+        fontsize=14
+
+        // MemGPT Architecture
+        subgraph cluster_memgpt {
+            label="MemGPT / Letta"
+            style="rounded,filled"
+            fillcolor="#fbb6ce"
+            color="#b83280"
+
+            memgpt_main [
+                label="Main Context\n(In-Context)"
+                fillcolor="#f687b3"
+                shape=cylinder
+            ]
+
+            memgpt_core [
+                label="Core Memory\n(Always accessible)"
+                fillcolor="#f687b3"
+                shape=cylinder
+            ]
+
+            memgpt_recall [
+                label="Recall Memory\n(Searchable history)"
+                fillcolor="#f687b3"
+                shape=cylinder
+            ]
+
+            memgpt_archival [
+                label="Archival Memory\n(Long-term storage)"
+                fillcolor="#f687b3"
+                shape=cylinder
+            ]
+        }
+
+        // Stanford Generative Agents
+        subgraph cluster_stanford {
+            label="Stanford Generative Agents"
+            style="rounded,filled"
+            fillcolor="#e9d8fd"
+            color="#6b46c1"
+
+            memory_stream [
+                label="Memory Stream\n━━━━━━━━━━━━\nComplete experience\nrecord in natural\nlanguage"
+                fillcolor="#d6bcfa"
+            ]
+
+            reflection [
+                label="Reflection\n━━━━━━━━━━━━\nSynthesize memories\ninto higher-level\ninferences"
+                fillcolor="#d6bcfa"
+            ]
+
+            planning [
+                label="Planning\n━━━━━━━━━━━━\nHigh-level action\nplans from\nreflections"
+                fillcolor="#d6bcfa"
+            ]
+        }
+
+        // Mem0 Architecture
+        subgraph cluster_mem0 {
+            label="Mem0"
+            style="rounded,filled"
+            fillcolor="#feebc8"
+            color="#c05621"
+
+            mem0_user [
+                label="User Memory\n(Cross-session)"
+                fillcolor="#fbd38d"
+                shape=folder
+            ]
+
+            mem0_session [
+                label="Session Memory\n(Single conversation)"
+                fillcolor="#fbd38d"
+                shape=folder
+            ]
+
+            mem0_agent [
+                label="Agent Memory\n(Agent-specific)"
+                fillcolor="#fbd38d"
+                shape=folder
+            ]
+
+            mem0_graph [
+                label="Graph Memory\n(Mem0ᵍ)\n━━━━━━━━━━━━\nEntities as nodes\nRelations as edges"
+                fillcolor="#f6ad55"
+                shape=hexagon
+            ]
+        }
+    }
+
+    // ===========================================
+    // CLUSTER: Memory Operations
+    // ===========================================
+    subgraph cluster_operations {
+        label="Memory Operations (Lifecycle)"
+        style="rounded,filled"
+        fillcolor="#fefcbf"
+        color="#975a16"
+        fontcolor="#975a16"
+        fontsize=14
+
+        encoding [
+            label="📥 Encoding\n━━━━━━━━━━━━\n• Extract salient info\n• Vectorize content\n• Chunk & embed\n• Add metadata"
+            fillcolor="#faf089"
+        ]
+
+        storage [
+            label="💾 Storage\n━━━━━━━━━━━━\n• Vector databases\n• Graph databases\n• Key-value stores\n• Hybrid storage"
+            fillcolor="#faf089"
+        ]
+
+        retrieval [
+            label="🔍 Retrieval\n━━━━━━━━━━━━\n• Semantic search\n• Scoring & ranking\n• Context assembly\n• Multi-hop queries"
+            fillcolor="#faf089"
+        ]
+
+        consolidation [
+            label="🔄 Consolidation\n━━━━━━━━━━━━\n• Summarization\n• Reflection\n• Knowledge fusion\n• Memory evolution"
+            fillcolor="#faf089"
+        ]
+
+        forgetting [
+            label="🗑️ Forgetting\n━━━━━━━━━━━━\n• Decay over time\n• Importance filtering\n• Memory pruning\n• Conflict resolution"
+            fillcolor="#faf089"
+        ]
+    }
+
+    // ===========================================
+    // CLUSTER: Retrieval Scoring
+    // ===========================================
+    subgraph cluster_scoring {
+        label="Retrieval Scoring Mechanisms"
+        style="rounded,filled"
+        fillcolor="#e6fffa"
+        color="#234e52"
+        fontcolor="#234e52"
+        fontsize=14
+
+        recency_score [
+            label="⏰ Recency\n━━━━━━━━━━━\nDecay factor: 0.995/hr\nFavors recent info\nContext freshness"
+            fillcolor="#b2f5ea"
+        ]
+
+        relevance_score [
+            label="🎯 Relevance\n━━━━━━━━━━━\nCosine similarity\nSemantic matching\nQuery alignment"
+            fillcolor="#b2f5ea"
+        ]
+
+        importance_score [
+            label="⭐ Importance\n━━━━━━━━━━━\nLLM-generated score\nPerceived significance\nSalience detection"
+            fillcolor="#b2f5ea"
+        ]
+
+        final_score [
+            label="📊 Final Score\n━━━━━━━━━━━\nWeighted combination\nof all factors"
+            fillcolor="#81e6d9"
+            shape=diamond
+        ]
+    }
+
+    // ===========================================
+    // CLUSTER: Implementation Stack
+    // ===========================================
+    subgraph cluster_tech {
+        label="Implementation Technologies"
+        style="rounded,filled"
+        fillcolor="#e2e8f0"
+        color="#4a5568"
+        fontcolor="#4a5568"
+        fontsize=14
+
+        subgraph cluster_vectordb {
+            label="Vector Databases"
+            style="rounded,filled"
+            fillcolor="#cbd5e0"
+
+            pinecone [label="Pinecone" fillcolor="#a0aec0" shape=cylinder]
+            weaviate [label="Weaviate" fillcolor="#a0aec0" shape=cylinder]
+            chroma [label="Chroma" fillcolor="#a0aec0" shape=cylinder]
+            qdrant [label="Qdrant" fillcolor="#a0aec0" shape=cylinder]
+            faiss [label="FAISS" fillcolor="#a0aec0" shape=cylinder]
+        }
+
+        subgraph cluster_frameworks {
+            label="Agent Frameworks"
+            style="rounded,filled"
+            fillcolor="#c3dafe"
+
+            langchain [label="LangChain" fillcolor="#a3bffa" shape=component]
+            llamaindex [label="LlamaIndex" fillcolor="#a3bffa" shape=component]
+            letta [label="Letta" fillcolor="#a3bffa" shape=component]
+            mem0_fw [label="Mem0" fillcolor="#a3bffa" shape=component]
+            autogen [label="AutoGen" fillcolor="#a3bffa" shape=component]
+        }
+
+        subgraph cluster_patterns {
+            label="Design Patterns"
+            style="rounded,filled"
+            fillcolor="#feebc8"
+
+            rag [label="RAG\n(Retrieval-Augmented\nGeneration)" fillcolor="#fbd38d"]
+            agentic_rag [label="Agentic RAG\n(Multi-hop reasoning\n+ Tool use)" fillcolor="#fbd38d"]
+            hierarchical [label="Hierarchical\nMemory\n(OS-inspired)" fillcolor="#fbd38d"]
+        }
+    }
+
+    // ===========================================
+    // RELATIONSHIPS
+    // ===========================================
+
+    // Memory type flows
+    working_memory -> semantic_memory [label="retrieves" style=dashed color="#3182ce"]
+    working_memory -> episodic_memory [label="retrieves" style=dashed color="#3182ce"]
+    working_memory -> procedural_memory [label="uses" style=dashed color="#3182ce"]
+
+    semantic_memory -> working_memory [label="context" style=dashed color="#276749"]
+    episodic_memory -> working_memory [label="recall" style=dashed color="#276749"]
+
+    // Operation flow
+    encoding -> storage [color="#975a16" penwidth=2]
+    storage -> retrieval [color="#975a16" penwidth=2]
+    retrieval -> consolidation [color="#975a16" penwidth=2]
+    consolidation -> storage [color="#975a16" penwidth=2 label="update"]
+    storage -> forgetting [color="#975a16" penwidth=2]
+    forgetting -> storage [color="#975a16" penwidth=2 label="prune"]
+
+    // Scoring combination
+    recency_score -> final_score [color="#234e52"]
+    relevance_score -> final_score [color="#234e52"]
+    importance_score -> final_score [color="#234e52"]
+    final_score -> retrieval [color="#234e52" style=dashed label="ranks results"]
+
+    // Stanford architecture flow
+    memory_stream -> reflection [color="#6b46c1" penwidth=2]
+    reflection -> planning [color="#6b46c1" penwidth=2]
+    planning -> memory_stream [color="#6b46c1" penwidth=2 label="new experiences"]
+
+    // MemGPT hierarchy
+    memgpt_main -> memgpt_recall [label="overflow" color="#b83280"]
+    memgpt_recall -> memgpt_main [label="retrieve" color="#b83280" style=dashed]
+    memgpt_main -> memgpt_archival [label="archive" color="#b83280"]
+    memgpt_archival -> memgpt_main [label="restore" color="#b83280" style=dashed]
+    memgpt_core -> memgpt_main [label="pinned" color="#b83280" style=dotted]
+
+    // Mem0 graph relationships
+    mem0_user -> mem0_graph [color="#c05621"]
+    mem0_session -> mem0_graph [color="#c05621"]
+    mem0_agent -> mem0_graph [color="#c05621"]
+
+    // Cross-cluster relationships (architecture to operations)
+    memory_stream -> encoding [ltail=cluster_stanford lhead=cluster_operations style=dashed color="#666666"]
+    memgpt_archival -> storage [ltail=cluster_memgpt lhead=cluster_operations style=dashed color="#666666"]
+
+    // Framework to vector DB connections
+    langchain -> pinecone [style=dotted color="#4a5568"]
+    langchain -> chroma [style=dotted color="#4a5568"]
+    llamaindex -> weaviate [style=dotted color="#4a5568"]
+    llamaindex -> qdrant [style=dotted color="#4a5568"]
+    letta -> faiss [style=dotted color="#4a5568"]
+    mem0_fw -> pinecone [style=dotted color="#4a5568"]
+
+    // Patterns to architectures
+    rag -> semantic_memory [style=dashed color="#975a16"]
+    agentic_rag -> working_memory [style=dashed color="#975a16"]
+    hierarchical -> memgpt_main [style=dashed color="#975a16"]
+
+    // ===========================================
+    // LEGEND
+    // ===========================================
+    subgraph cluster_legend {
+        label="Legend"
+        style="rounded,filled"
+        fillcolor="white"
+        color="#718096"
+        fontsize=12
+
+        legend [
+            label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="4">
+                <TR><TD ALIGN="LEFT"><B>Edge Types:</B></TD></TR>
+                <TR><TD ALIGN="LEFT">━━━  Data flow</TD></TR>
+                <TR><TD ALIGN="LEFT">- - -  Retrieval/query</TD></TR>
+                <TR><TD ALIGN="LEFT">····  Integration</TD></TR>
+                <TR><TD ALIGN="LEFT"> </TD></TR>
+                <TR><TD ALIGN="LEFT"><B>Node Shapes:</B></TD></TR>
+                <TR><TD ALIGN="LEFT">▭ Process/Concept</TD></TR>
+                <TR><TD ALIGN="LEFT">⬡ Graph structure</TD></TR>
+                <TR><TD ALIGN="LEFT">⊙ Storage</TD></TR>
+            </TABLE>>
+            shape=none
+            fillcolor="white"
+        ]
+    }
+}

@@ -1,0 +1,142 @@
+// AI Agent Memory Lifecycle Flow
+// Simplified view of how memory flows through an agent system
+
+digraph MemoryLifecycle {
+    graph [
+        rankdir=LR
+        bgcolor="#fdfdf5"
+        fontname="Arial Unicode MS"
+        label="AI Agent Memory Lifecycle\nFrom Input to Retrieval"
+        labelloc=t
+        labelfontsize=20
+        pad=0.5
+        nodesep=0.8
+        ranksep=1.2
+        splines=curved
+    ]
+
+    node [
+        fontname="Arial Unicode MS"
+        fontsize=10
+        style="rounded,filled"
+    ]
+
+    edge [fontname="Arial Unicode MS" fontsize=9]
+
+    // Input Stage
+    subgraph cluster_input {
+        label="1. Input"
+        style="rounded,filled"
+        fillcolor="#e8f4f8"
+        color="#2c5282"
+
+        user_input [label="User\nMessage" shape=ellipse fillcolor="#90cdf4"]
+        env_obs [label="Environment\nObservation" shape=ellipse fillcolor="#90cdf4"]
+        tool_output [label="Tool\nOutput" shape=ellipse fillcolor="#90cdf4"]
+    }
+
+    // Processing Stage
+    subgraph cluster_process {
+        label="2. Processing"
+        style="rounded,filled"
+        fillcolor="#fefcbf"
+        color="#975a16"
+
+        extract [label="Extract\nSalient Info" shape=box fillcolor="#faf089"]
+        chunk [label="Chunk &\nEmbed" shape=box fillcolor="#faf089"]
+        score [label="Score\nImportance" shape=box fillcolor="#faf089"]
+    }
+
+    // Storage Stage
+    subgraph cluster_storage {
+        label="3. Storage"
+        style="rounded,filled"
+        fillcolor="#c6f6d5"
+        color="#276749"
+
+        stm [label="Short-Term\nMemory\n(Context Window)" shape=cylinder fillcolor="#9ae6b4"]
+        ltm [label="Long-Term\nMemory\n(Vector DB)" shape=cylinder fillcolor="#9ae6b4"]
+        graph_mem [label="Graph\nMemory\n(Relations)" shape=hexagon fillcolor="#68d391"]
+    }
+
+    // Retrieval Stage
+    subgraph cluster_retrieval {
+        label="4. Retrieval"
+        style="rounded,filled"
+        fillcolor="#fed7e2"
+        color="#97266d"
+
+        query [label="Query\nFormation" shape=box fillcolor="#fbb6ce"]
+        search [label="Semantic\nSearch" shape=box fillcolor="#fbb6ce"]
+        rank [label="Rank by\nR+R+I*" shape=diamond fillcolor="#f687b3"]
+    }
+
+    // Output Stage
+    subgraph cluster_output {
+        label="5. Output"
+        style="rounded,filled"
+        fillcolor="#e9d8fd"
+        color="#6b46c1"
+
+        context [label="Assembled\nContext" shape=box fillcolor="#d6bcfa"]
+        llm [label="LLM\nReasoning" shape=ellipse fillcolor="#b794f4"]
+        response [label="Agent\nResponse" shape=ellipse fillcolor="#9f7aea"]
+    }
+
+    // Consolidation (feedback loop)
+    subgraph cluster_consolidate {
+        label="6. Consolidation"
+        style="rounded,filled"
+        fillcolor="#e6fffa"
+        color="#234e52"
+
+        reflect [label="Reflect &\nSummarize" shape=box fillcolor="#b2f5ea"]
+        forget [label="Decay &\nPrune" shape=box fillcolor="#81e6d9"]
+    }
+
+    // Main Flow
+    user_input -> extract
+    env_obs -> extract
+    tool_output -> extract
+
+    extract -> chunk
+    chunk -> score
+
+    score -> stm [label="immediate"]
+    score -> ltm [label="persist"]
+    score -> graph_mem [label="relations"]
+
+    // Retrieval flow
+    stm -> query [style=dashed]
+    ltm -> search
+    graph_mem -> search
+
+    query -> search
+    search -> rank
+    rank -> context
+
+    context -> llm
+    llm -> response
+
+    // Feedback loops
+    response -> extract [style=dashed color="#6b46c1" label="new experience"]
+    ltm -> reflect [style=dashed]
+    reflect -> ltm [label="update"]
+    ltm -> forget [style=dashed]
+    forget -> ltm [label="prune" style=dashed]
+
+    // Legend
+    subgraph cluster_legend {
+        label="*R+R+I = Recency + Relevance + Importance"
+        style="rounded"
+        fillcolor="white"
+        fontsize=10
+        color="#718096"
+
+        legend_note [
+            label="Weighted scoring formula\nfor memory retrieval"
+            shape=note
+            fillcolor="#f7fafc"
+        ]
+    }
+}
