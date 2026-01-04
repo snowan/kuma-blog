@@ -13,7 +13,8 @@ This runbook covers setting up VibeTunnel to access Claude Code from your iPhone
 
 | Item | Value |
 |------|-------|
-| Dashboard URL | `http://<tailscale-ip>:4020` |
+| Dashboard URL (IP) | `http://<tailscale-ip>:4020` |
+| Dashboard URL (Serve) | `https://<hostname>.<tailnet>.ts.net/` |
 | Username | Your Mac username |
 | Password | Your Mac login password |
 | Start session | `vt claude` |
@@ -258,6 +259,107 @@ vt -i
 
 ---
 
+### Issue 8: Login Fails After VibeTunnel Restart
+
+**Symptom:** Mac username/password no longer works after restarting VibeTunnel.
+
+**Cause:** VibeTunnel may have restarted with `--enable-tailscale-serve` mode, which uses different authentication.
+
+**Diagnosis:**
+```bash
+ps aux | grep vibetunnel | grep -v grep
+```
+
+Look for `--enable-tailscale-serve` or `--bind 127.0.0.1` in the output.
+
+**Solution - Use Tailscale Serve:**
+
+1. Set up Tailscale Serve:
+   ```bash
+   tailscale serve reset
+   tailscale serve --bg 4020
+   ```
+
+2. Access via Tailscale hostname (no password needed):
+   ```
+   https://<hostname>.<tailnet>.ts.net/
+   ```
+
+3. Find your hostname:
+   ```bash
+   tailscale status | head -1
+   ```
+
+---
+
+### Issue 9: Claude Code Running but 0 Active Sessions
+
+**Symptom:** Claude Code is running in terminal, but VibeTunnel dashboard shows 0 sessions.
+
+**Cause:** Claude Code was started with `claude` instead of `vt claude`.
+
+**Diagnosis:**
+```bash
+# Check if sessions are wrapped with vt
+ps aux | grep "vibetunnel fwd" | grep -v grep
+```
+
+If no output, sessions aren't being tracked by VibeTunnel.
+
+**Solution:**
+
+1. Exit your current Claude Code sessions (`/exit` or Ctrl+C)
+
+2. Restart with the `vt` wrapper:
+   ```bash
+   cd ~/code/your-project
+   vt claude
+   ```
+
+**Important:** Always use `vt claude` instead of just `claude` when you want remote access.
+
+---
+
+### Issue 10: Tailscale Serve Conflicts
+
+**Symptom:**
+```
+foreground listener already exists for port 443
+```
+
+**Solution:**
+```bash
+tailscale serve reset
+tailscale serve --bg 4020
+```
+
+---
+
+## Debugging Commands
+
+Quick commands to diagnose issues:
+
+```bash
+# Check all components at once
+echo "=== VibeTunnel ===" && vt status && \
+echo "=== Tailscale ===" && tailscale status && \
+echo "=== Active Sessions ===" && ps aux | grep "vibetunnel fwd" | grep -v grep
+
+# Check VibeTunnel server settings
+ps aux | grep vibetunnel | grep -v grep | head -1
+
+# Test dashboard is responding
+curl -s -o /dev/null -w "HTTP Status: %{http_code}\n" http://localhost:4020
+
+# Check Tailscale Serve status
+tailscale serve status
+
+# View VibeTunnel bind address and auth mode
+ps aux | grep vibetunnel | grep -o -E '\-\-bind [^ ]+|--enable-tailscale-serve'
+```
+
+---
+
 ## Managing Multiple Sessions
 
 ### Running Multiple Claude Code Sessions
@@ -332,20 +434,38 @@ After renaming, refresh the iPhone dashboard to see the updated names.
 | `vt title "Name"` | Rename current session |
 | `tailscale status` | Check Tailscale connection |
 | `tailscale ip` | Show your Tailscale IP |
+| `tailscale serve --bg 4020` | Enable Tailscale Serve for VibeTunnel |
+| `tailscale serve status` | Check Tailscale Serve configuration |
+| `tailscale serve reset` | Reset Tailscale Serve settings |
 
 ---
 
 ## Architecture Overview
 
+### Option A: Direct Tailscale IP Access
 ```
 ┌─────────────────┐     Tailscale      ┌─────────────────┐
 │     iPhone      │◄──────────────────►│       Mac       │
-│                 │     (encrypted)    │                 │
+│                 │   (100.x.x.x)      │                 │
 │  Safari Browser │                    │  VibeTunnel     │
 │                 │                    │  (port 4020)    │
 └─────────────────┘                    │       │         │
-                                       │       ▼         │
-                                       │  Claude Code    │
+    http://100.x.x.x:4020              │       ▼         │
+    + Mac username/password            │  Claude Code    │
+                                       │  (via vt)       │
+                                       └─────────────────┘
+```
+
+### Option B: Tailscale Serve (Recommended)
+```
+┌─────────────────┐     Tailscale      ┌─────────────────┐
+│     iPhone      │◄──────────────────►│       Mac       │
+│                 │     Serve          │                 │
+│  Safari Browser │   (HTTPS proxy)    │  VibeTunnel     │
+│                 │                    │  (port 4020)    │
+└─────────────────┘                    │       │         │
+    https://hostname.tailnet.ts.net    │       ▼         │
+    + Auto-authenticated               │  Claude Code    │
                                        │  (via vt)       │
                                        └─────────────────┘
 ```
