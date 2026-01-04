@@ -101,7 +101,7 @@ This starts Claude Code with VibeTunnel monitoring, making it visible in the das
 ### Step 7: Authenticate
 
 When prompted for credentials:
-- **Username:** Your Mac username (e.g., `<username>`)
+- **Username:** Your Mac username (e.g., `michi`)
 - **Password:** Your Mac login password
 
 ---
