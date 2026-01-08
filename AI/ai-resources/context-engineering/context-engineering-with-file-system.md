@@ -55,6 +55,8 @@ The goal is to ensure the agent always has **the right context, at the right tim
 - Store long tool outputs, documents, and intermediate results.
 - Retrieve only what is needed for the next step.
 
+![Manus Context Engineering - Filesystem as Unbounded Memory](manus-context-engineering.png)
+
 ---
 
 ### Anthropic — Effective Context Engineering
