@@ -1,5 +1,4 @@
 # Agent Context Engineering with File Systems  
-*A Deep Research Summary*
 
 ---
 
@@ -44,7 +43,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ## Key Sources & Insights
 
 ### Manus — Context Engineering Lessons
-**Source:** https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus
+**Source:** [Manus Blog - Context Engineering for AI Agents](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
 
 **Key Ideas:**
 - Context engineering is more impactful than model tuning.
@@ -59,7 +58,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ---
 
 ### Anthropic — Effective Context Engineering
-**Source:** https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents
+**Source:** [Anthropic - Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
 
 **Key Ideas:**
 - Context is a finite, valuable resource.
@@ -69,7 +68,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ---
 
 ### LangChain — Context Engineering for Agents
-**Source:** https://blog.langchain.com/context-engineering-for-agents/
+**Source:** [LangChain Blog - Context Engineering for Agents](https://blog.langchain.com/context-engineering-for-agents/)
 
 **Four Core Strategies:**
 - **Write:** Save context externally
@@ -82,7 +81,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ---
 
 ### LangChain — Filesystems for Agents
-**Source:** https://blog.langchain.com/how-agents-can-use-filesystems-for-context-engineering/
+**Source:** [LangChain Blog - How Agents Can Use Filesystems](https://blog.langchain.com/how-agents-can-use-filesystems-for-context-engineering/)
 
 **Key Ideas:**
 - Filesystems act as flexible external memory.
@@ -92,7 +91,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ---
 
 ### Cursor — Dynamic Context Discovery
-**Source:** https://cursor.com/blog/dynamic-context-discovery
+**Source:** [Cursor Blog - Dynamic Context Discovery](https://cursor.com/blog/dynamic-context-discovery)
 
 **Key Ideas:**
 - Do not preload all context.
@@ -107,7 +106,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ## Academic Research
 
 ### “Everything is Context: Agentic File System Abstraction for Context Engineering”
-**Paper:** https://arxiv.org/abs/2512.05470
+**Paper:** [arXiv:2512.05470 - Everything is Context](https://arxiv.org/abs/2512.05470)
 
 **Contributions:**
 - Proposes a Unix-like filesystem abstraction for agent context.
@@ -121,7 +120,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ---
 
 ### “Agent READMEs: An Empirical Study”
-**Paper:** https://arxiv.org/abs/2511.12884
+**Paper:** [arXiv:2511.12884 - Agent READMEs](https://arxiv.org/abs/2511.12884)
 
 **Insights:**
 - Context files behave like evolving configuration and instruction artifacts.

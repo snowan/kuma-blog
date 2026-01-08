@@ -1,0 +1,218 @@
+// Cloud vs Local-First Comparison
+// Visual decision framework for data ownership
+
+digraph CloudVsLocal {
+    graph [
+        rankdir=LR
+        bgcolor="#fefefe"
+        fontname="Arial Unicode MS"
+        label=<<B>Cloud Apps vs Local-First</B><BR/><FONT POINT-SIZE="12">A Comparison for Digital Longevity</FONT>>
+        labelloc=t
+        labelfontsize=22
+        pad=0.5
+        nodesep=0.4
+        ranksep=1.0
+        splines=ortho
+    ]
+
+    node [
+        fontname="Arial Unicode MS"
+        fontsize=10
+        style="rounded,filled"
+    ]
+
+    edge [fontname="Arial Unicode MS" fontsize=8]
+
+    // ===========================================
+    // CLOUD APPS (Left Side - Red)
+    // ===========================================
+    subgraph cluster_cloud {
+        label=<<B><FONT POINT-SIZE="14">☁️ Cloud Apps (SaaS)</FONT></B>>
+        style="rounded,filled"
+        fillcolor="#fed7d7"
+        color="#c53030"
+        fontcolor="#c53030"
+
+        cloud_data [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Data Location</B></TD></TR>
+                <TR><TD>Remote servers</TD></TR>
+                <TR><TD>"Someone else's computer"</TD></TR>
+            </TABLE>>
+            fillcolor="#feb2b2"
+            shape=box
+        ]
+
+        cloud_access [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Access</B></TD></TR>
+                <TR><TD>Requires internet</TD></TR>
+                <TR><TD>Behind login walls</TD></TR>
+            </TABLE>>
+            fillcolor="#feb2b2"
+            shape=box
+        ]
+
+        cloud_format [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Format</B></TD></TR>
+                <TR><TD>Proprietary</TD></TR>
+                <TR><TD>App-dependent</TD></TR>
+            </TABLE>>
+            fillcolor="#feb2b2"
+            shape=box
+        ]
+
+        cloud_ownership [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Ownership</B></TD></TR>
+                <TR><TD>Vendor controls access</TD></TR>
+                <TR><TD>ToS can change</TD></TR>
+            </TABLE>>
+            fillcolor="#fc8181"
+            shape=box
+        ]
+
+        cloud_longevity [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Longevity</B></TD></TR>
+                <TR><TD>Depends on company</TD></TR>
+                <TR><TD>Service can shut down</TD></TR>
+            </TABLE>>
+            fillcolor="#fc8181"
+            shape=box
+        ]
+
+        cloud_examples [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Examples</B></TD></TR>
+                <TR><TD>Google Docs, Notion</TD></TR>
+                <TR><TD>Evernote, Roam</TD></TR>
+            </TABLE>>
+            fillcolor="#fff5f5"
+            shape=note
+        ]
+    }
+
+    // ===========================================
+    // LOCAL-FIRST (Right Side - Green)
+    // ===========================================
+    subgraph cluster_local {
+        label=<<B><FONT POINT-SIZE="14">💾 Local-First Apps</FONT></B>>
+        style="rounded,filled"
+        fillcolor="#c6f6d5"
+        color="#276749"
+        fontcolor="#276749"
+
+        local_data [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Data Location</B></TD></TR>
+                <TR><TD>Your device first</TD></TR>
+                <TR><TD>Cloud as backup</TD></TR>
+            </TABLE>>
+            fillcolor="#9ae6b4"
+            shape=box
+        ]
+
+        local_access [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Access</B></TD></TR>
+                <TR><TD>Works offline</TD></TR>
+                <TR><TD>No login required</TD></TR>
+            </TABLE>>
+            fillcolor="#9ae6b4"
+            shape=box
+        ]
+
+        local_format [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Format</B></TD></TR>
+                <TR><TD>Open standards</TD></TR>
+                <TR><TD>Plain text / Markdown</TD></TR>
+            </TABLE>>
+            fillcolor="#9ae6b4"
+            shape=box
+        ]
+
+        local_ownership [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Ownership</B></TD></TR>
+                <TR><TD>You own the files</TD></TR>
+                <TR><TD>Full control</TD></TR>
+            </TABLE>>
+            fillcolor="#68d391"
+            shape=box
+        ]
+
+        local_longevity [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Longevity</B></TD></TR>
+                <TR><TD>Files outlive apps</TD></TR>
+                <TR><TD>Readable forever</TD></TR>
+            </TABLE>>
+            fillcolor="#68d391"
+            shape=box
+        ]
+
+        local_examples [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><B>Examples</B></TD></TR>
+                <TR><TD>Obsidian, Logseq</TD></TR>
+                <TR><TD>iA Writer, Zettlr</TD></TR>
+            </TABLE>>
+            fillcolor="#f0fff4"
+            shape=note
+        ]
+    }
+
+    // ===========================================
+    // COMPARISON ARROWS (Center)
+    // ===========================================
+    cloud_data -> local_data [label="vs" dir=both color="#718096" style=dashed]
+    cloud_access -> local_access [label="vs" dir=both color="#718096" style=dashed]
+    cloud_format -> local_format [label="vs" dir=both color="#718096" style=dashed]
+    cloud_ownership -> local_ownership [label="vs" dir=both color="#718096" style=dashed]
+    cloud_longevity -> local_longevity [label="vs" dir=both color="#718096" style=dashed]
+
+    // ===========================================
+    // DECISION GUIDE (Bottom)
+    // ===========================================
+    subgraph cluster_decision {
+        label=<<B>Quick Decision Guide</B>>
+        style="rounded,filled"
+        fillcolor="#ebf8ff"
+        color="#2b6cb0"
+        fontcolor="#2b6cb0"
+        rank=sink
+
+        decision [
+            label=<<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+                <TR>
+                    <TD BGCOLOR="#fed7d7"><B>Choose Cloud If...</B></TD>
+                    <TD BGCOLOR="#c6f6d5"><B>Choose Local-First If...</B></TD>
+                </TR>
+                <TR>
+                    <TD BGCOLOR="#fff5f5">Real-time collaboration is critical</TD>
+                    <TD BGCOLOR="#f0fff4">Data longevity matters most</TD>
+                </TR>
+                <TR>
+                    <TD BGCOLOR="#fff5f5">Always-online access needed</TD>
+                    <TD BGCOLOR="#f0fff4">Offline work is common</TD>
+                </TR>
+                <TR>
+                    <TD BGCOLOR="#fff5f5">Team features trump ownership</TD>
+                    <TD BGCOLOR="#f0fff4">You want full control</TD>
+                </TR>
+                <TR>
+                    <TD BGCOLOR="#fff5f5">Convenience over portability</TD>
+                    <TD BGCOLOR="#f0fff4">Portability is essential</TD>
+                </TR>
+            </TABLE>>
+            shape=none
+        ]
+    }
+
+    // Connect to decision
+    cloud_longevity -> decision [style=invis]
+    local_longevity -> decision [style=invis]
+}

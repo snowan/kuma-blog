@@ -1,0 +1,382 @@
+// File Over App Philosophy - Knowledge Infographic
+// Comprehensive visualization of local-first software principles
+
+digraph FileOverApp {
+    // Global Settings
+    graph [
+        rankdir=TB
+        bgcolor="#fefefe"
+        fontname="Arial Unicode MS"
+        fontsize=14
+        label=<<B>File Over App</B><BR/><FONT POINT-SIZE="14">A Philosophy for Digital Longevity</FONT><BR/><FONT POINT-SIZE="10">by Steph Ango (kepano) - CEO of Obsidian</FONT>>
+        labelloc=t
+        labelfontsize=28
+        pad=0.5
+        nodesep=0.5
+        ranksep=0.7
+        splines=curved
+        compound=true
+    ]
+
+    node [
+        fontname="Arial Unicode MS"
+        fontsize=10
+        style="rounded,filled"
+        shape=box
+    ]
+
+    edge [
+        fontname="Arial Unicode MS"
+        fontsize=8
+    ]
+
+    // ===========================================
+    // CORE PHILOSOPHY (Center)
+    // ===========================================
+    subgraph cluster_core {
+        label=""
+        style="rounded,filled"
+        fillcolor="#1a365d"
+        color="#1a365d"
+
+        core_philosophy [
+            label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="4">
+                <TR><TD><B><FONT COLOR="white" POINT-SIZE="16">FILE OVER APP</FONT></B></TD></TR>
+                <TR><TD><FONT COLOR="#bee3f8" POINT-SIZE="10">"The files you create are more</FONT></TD></TR>
+                <TR><TD><FONT COLOR="#bee3f8" POINT-SIZE="10">important than the tools you use</FONT></TD></TR>
+                <TR><TD><FONT COLOR="#bee3f8" POINT-SIZE="10">to create them"</FONT></TD></TR>
+            </TABLE>>
+            shape=box
+            style="rounded,filled"
+            fillcolor="#2b6cb0"
+            color="#1a365d"
+            penwidth=3
+        ]
+    }
+
+    // ===========================================
+    // THE PROBLEM (Left)
+    // ===========================================
+    subgraph cluster_problem {
+        label="The Problem: Cloud Lock-In"
+        style="rounded,filled"
+        fillcolor="#fed7d7"
+        color="#c53030"
+        fontcolor="#c53030"
+        fontsize=12
+
+        problem_servers [
+            label="Data on\nSomeone Else's\nComputers"
+            fillcolor="#feb2b2"
+            shape=box
+        ]
+
+        problem_formats [
+            label="Proprietary\nFile Formats"
+            fillcolor="#feb2b2"
+        ]
+
+        problem_login [
+            label="Trapped Behind\nLogins & APIs"
+            fillcolor="#feb2b2"
+        ]
+
+        problem_shutdown [
+            label="Services\nShut Down"
+            fillcolor="#fc8181"
+            fontcolor="#742a2a"
+            penwidth=2
+        ]
+
+        problem_example [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><FONT POINT-SIZE="8">Example: Dropbox Paper</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="7">.paper files store URLs,</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="7">not actual content</FONT></TD></TR>
+            </TABLE>>
+            fillcolor="#fff5f5"
+            shape=note
+        ]
+
+        problem_servers -> problem_shutdown [style=dashed color="#c53030"]
+        problem_formats -> problem_shutdown [style=dashed color="#c53030"]
+        problem_login -> problem_shutdown [style=dashed color="#c53030"]
+    }
+
+    // ===========================================
+    // THE SOLUTION (Right)
+    // ===========================================
+    subgraph cluster_solution {
+        label="The Solution: Local-First"
+        style="rounded,filled"
+        fillcolor="#c6f6d5"
+        color="#276749"
+        fontcolor="#276749"
+        fontsize=12
+
+        solution_local [
+            label="Data Stored\nLocally First"
+            fillcolor="#9ae6b4"
+        ]
+
+        solution_formats [
+            label="Open Standard\nFormats"
+            fillcolor="#9ae6b4"
+        ]
+
+        solution_offline [
+            label="Works\nOffline"
+            fillcolor="#9ae6b4"
+        ]
+
+        solution_ownership [
+            label="Full User\nOwnership"
+            fillcolor="#68d391"
+            fontcolor="#22543d"
+            penwidth=2
+        ]
+
+        solution_example [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><FONT POINT-SIZE="8">Example: Obsidian</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="7">Plain Markdown files in</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="7">a local folder you own</FONT></TD></TR>
+            </TABLE>>
+            fillcolor="#f0fff4"
+            shape=note
+        ]
+
+        solution_local -> solution_ownership [style=dashed color="#276749"]
+        solution_formats -> solution_ownership [style=dashed color="#276749"]
+        solution_offline -> solution_ownership [style=dashed color="#276749"]
+    }
+
+    // ===========================================
+    // DURABILITY PRINCIPLE
+    // ===========================================
+    subgraph cluster_durability {
+        label="The Durability Test"
+        style="rounded,filled"
+        fillcolor="#fefcbf"
+        color="#975a16"
+        fontcolor="#975a16"
+        fontsize=12
+
+        durability_test [
+            label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="2">
+                <TR><TD><B><FONT POINT-SIZE="11">The Time Test</FONT></B></TD></TR>
+                <TR><TD><FONT POINT-SIZE="9">"If you want your writing to</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="9">still be readable on a computer</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="9">from 2060 or 2160, it must be</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="9">readable on a computer from 1960"</FONT></TD></TR>
+            </TABLE>>
+            fillcolor="#faf089"
+            shape=box
+        ]
+
+        timeline [
+            label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0">
+                <TR>
+                    <TD><FONT POINT-SIZE="8">1960</FONT></TD>
+                    <TD><FONT POINT-SIZE="10"> ← </FONT></TD>
+                    <TD><FONT POINT-SIZE="8">TODAY</FONT></TD>
+                    <TD><FONT POINT-SIZE="10"> → </FONT></TD>
+                    <TD><FONT POINT-SIZE="8">2160</FONT></TD>
+                </TR>
+                <TR>
+                    <TD COLSPAN="5"><FONT POINT-SIZE="7">━━━━━━━━━━━━━━━━━━━━━</FONT></TD>
+                </TR>
+                <TR>
+                    <TD COLSPAN="5"><FONT POINT-SIZE="8" COLOR="#975a16">Plain text readable across all eras</FONT></TD>
+                </TR>
+            </TABLE>>
+            fillcolor="#fffff0"
+            shape=none
+        ]
+    }
+
+    // ===========================================
+    // 7 LOCAL-FIRST IDEALS
+    // ===========================================
+    subgraph cluster_ideals {
+        label="7 Ideals of Local-First Software (Ink & Switch)"
+        style="rounded,filled"
+        fillcolor="#e9d8fd"
+        color="#6b46c1"
+        fontcolor="#6b46c1"
+        fontsize=12
+
+        ideal_1 [label="1. No Spinners\n(Instant response)" fillcolor="#d6bcfa" shape=ellipse]
+        ideal_2 [label="2. Multi-Device\n(Sync everywhere)" fillcolor="#d6bcfa" shape=ellipse]
+        ideal_3 [label="3. Optional Network\n(Works offline)" fillcolor="#d6bcfa" shape=ellipse]
+        ideal_4 [label="4. Seamless Collab\n(Real-time editing)" fillcolor="#d6bcfa" shape=ellipse]
+        ideal_5 [label="5. The Long Now\n(Data lasts forever)" fillcolor="#b794f4" shape=ellipse penwidth=2]
+        ideal_6 [label="6. Security & Privacy\n(E2E encryption)" fillcolor="#d6bcfa" shape=ellipse]
+        ideal_7 [label="7. Ownership\n(User control)" fillcolor="#b794f4" shape=ellipse penwidth=2]
+    }
+
+    // ===========================================
+    // DURABLE FORMATS
+    // ===========================================
+    subgraph cluster_formats {
+        label="Durable File Formats"
+        style="rounded,filled"
+        fillcolor="#bee3f8"
+        color="#2b6cb0"
+        fontcolor="#2b6cb0"
+        fontsize=12
+
+        format_txt [label=".txt\nPlain Text" fillcolor="#90cdf4" shape=cylinder]
+        format_md [label=".md\nMarkdown" fillcolor="#90cdf4" shape=cylinder]
+        format_jpg [label=".jpg\nImages" fillcolor="#90cdf4" shape=cylinder]
+        format_pdf [label=".pdf\nDocuments" fillcolor="#90cdf4" shape=cylinder]
+        format_html [label=".html\nWeb Pages" fillcolor="#90cdf4" shape=cylinder]
+
+        format_centuries [
+            label="Readable for\ncenturies"
+            fillcolor="#ebf8ff"
+            shape=diamond
+        ]
+    }
+
+    // ===========================================
+    // ALIGNED TOOLS
+    // ===========================================
+    subgraph cluster_tools {
+        label="Tools That Embrace File Over App"
+        style="rounded,filled"
+        fillcolor="#e2e8f0"
+        color="#4a5568"
+        fontcolor="#4a5568"
+        fontsize=12
+
+        tool_obsidian [label="Obsidian\n(Markdown PKM)" fillcolor="#7c3aed" fontcolor="white"]
+        tool_logseq [label="Logseq\n(Outliner)" fillcolor="#a0aec0"]
+        tool_silverbullet [label="SilverBullet\n(Open-source PKM)" fillcolor="#a0aec0"]
+        tool_emacs [label="Emacs + Org\n(Plain text)" fillcolor="#a0aec0"]
+        tool_ia [label="iA Writer\n(Markdown)" fillcolor="#a0aec0"]
+        tool_zettlr [label="Zettlr\n(Academic writing)" fillcolor="#a0aec0"]
+    }
+
+    // ===========================================
+    // HISTORICAL PRECEDENT
+    // ===========================================
+    subgraph cluster_history {
+        label="Historical Precedent"
+        style="rounded,filled"
+        fillcolor="#feebc8"
+        color="#c05621"
+        fontcolor="#c05621"
+        fontsize=12
+
+        history_hieroglyphs [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><FONT POINT-SIZE="14">𓀀 𓁀 𓂀</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="8">Egyptian Hieroglyphs</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="7">Ideas outlasted the chisels</FONT></TD></TR>
+            </TABLE>>
+            fillcolor="#fbd38d"
+            shape=box
+        ]
+
+        history_paper [
+            label=<<TABLE BORDER="0" CELLBORDER="0">
+                <TR><TD><FONT POINT-SIZE="14">📜</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="8">Paper Documents</FONT></TD></TR>
+                <TR><TD><FONT POINT-SIZE="7">Reading requires only eyeballs</FONT></TD></TR>
+            </TABLE>>
+            fillcolor="#fbd38d"
+            shape=box
+        ]
+    }
+
+    // ===========================================
+    // RELATIONSHIPS
+    // ===========================================
+
+    // Problem flows to core philosophy
+    problem_shutdown -> core_philosophy [
+        label="solves"
+        color="#c53030"
+        style=dashed
+        lhead=cluster_core
+    ]
+
+    // Core philosophy leads to solution
+    core_philosophy -> solution_ownership [
+        label="enables"
+        color="#276749"
+        penwidth=2
+        lhead=cluster_solution
+    ]
+
+    // Solution implements ideals
+    solution_ownership -> ideal_5 [
+        style=dashed
+        color="#6b46c1"
+        lhead=cluster_ideals
+    ]
+
+    solution_ownership -> ideal_7 [
+        style=dashed
+        color="#6b46c1"
+    ]
+
+    // Formats support durability
+    format_txt -> format_centuries [color="#2b6cb0"]
+    format_md -> format_centuries [color="#2b6cb0"]
+    format_jpg -> format_centuries [color="#2b6cb0"]
+    format_pdf -> format_centuries [color="#2b6cb0"]
+    format_html -> format_centuries [color="#2b6cb0"]
+
+    format_centuries -> durability_test [
+        style=dashed
+        color="#975a16"
+    ]
+
+    // Tools implement philosophy
+    core_philosophy -> tool_obsidian [
+        label="inspires"
+        color="#4a5568"
+        style=dashed
+        lhead=cluster_tools
+    ]
+
+    // History informs philosophy
+    history_hieroglyphs -> core_philosophy [
+        label="informs"
+        color="#c05621"
+        style=dashed
+    ]
+
+    // Durability connects to philosophy
+    durability_test -> core_philosophy [
+        color="#975a16"
+        style=dashed
+    ]
+
+    // ===========================================
+    // KEY TAKEAWAYS (Bottom)
+    // ===========================================
+    subgraph cluster_takeaways {
+        label="Key Takeaways"
+        style="rounded,filled"
+        fillcolor="#1a365d"
+        color="#1a365d"
+        fontcolor="white"
+        fontsize=12
+
+        takeaway [
+            label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="4">
+                <TR><TD ALIGN="LEFT"><FONT COLOR="#bee3f8" POINT-SIZE="9">✓ Own your data in open formats</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT"><FONT COLOR="#bee3f8" POINT-SIZE="9">✓ Prefer plain text / Markdown</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT"><FONT COLOR="#bee3f8" POINT-SIZE="9">✓ Store locally first, sync second</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT"><FONT COLOR="#bee3f8" POINT-SIZE="9">✓ Choose tools that respect ownership</FONT></TD></TR>
+                <TR><TD ALIGN="LEFT"><FONT COLOR="#bee3f8" POINT-SIZE="9">✓ Apps are ephemeral; files are forever</FONT></TD></TR>
+            </TABLE>>
+            shape=box
+            style="rounded,filled"
+            fillcolor="#2b6cb0"
+        ]
+    }
+}
