@@ -194,3 +194,6 @@ Index / Tag / Summarize
 Selective Retrieval
   ↓
 Inject into Context Window
+```
+
+![Agent Coding Context - Filesystem-Based Pattern](agent-coding-context-file.png)
