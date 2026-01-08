@@ -136,19 +136,7 @@ The goal is to ensure the agent always has **the right context, at the right tim
 - Context files behave like evolving configuration and instruction artifacts.
 - They strongly influence agent behavior over time.
 
----
-
-## Community Insights (Reddit / Hacker News)
-
-**Recurring Themes:**
-- “Context rot” is a real and common problem.
-- More tokens ≠ better reasoning.
-- Just-in-time retrieval beats static context dumps.
-- Files unify large tool outputs into manageable artifacts.
-
-**Relevant Discussions:**
-- Reddit: r/AI_Agents, r/ContextEngineering
-- Hacker News: Agent memory, tool output handling, long-running agents
+![Agent Coding Context - Filesystem-Based Pattern](agent-coding-context-file.png)
 
 ---
 
@@ -196,4 +184,3 @@ Selective Retrieval
 Inject into Context Window
 ```
 
-![Agent Coding Context - Filesystem-Based Pattern](agent-coding-context-file.png)
