@@ -94,6 +94,8 @@ The goal is to ensure the agent always has **the right context, at the right tim
 - Agents write structured artifacts (search results, plans, logs).
 - Files can be indexed, summarized, or selectively reloaded.
 
+![LangChain - Filesystems for Context Engineering](langchain-context-engineering-file-system.png)
+
 ---
 
 ### Cursor — Dynamic Context Discovery
@@ -122,6 +124,8 @@ The goal is to ensure the agent always has **the right context, at the right tim
   - Traceability
   - Reproducibility
   - Structured context pipelines
+
+![Everything is Context - Agentic File System Abstraction](everything-is-context-file-system.png)
 
 ---
 
