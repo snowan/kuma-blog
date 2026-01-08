@@ -57,6 +57,8 @@ The goal is to ensure the agent always has **the right context, at the right tim
 
 ![Manus Context Engineering - Filesystem as Unbounded Memory](manus-context-engineering.png)
 
+![Manus Summary - Context Engineering Overview](manus-summary-context-engineering.png)
+
 ---
 
 ### Anthropic — Effective Context Engineering
@@ -66,6 +68,8 @@ The goal is to ensure the agent always has **the right context, at the right tim
 - Context is a finite, valuable resource.
 - Focus on holistic context optimization, not just prompts.
 - Carefully curate instructions, tool outputs, memory, and history.
+
+![Anthropic - Effective Context Engineering](anthropic-context-engineering.png)
 
 ---
 
