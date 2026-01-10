@@ -1,26 +1,27 @@
-# Agent Context Engineering: The Definitive Guide (Top 26 Resources)
+# Agent Context Engineering: The Definitive Guide (Top 30 Resources)
 
 **Last Updated:** January 2026
 **Author:** Michi
+**Fact-Checked:** January 9, 2026
 
 "Context Engineering" is the art and science of providing an AI agent with exactly the right information—system instructions, memory, tool outputs, and retrieved context—at each step of its trajectory. As Andrej Karpathy puts it: *"The context window is the working memory (RAM) of the LLM OS."*
 
-This guide curates the **top 26 verified resources** that are **directly** about Agent Context Engineering—no general prompting guides or tangentially related papers.
+This guide curates the **top 30 verified resources** that are **directly** about Agent Context Engineering—no general prompting guides or tangentially related papers. All URLs and dates have been fact-checked.
 
 ---
 
-## 🏆 The "Canon": Must-Read Foundations
+## The "Canon": Must-Read Foundations
 
 These are the seminal texts that defined the field. If you only read 5 resources, read these.
 
-### 1. [Effective Context Engineering for AI Agents](https://www.anthropic.com/news/effective-context-engineering-for-ai-agents)
-*   **Source:** Anthropic Engineering Team
+### 1. [Effective Context Engineering for AI Agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+*   **Source:** Anthropic Applied AI Team
 *   **Published:** September 29, 2025
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** The definitive manifesto that popularized "Context Engineering" as the successor to "Prompt Engineering." Details strategies for managing the "attention budget" of agents, including context editing to prune irrelevant tool outputs, compaction for long-horizon tasks, and sub-agent architectures.
 *   **Key Insight:** Find the smallest set of high-signal tokens that maximize the likelihood of a desired outcome.
 
-### 2. [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-engineering-for-AI-Agents)
+### 2. [Context Engineering for AI Agents: Lessons from Building Manus](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
 *   **Source:** Manus AI (Yichao 'Peak' Ji)
 *   **Published:** July 18, 2025
 *   **Rating:** ⭐⭐⭐⭐⭐
@@ -36,7 +37,7 @@ These are the seminal texts that defined the field. If you only read 5 resources
 *   **Companion:** [Video walkthrough](https://youtu.be/4GiqzUHD5AA)
 
 ### 4. [Context Engineering for AI Agents](https://weaviate.io/blog/context-engineering)
-*   **Source:** Weaviate
+*   **Source:** Weaviate (Femke Plantinga, Prajjwal Yadav, Victoria Slocum)
 *   **Published:** December 9, 2025
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** Introduces "The Six Pillars of Context Engineering": Agents, Query Augmentation, Retrieval, Prompting Techniques, Memory, and Tools. Treats the context window as a scarce resource requiring careful allocation.
@@ -51,18 +52,18 @@ These are the seminal texts that defined the field. If you only read 5 resources
 
 ---
 
-## � Viral Discussions & Key Moments
+## Viral Discussions & Key Moments
 
 The term "Context Engineering" gained widespread adoption through these influential moments.
 
 ### 6. [Karpathy's "Context Engineering" Tweet](https://x.com/karpathy/status/1937902205765607626)
 *   **Source:** Andrej Karpathy (X/Twitter)
-*   **Published:** June 2025
+*   **Published:** June 25, 2025
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** The tweet that popularized the term: *"Context engineering is the delicate art and science of filling the context window with just the right information for the next step."* Sparked industry-wide adoption.
 *   **Key Insight:** Context engineering is about the "next step"—dynamic, not static.
 
-### 7. [Tobi Lutke's Definition](https://x.com/tolobit/status/1927856341076254720)
+### 7. [Tobi Lutke's Definition](https://x.com/tobi/status/1927856341076254720)
 *   **Source:** Tobi Lutke, CEO of Shopify (X/Twitter)
 *   **Published:** June 2025
 *   **Rating:** ⭐⭐⭐⭐⭐
@@ -78,7 +79,7 @@ The term "Context Engineering" gained widespread adoption through these influent
 
 ---
 
-## 📜 Academic Papers on Agent Context Engineering
+## Academic Papers on Agent Context Engineering
 
 These are **peer-reviewed papers** specifically about context engineering for agents.
 
@@ -100,51 +101,51 @@ These are **peer-reviewed papers** specifically about context engineering for ag
 *   **Source:** Mohsenimofidi et al. (University of Canterbury)
 *   **Published:** October 24, 2025
 *   **Rating:** ⭐⭐⭐⭐
-*   **Summary:** Studies how open-source projects structure their AI configuration files to provide context. Found wide variation in approaches (descriptive, prescriptive, prohibitive, explanatory).
+*   **Summary:** Studies how 466 open-source projects structure their AI configuration files (AGENTS.md) to provide context. Found wide variation in approaches (descriptive, prescriptive, prohibitive, explanatory).
 *   **Key Insight:** Format and structure of context significantly affects generated output quality.
 
+---
 
-
-## �📚 Foundational Research Papers
+## Foundational Research Papers
 
 ### 12. [ReAct: Synergizing Reasoning and Acting in Language Models](https://arxiv.org/abs/2210.03629)
 *   **Source:** Yao et al. (Princeton / Google)
-*   **Published:** October 2022
+*   **Published:** October 6, 2022
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** The paper that defined modern agents. Proves that interleaving "Thought" (reasoning traces) and "Action" (tool calls) in the context performs better than either in isolation.
 *   **Key Insight:** The fundamental pattern for all agentic context loops (LangChain, etc.).
 
 ### 13. [Generative Agents: Interactive Simulacra of Human Behavior](https://arxiv.org/abs/2304.03442)
 *   **Source:** Park et al. (Stanford / Google)
-*   **Published:** April 2023
+*   **Published:** April 7, 2023
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** The famous "Sims" paper. Introduces the **Memory Stream** architecture, scoring memories by Recency, Importance, and Relevance to determine what enters the context window. Adds "Reflection" to synthesize high-level thoughts.
 *   **Key Insight:** The definitive architecture for "human-like" memory in agents.
 
 ### 14. [MemGPT: Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560)
 *   **Source:** Packer et al. (Letta)
-*   **Published:** October 2023
+*   **Published:** October 12, 2023
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** Introduces "OS-level memory management" for LLMs, treating context as a finite resource with paging (swapping memory in/out) to create "infinite" conversation sessions.
 *   **Key Insight:** The LLM agent should manage its own memory like an operating system.
 
 ### 15. [Lost in the Middle: How Language Models Use Long Contexts](https://arxiv.org/abs/2307.03172)
 *   **Source:** Liu et al. (Stanford/Berkeley)
-*   **Published:** July 2023
+*   **Published:** July 6, 2023
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** Exposed the "U-shaped" performance curve—LLMs excel at using information at the start and end of context but ignore information buried in the middle.
 *   **Key Insight:** Place critical information at the beginning or end; put queries at the end.
 
 ### 16. [Voyager: An Open-Ended Embodied Agent with Large Language Models](https://arxiv.org/abs/2305.16291)
-*   **Source:** Fan et al. (NVIDIA / Caltech)
-*   **Published:** May 2023
+*   **Source:** Wang et al. (NVIDIA / Caltech)
+*   **Published:** May 25, 2023
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** An embodied Minecraft agent that builds an ever-growing **Skill Library** of executable code. Retrieves relevant skills as context for future problems.
 *   **Key Insight:** Demonstrates "executable context"—storing logic, not just text.
 
 ---
 
-## 🏭 Industry Production Guides
+## Industry Production Guides
 
 ### 17. [Anthropic: Model Context Protocol (MCP)](https://www.anthropic.com/news/model-context-protocol)
 *   **Source:** Anthropic
@@ -154,79 +155,111 @@ These are **peer-reviewed papers** specifically about context engineering for ag
 *   **Key Insight:** Standardized context integration is essential for enterprise agents.
 
 ### 18. [GitHub Copilot: A Developer's Guide to Prompt Engineering](https://github.blog/developer-skills/github/prompt-engineering-guide-generative-ai-llms/)
-*   **Source:** GitHub Engineering
-*   **Published:** July 2023
+*   **Source:** GitHub Engineering (Albert Ziegler, John Berryman)
+*   **Published:** July 17, 2023 (updated May 2024)
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** Reveals the "snippeting" pipeline—how Copilot selects which code chunks to include in context from other files to maximize relevance without overflowing limits.
 *   **Key Insight:** Production context selection at scale requires intelligent chunking pipelines.
 
 ### 19. [LinkedIn: The Tech Behind the First Agent - Hiring Assistant](https://www.linkedin.com/blog/engineering/generative-ai/the-tech-behind-the-first-agent-from-linkedin-hiring-assistant)
 *   **Source:** LinkedIn Engineering
-*   **Published:** October 2024
+*   **Published:** October 29, 2024
 *   **Rating:** ⭐⭐⭐⭐
 *   **Summary:** Architectural deep-dive into LinkedIn's first production AI agent. Features "experiential memory" for personalization and an agent orchestration layer for complex workflows.
 *   **Key Insight:** Enterprise agents need memory systems that persist across sessions.
 
-### 20. [Airbnb: Automation Platform v2 - Improving Conversational AI](https://medium.com/airbnb-engineering/automation-platform-v2-improving-conversational-ai-at-airbnb-d86c9386e0cb)
-*   **Source:** Airbnb Engineering
-*   **Published:** October 2024
-*   **Rating:** ⭐⭐⭐⭐
-*   **Summary:** Evolution from static workflow-based chatbots to an LLM-native platform. Focuses on runtime context management that dynamically loads trip details and customer history based on intent.
-*   **Key Insight:** Dynamic context loading based on detected intent enables natural conversation.
-
-### 21. [Uber: Navigating the LLM Landscape with GenAI Gateway](https://www.uber.com/blog/genai-gateway/)
+### 20. [Uber: Navigating the LLM Landscape with GenAI Gateway](https://www.uber.com/blog/genai-gateway/)
 *   **Source:** Uber Engineering
-*   **Published:** September 2024
+*   **Published:** July 11, 2024
 *   **Rating:** ⭐⭐⭐⭐
-*   **Summary:** Centralized GenAI Gateway standardizing LLM access across 30+ internal teams. Features PII redaction, intelligent caching, fallback logic, and hallucination detection.
+*   **Summary:** Centralized GenAI Gateway standardizing LLM access across 60+ use cases. Features PII redaction, intelligent caching, fallback logic, and hallucination detection.
 *   **Key Insight:** Context safety (PII handling) and reliability patterns are critical at scale.
 
 ---
 
-## 🛠️ Frameworks & Implementation
+## Frameworks & Implementation
 
-### 22. [LangChain: Memory & Context Windows](https://python.langchain.com/docs/concepts/memory/)
-*   **Source:** LangChain Documentation
-*   **Published:** 2023 (continuously updated)
-*   **Rating:** ⭐⭐⭐⭐
-*   **Summary:** Definitive documentation on techniques like `ConversationSummaryBufferMemory`—keeping recent tokens raw while summarizing older context.
-*   **Key Insight:** Hybrid memory (raw + summarized) balances detail and efficiency.
-
-### 23. [LangGraph: Orchestrating Multi-Agent Context](https://blog.langchain.dev/langgraph-multi-agent-orchestration/)
+### 21. [LangGraph: Orchestrating Multi-Agent Context](https://blog.langchain.dev/langgraph-multi-agent-orchestration/)
 *   **Source:** LangChain
 *   **Published:** 2024
 *   **Rating:** ⭐⭐⭐⭐
 *   **Summary:** How to split context across multiple agents (e.g., "Researcher" and "Writer") so no single agent is overwhelmed by the full state.
 *   **Key Insight:** Sub-agents with isolated context windows prevent information overload.
 
-### 24. [DSPy: Programming—Not Prompting](https://dspy.ai/)
+### 22. [DSPy: Programming—Not Prompting](https://dspy.ai/)
 *   **Source:** Stanford NLP (Omar Khattab)
 *   **Published:** 2023 (actively developed)
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** A radical framework that abstracts prompts away entirely. Define "Signatures" (I/O types) and "Modules," and DSPy "compiles" the optimal prompt/context automatically.
 *   **Key Insight:** Treat context engineering as a compiler problem, not a writing problem.
 
-### 25. [LlamaIndex: Towards Long Context RAG](https://www.llamaindex.ai/blog/towards-long-context-rag)
+### 23. [LlamaIndex: Towards Long Context RAG](https://www.llamaindex.ai/blog/towards-long-context-rag)
 *   **Source:** LlamaIndex
-*   **Published:** March 2024
+*   **Published:** March 1, 2024
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** Answers "Do we need RAG if we have 1M token windows?" (Yes.) Explains "Context Augmented Generation" vs RAG and how to optimize chunk sizes for large windows.
 *   **Key Insight:** RAG remains essential even with massive context windows.
 
 ---
 
-## 📚 Community Resources
+## Practitioner Guides & Deep Dives
 
-### 26. [Awesome Context Engineering (GitHub)](https://github.com/meirtz/awesome-context-engineering)
+### 24. [Context Engineering (Simon Willison)](https://simonwillison.net/2025/jun/27/context-engineering/)
+*   **Source:** Simon Willison
+*   **Published:** June 27, 2025
+*   **Rating:** ⭐⭐⭐⭐⭐
+*   **Summary:** Explains why "context engineering" is replacing "prompt engineering" as terminology. The inferred meaning of "context" aligns better with the actual complexity of the work.
+*   **Key Insight:** Language matters—the public trivializes "prompting" but respects "engineering."
+
+### 25. [Context Engineering for AI Agents: Part 1](https://www.philschmid.de/context-engineering)
+*   **Source:** Philipp Schmid
+*   **Published:** June 30, 2025
+*   **Rating:** ⭐⭐⭐⭐⭐
+*   **Summary:** Argues that most agent failures stem from insufficient context rather than model limitations. Illustrates with a meeting-scheduling example comparing basic vs. context-enriched agents.
+*   **Key Insight:** Agent success = right information + right format + right time.
+
+### 26. [Context Engineering for AI Agents: Part 2](https://www.philschmid.de/context-engineering-part-2)
+*   **Source:** Philipp Schmid
+*   **Published:** December 4, 2025
+*   **Rating:** ⭐⭐⭐⭐⭐
+*   **Summary:** Advanced strategies: context compaction, selective sharing, hierarchical action spaces, agent-as-tool pattern. Emphasizes that "biggest gains came from removing things."
+*   **Key Insight:** Set pre-rot thresholds around 256k tokens; prefer simplification over fine-tuning.
+
+### 27. [Context Engineering: Bringing Engineering Discipline to Prompts](https://addyo.substack.com/p/context-engineering-bringing-engineering)
+*   **Source:** Addy Osmani
+*   **Published:** July 13, 2025
+*   **Rating:** ⭐⭐⭐⭐
+*   **Summary:** Positions context engineering as an engineering discipline like software architecture. Compares it to traditional practices and explains dynamic context construction.
+*   **Key Insight:** Context engineering requires the same rigor as traditional software engineering.
+
+### 28. [Prompting Guide: Context Engineering Guide](https://www.promptingguide.ai/guides/context-engineering-guide)
+*   **Source:** DAIR.AI
+*   **Published:** 2025 (continuously updated)
+*   **Rating:** ⭐⭐⭐⭐⭐
+*   **Summary:** Comprehensive walkthrough of a multi-agent deep research application, covering system prompts, instructions, structured I/O, tools, RAG, memory, and state management.
+*   **Key Insight:** Context engineering requires systematic experimentation and measurement.
+
+---
+
+## Community Resources
+
+### 29. [Awesome Context Engineering (GitHub)](https://github.com/meirtz/awesome-context-engineering)
 *   **Source:** Community (Meirtz)
-*   **Published:** 2024 (actively maintained)
+*   **Published:** 2024 (actively maintained, 51+ commits)
 *   **Rating:** ⭐⭐⭐⭐⭐
 *   **Summary:** The most comprehensive GitHub list tracking papers, tools, and blog posts specifically on context engineering for agents.
 *   **Key Insight:** Continuously updated crowdsourced resource list—the best way to stay current.
 
+### 30. [LangChain: Memory Concepts Documentation](https://python.langchain.com/docs/concepts/memory/)
+*   **Source:** LangChain Documentation
+*   **Published:** 2023 (continuously updated)
+*   **Rating:** ⭐⭐⭐⭐
+*   **Summary:** Definitive documentation on agent memory techniques including conversation buffers, summary memory, and hybrid approaches.
+*   **Key Insight:** Hybrid memory (raw + summarized) balances detail and efficiency.
+
 ---
 
-## 🎯 Quick Reference: Key Patterns
+## Quick Reference: Key Patterns
 
 | Pattern | Description | Use Case |
 |---------|-------------|----------|
@@ -237,6 +270,7 @@ These are **peer-reviewed papers** specifically about context engineering for ag
 | **Note-Taking RAG** | Generate notes on retrieved docs before answering | Noise filtering |
 | **Todo Recitation** | Constantly rewrite goals to maintain focus | Long-horizon tasks |
 | **Error Preservation** | Keep failures in context to prevent repetition | Learning agents |
+| **Agent-as-Tool** | Treat sub-agents as deterministic functions | Multi-agent systems |
 
 ---
 
