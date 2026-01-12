@@ -3,8 +3,8 @@
 **Source:** Lance Martin  
 **Post:** *Agent design patterns*  
 **Date:** Jan 9, 2026  
-**URL:** https://rlancemartin.github.io/2026/01/09/agent_design/
-
+**URL:** [agent design patterns](https://rlancemartin.github.io/2026/01/09/agent_design/)
+-
 ---
 ![agent design patterns infographic](./resources/agent-design-patterns-infographic.png)
 
