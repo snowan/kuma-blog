@@ -6,6 +6,7 @@
 **URL:** https://rlancemartin.github.io/2026/01/09/agent_design/
 
 ---
+![agent design patterns infographic](./resources/agent-design-patterns-infographic.png)
 
 ## 1. Core Idea
 
@@ -147,3 +148,5 @@ The future of agent design is:
 - Modular by default
 
 ---
+
+![agent design patterns note](./resources/agent-design-patterns-note.png)
