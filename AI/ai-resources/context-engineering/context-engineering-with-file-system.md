@@ -112,6 +112,11 @@ The goal is to ensure the agent always has **the right context, at the right tim
 
 ![Dynamic Context Discovery - Static vs Dynamic Context](dynamic-context-discovery.jpg)
 
+### Vercel - How to build agents with filesystems and bash
+
+**Source:** [how-to-build-agents-with-filesystems-and-bash](https://vercel.com/blog/how-to-build-agents-with-filesystems-and-bash)
+
+
 ---
 
 ## Academic Research
