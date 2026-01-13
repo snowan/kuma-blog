@@ -150,3 +150,99 @@ The future of agent design is:
 ---
 
 ![agent design patterns note](./resources/agent-design-patterns-note.png)
+
+
+--- 
+
+# 📂 Resource Collection: Agent Design Patterns (2026)
+*Extracted from [Agent design patterns](https://rlancemartin.github.io/2026/01/09/agent_design/) by Lance Martin (Jan 9, 2026)*
+
+Below is a curated list of tools, papers, and articles defining the modern stack for autonomous AI agents.
+
+### 🛠️ Core Agents & Tools
+**Manus (acquired by Meta)**
+* **Source:** Manus / E2B
+* **Summary:** A highly advanced agent that uses a virtual computer (via E2B) to execute complex tasks. It minimizes tools (under 20) and relies on a bash shell for actions.
+* **Link:** [How Manus uses E2B](https://e2b.dev/blog.how-manus-uses-e2b-to-provide-agents-with-virtual-computers)
+* **Tag:** #Agents #VirtualComputer
+
+**Claude Code**
+* **Source:** Anthropic
+* **Summary:** "AI for your operating system." A CLI-first agent that lives on your computer, using cached context and a small set of highly effective tools.
+* **Link:** [Karpathy on Claude Code](https://x.com/karpathy/status/2002118205729562949)
+* **Tag:** #Agents #CLI
+
+**Cursor Agent**
+* **Source:** Cursor
+* **Summary:** An agent integrated into the IDE that uses "progressive disclosure" to manage tool definitions, syncing MCP tool descriptions to a folder rather than overloading context.
+* **Link:** [Dynamic Context Discovery](https://cursor.com/blog/dynamic-context-discovery)
+* **Tag:** #IDE #ContextManagement
+
+**Model Context Protocol (MCP)**
+* **Source:** Model Context Protocol
+* **Summary:** An open standard for connecting AI models to data and tools. The post discusses how to manage MCP scaling issues to avoid context overload.
+* **Link:** [Getting Started with MCP](https://modelcontextprotocol.io/docs/getting-started/intro)
+* **Tag:** #Standard #Tools
+
+### 📄 Research Papers & Concepts
+**CodeAct: Code as Actions**
+* **Source:** Arxiv (Wang et al.)
+* **Summary:** A framework showing that agents perform better when they can write and execute code (Python/Bash) rather than just calling restricted JSON tools.
+* **Link:** [CodeAct Paper](https://arxiv.org/abs/2402.01030)
+* **Tag:** #Paper #ActionSpace
+
+**Context Rot**
+* **Source:** Chroma
+* **Summary:** Research showing that as context windows grow, the model's ability to retrieve and reason about information ("attention budget") degrades.
+* **Link:** [Context Rot Analysis](https://research.trychroma.com/context-rot)
+* **Tag:** #Research #ContextWindow
+
+**Recursive Language Models (RLM)**
+* **Source:** Prime Intellect
+* **Summary:** Proposes that models can learn to manage their own context (compressing history) rather than relying on hand-crafted heuristics.
+* **Link:** [Recursive Language Model Blog](https://www.primeintellect.ai/blog/rlm)
+* **Tag:** #FutureTech #SelfLearning
+
+**Sleep-time Compute**
+* **Source:** Arxiv (Letta AI)
+* **Summary:** Explores the concept of agents "dreaming" or thinking offline to consolidate memories and update their internal state between active tasks.
+* **Link:** [Sleep-time Compute Paper](https://arxiv.org/abs/2504.13171)
+* **Tag:** #Paper #Memory
+
+### 🧠 Context Engineering Guides
+**Effective Context Engineering**
+* **Source:** Anthropic
+* **Summary:** A definitive guide on managing the "attention budget" of LLMs, including strategies for retrieval, offloading, and caching.
+* **Link:** [Effective Context Engineering](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+* **Tag:** #Guide #BestPractices
+
+**Building Effective Agents**
+* **Source:** Anthropic (Barry & Schluntz)
+* **Summary:** Defines agents as systems where LLMs direct their own control flow, emphasizing the need for computer access (shell + filesystem).
+* **Link:** [Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents)
+* **Tag:** #Architecture #Design
+
+**Continual Learning in Token Space**
+* **Source:** Letta AI
+* **Summary:** Discusses how agents can "learn" without model training by updating their context/instructions based on past experiences (like a diary).
+* **Link:** [Continual Learning Blog](https://www.letta.com/blog/continual-learning)
+* **Tag:** #Learning #Memory
+
+### 🏗️ Agent Architectures & Patterns
+**The Ralph Wiggum Loop**
+* **Source:** HumanLayer
+* **Summary:** A pattern for long-running agents where they wake up, read state from a file, do work, and sleep—allowing for infinite-duration tasks.
+* **Link:** [Brief History of Ralph](https://www.humanlayer.dev/blog/brief-history-of-ralph)
+* **Tag:** #Pattern #LongRunning
+
+**Gas Town (Multi-Agent Swarm)**
+* **Source:** Steve Yegge (GitHub)
+* **Summary:** A multi-agent orchestrator project that coordinates dozens of Claude Code instances to build software, using a "Mayor" agent and git-backed tracking.
+* **Link:** [Gas Town GitHub](https://github.com/steveyegge/gastown)
+* **Tag:** #MultiAgent #Code
+
+**Claude Diary**
+* **Source:** Lance Martin
+* **Summary:** A plugin/pattern for Claude Code to reflect on session logs and update its own `CLAUDE.md` instructions, enabling personalization.
+* **Link:** [Claude Diary Post](https://rlancemartin.github.io/2025/12/01/claude_diary/)
+* **Tag:** #Plugin #Memory

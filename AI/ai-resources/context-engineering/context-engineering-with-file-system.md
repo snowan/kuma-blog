@@ -43,7 +43,10 @@ The goal is to ensure the agent always has **the right context, at the right tim
 ## Key Sources & Insights
 
 ### Manus — Context Engineering Lessons
-**Source:** [Manus Blog - Context Engineering for AI Agents](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
+**Source:** 
+- [Manus Blog - Context Engineering for AI Agents](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
+
+- [how-manus-uses-e2b-to-provide-agents-with-virtual-computers](https://e2b.dev/blog/how-manus-uses-e2b-to-provide-agents-with-virtual-computers)
 
 **Key Ideas:**
 - Context engineering is more impactful than model tuning.
