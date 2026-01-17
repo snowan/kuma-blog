@@ -1,13 +1,14 @@
 # LangSmith Agent Builder — Summary
-**Source:*Harrison Chase*   
+**Source:** **Harrison Chase**   
 **Post:** **How we built Agent Builder’s memory system**  
 **Date:** Jan 15, 2026  
 **URL:** [How we built Agent Builder’s memory system](https://x.com/hwchase17/status/2011814697889316930?s=42)
 
 ---
-![langsmith-agent-builder-memory-image](./resources/langsmith-agent-builder-memory-image.png)
+![langsmith-agent-builder-memory-image](./resources/langsmith-agent-builder-image.png)
 
-![langsmith-agent-builder-memory-infographic](./resources/langsmith-agent-builder-memory-infographic.png)
+![langsmith-agent-builder-memory-infographic](./resources/langsmith-agent-build-memory-infographic.png)
+
 ---
 
 ## 1. What is Agent Builder?
@@ -76,4 +77,4 @@
 ---
 
 
-![langsmith-agent-builder-memory-note](./resources/langsmith-agent-builder-memory-note.png)
+![langsmith-agent-builder-memory-note](./resources/langsmith-agent-builder-note.png)
