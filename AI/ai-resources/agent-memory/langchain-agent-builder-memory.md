@@ -61,7 +61,7 @@
 ## Key Takeaways
 
 - No-code agent building lowers the barrier to entry
-- **Memory is a first-class feature**
+- **Memory is a first-class feature** - Memory is implemented using a filesystem-like structure (built on Postgres behind the scenes) so agents can store and recall state. 
 - Agents can operate beyond chat via triggers
 - Modular design improves scalability
 - Represents a shift toward **practical, production-ready AI agents**
