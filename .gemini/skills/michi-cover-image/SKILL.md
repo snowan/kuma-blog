@@ -54,6 +54,7 @@ Generate hand-drawn style cover images for articles with multiple style options.
 | `playful` | Fun, creative, whimsical |
 | `nature` | Organic, calm, earthy |
 | `retro` | Vintage, nostalgic, classic |
+| `michi` | Cute calico cat in Japanese manga style, cozy |
 
 Detailed style definitions: `references/styles/<style>.md`
 
@@ -71,6 +72,7 @@ When no `--style` is specified, the system analyzes content to select the best s
 | Nature, eco, wellness, health, organic | `nature` |
 | History, classic, vintage, old, traditional | `retro` |
 | Business, professional, strategy, analysis | `elegant` |
+| Tutorial, learning, cozy, mascot, friendly, cat | `michi` |
 
 ## File Management
 

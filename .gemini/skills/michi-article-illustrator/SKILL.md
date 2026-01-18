@@ -84,6 +84,13 @@ Minimalist hand-drawn line art, intellectual
 - **Elements**: Simple line doodles, geometric shapes, hand-drawn wobble, maximum whitespace
 - **Best for**: Knowledge sharing, concept explanations, SaaS content, productivity articles
 
+### 10. `michi`
+Cute calico cat in Japanese manga style - cozy, friendly mascot
+- **Colors**: Cream white, soft orange, warm brown, blush pink accents
+- **Elements**: Cute calico cat (三毛猫) interacting with concepts, speech bubbles, paw prints
+- **Animation Feel**: Studio Ghibli warmth, Chi's Sweet Home vibes
+- **Best for**: Tutorials, learning content, blogs needing consistent mascot branding
+
 ## Auto Style Selection
 
 When no `--style` is specified, analyze content to select the best style:
@@ -99,6 +106,7 @@ When no `--style` is specified, analyze content to select the best style:
 | Idea, thought, concept, draft, brainstorm | `sketch` |
 | Business, professional, strategy, analysis | `elegant` |
 | Knowledge, concept, productivity, SaaS, notion | `notion` |
+| Tutorial, learning, cozy, mascot, cat, friendly | `michi` |
 
 ## File Management
 
@@ -439,6 +447,16 @@ Background: Pure white (#FFFFFF), off-white (#FAFAFA)
 Accents: Pastel blue (#A8D4F0), pastel yellow (#F9E79F), pastel pink (#FADBD8)
 Elements: Simple line doodles, hand-drawn wobble effect, geometric shapes, stick figures, maximum whitespace
 Typography: Clean hand-drawn lettering, simple sans-serif labels
+```
+
+### michi
+```
+Colors: Cream white (#FFFEF2), soft orange (#FFD8A8), warm brown (#D4A574), charcoal (#4A4A4A)
+Background: Warm cream (#FFF8E7), soft paper texture
+Accents: Blush pink (#FFB6C1), gentle coral (#FF7F7F), soft sky blue (#87CEEB)
+Elements: Cute calico cat (三毛猫) mascot interacting with concepts, manga-style expressions, speech bubbles, paw prints
+Animation Feel: Studio Ghibli warmth, Chi's Sweet Home vibes, Japanese kawaii aesthetic
+Typography: Clean Japanese-inspired hand lettering, rounded friendly fonts
 ```
 
 ## Notes

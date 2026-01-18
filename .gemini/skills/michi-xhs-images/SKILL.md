@@ -42,7 +42,7 @@ Break down complex content into eye-catching infographic series for Xiaohongshu 
 
 | Dimension | Controls | Options |
 |-----------|----------|---------|
-| **Style** | Visual aesthetics: colors, lines, decorations | cute, fresh, tech, warm, bold, minimal, retro, pop, notion |
+| **Style** | Visual aesthetics: colors, lines, decorations | cute, fresh, tech, warm, bold, minimal, retro, pop, notion, michi |
 | **Layout** | Information structure: density, arrangement | sparse, balanced, dense, list, comparison, flow |
 
 Style × Layout can be freely combined. Example: `--style notion --layout dense` creates an intellectual-looking knowledge card with high information density.
@@ -60,6 +60,7 @@ Style × Layout can be freely combined. Example: `--style notion --layout dense`
 | `retro` | Vintage, nostalgic, trendy |
 | `pop` | Vibrant, energetic, eye-catching |
 | `notion` | Minimalist hand-drawn line art, intellectual |
+| `michi` | Cute calico cat in Japanese manga style, cozy |
 
 Detailed style definitions: `references/styles/<style>.md`
 
@@ -89,6 +90,7 @@ Detailed layout definitions: `references/layouts/<layout>.md`
 | Classic, vintage, old, traditional | `retro` | balanced |
 | Fun, exciting, wow, amazing | `pop` | sparse/list |
 | Knowledge, concept, productivity, SaaS | `notion` | dense/list |
+| Tutorial, learning, cozy, mascot, friendly, cat | `michi` | balanced/sparse |
 
 ## File Structure
 
@@ -284,6 +286,7 @@ Files:
 | retro | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓ | ✓ |
 | pop | ✓✓ | ✓✓ | ✓ | ✓✓ | ✓✓ | ✓ |
 | notion | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ | ✓✓ |
+| michi | ✓✓ | ✓✓ | ✓ | ✓ | ✓ | ✓✓ |
 
 ## References
 

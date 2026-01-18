@@ -58,6 +58,7 @@ Transform content into professional slide deck images with flexible style option
 | `notion` (Default) | SaaS dashboard, clean data focus | Product demos, productivity |
 | `corporate` | Navy/gold, professional | Investor decks, proposals |
 | `playful` | Vibrant, dynamic shapes | Workshops, training |
+| `michi` | Cute calico cat mascot, Japanese manga | Tutorials, friendly content |
 
 ## Auto Style Selection
 
@@ -73,6 +74,7 @@ Transform content into professional slide deck images with flexible style option
 | saas, product, dashboard, metrics, productivity | `notion` |
 | investor, quarterly, business, corporate, proposal | `corporate` |
 | workshop, training, fun, playful, energetic | `playful` |
+| cozy, mascot, friendly, cat, tutorial, approachable | `michi` |
 | Default | `notion` |
 
 ## Design Philosophy
