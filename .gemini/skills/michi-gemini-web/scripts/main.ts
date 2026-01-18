@@ -61,14 +61,14 @@ function normalizeSessionMetadata(input: unknown): Array<string | null> {
 
 function printUsage(cookiePath: string, profileDir: string): void {
   console.log(`Usage:
-  npx -y bun skills/baoyu-gemini-web/scripts/main.ts --prompt "Hello"
-  npx -y bun skills/baoyu-gemini-web/scripts/main.ts "Hello"
-  npx -y bun skills/baoyu-gemini-web/scripts/main.ts --prompt "A cute cat" --image generated.png
-  npx -y bun skills/baoyu-gemini-web/scripts/main.ts --promptfiles system.md content.md --image out.png
+  npx -y bun skills/michi-gemini-web/scripts/main.ts --prompt "Hello"
+  npx -y bun skills/michi-gemini-web/scripts/main.ts "Hello"
+  npx -y bun skills/michi-gemini-web/scripts/main.ts --prompt "A cute cat" --image generated.png
+  npx -y bun skills/michi-gemini-web/scripts/main.ts --promptfiles system.md content.md --image out.png
 
 Multi-turn conversation (agent generates unique sessionId):
-  npx -y bun skills/baoyu-gemini-web/scripts/main.ts "Remember 42" --sessionId abc123
-  npx -y bun skills/baoyu-gemini-web/scripts/main.ts "What number?" --sessionId abc123
+  npx -y bun skills/michi-gemini-web/scripts/main.ts "Remember 42" --sessionId abc123
+  npx -y bun skills/michi-gemini-web/scripts/main.ts "What number?" --sessionId abc123
 
 Options:
   -p, --prompt <text>       Prompt text

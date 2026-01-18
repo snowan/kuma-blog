@@ -2,7 +2,7 @@ import os from 'node:os';
 import path from 'node:path';
 import process from 'node:process';
 
-const APP_DATA_DIR = 'baoyu-skills';
+const APP_DATA_DIR = 'michi-skills';
 const GEMINI_DATA_DIR = 'gemini-web';
 const COOKIE_FILE_NAME = 'cookies.json';
 const PROFILE_DIR_NAME = 'chrome-profile';

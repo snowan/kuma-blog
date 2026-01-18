@@ -1,5 +1,5 @@
 ---
-name: baoyu-post-to-wechat
+name: michi-post-to-wechat
 description: Post content to WeChat Official Account (微信公众号). Supports both article posting (文章) and image-text posting (图文).
 ---
 

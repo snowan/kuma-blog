@@ -1,5 +1,5 @@
 ---
-name: baoyu-slide-deck
+name: michi-slide-deck
 description: Generate professional slide deck images from content. Creates comprehensive outlines with style instructions, then generates individual slide images. Use when user asks to "create slides", "make a presentation", "generate deck", or "slide deck".
 ---
 
@@ -10,13 +10,13 @@ Transform content into professional slide deck images with flexible style option
 ## Usage
 
 ```bash
-/baoyu-slide-deck path/to/content.md
-/baoyu-slide-deck path/to/content.md --style sketch-notes
-/baoyu-slide-deck path/to/content.md --audience executives
-/baoyu-slide-deck path/to/content.md --lang zh
-/baoyu-slide-deck path/to/content.md --slides 10
-/baoyu-slide-deck path/to/content.md --outline-only
-/baoyu-slide-deck  # Then paste content
+/michi-slide-deck path/to/content.md
+/michi-slide-deck path/to/content.md --style sketch-notes
+/michi-slide-deck path/to/content.md --audience executives
+/michi-slide-deck path/to/content.md --lang zh
+/michi-slide-deck path/to/content.md --slides 10
+/michi-slide-deck path/to/content.md --outline-only
+/michi-slide-deck  # Then paste content
 ```
 
 ## Script Directory

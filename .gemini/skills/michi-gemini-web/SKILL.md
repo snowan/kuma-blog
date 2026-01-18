@@ -1,5 +1,5 @@
 ---
-name: baoyu-gemini-web
+name: michi-gemini-web
 description: Image generation skill using Gemini Web. Generates images from text prompts via Google Gemini. Also supports text generation. Use as the image generation backend for other skills like cover-image, xhs-images, article-illustrator.
 ---
 
@@ -170,7 +170,7 @@ npx -y bun ${SKILL_DIR}/scripts/main.ts "Now multiply that by 10" --sessionId ta
 npx -y bun ${SKILL_DIR}/scripts/main.ts --list-sessions
 ```
 
-Session files are stored in `~/Library/Application Support/baoyu-skills/gemini-web/sessions/<id>.json` and contain:
+Session files are stored in `~/Library/Application Support/michi-skills/gemini-web/sessions/<id>.json` and contain:
 - `id`: Session ID
 - `metadata`: Gemini chat metadata for continuation
 - `messages`: Array of `{role, content, timestamp, error?}`

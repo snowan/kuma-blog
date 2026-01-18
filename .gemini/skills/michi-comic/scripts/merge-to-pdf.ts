@@ -1,8 +1,8 @@
 import { existsSync, readdirSync, readFileSync } from "fs";
 import { join, basename } from "path";
-import { PDFDocument, rgb } from "pdf-lib";
+import { PDFDocument } from "pdf-lib";
 
-interface SlideInfo {
+interface PageInfo {
   filename: string;
   path: string;
   index: number;
@@ -23,28 +23,28 @@ function parseArgs(): { dir: string; output?: string } {
   }
 
   if (!dir) {
-    console.error("Usage: bun merge-to-pdf.ts <slide-deck-dir> [--output filename.pdf]");
+    console.error("Usage: bun merge-to-pdf.ts <comic-dir> [--output filename.pdf]");
     process.exit(1);
   }
 
   return { dir, output };
 }
 
-function findSlideImages(dir: string): SlideInfo[] {
+function findComicPages(dir: string): PageInfo[] {
   if (!existsSync(dir)) {
     console.error(`Directory not found: ${dir}`);
     process.exit(1);
   }
 
   const files = readdirSync(dir);
-  const slidePattern = /^(\d+)-slide-.*\.(png|jpg|jpeg)$/i;
+  const pagePattern = /^(\d+)-(cover|page)(-[\w-]+)?\.(png|jpg|jpeg)$/i;
   const promptsDir = join(dir, "prompts");
   const hasPrompts = existsSync(promptsDir);
 
-  const slides: SlideInfo[] = files
-    .filter((f) => slidePattern.test(f))
+  const pages: PageInfo[] = files
+    .filter((f) => pagePattern.test(f))
     .map((f) => {
-      const match = f.match(slidePattern);
+      const match = f.match(pagePattern);
       const baseName = f.replace(/\.(png|jpg|jpeg)$/i, "");
       const promptPath = hasPrompts ? join(promptsDir, `${baseName}.md`) : undefined;
 
@@ -57,57 +57,57 @@ function findSlideImages(dir: string): SlideInfo[] {
     })
     .sort((a, b) => a.index - b.index);
 
-  if (slides.length === 0) {
-    console.error(`No slide images found in: ${dir}`);
-    console.error("Expected format: 01-slide-*.png, 02-slide-*.png, etc.");
+  if (pages.length === 0) {
+    console.error(`No comic pages found in: ${dir}`);
+    console.error("Expected format: 00-cover-slug.png, 01-page-slug.png, etc.");
     process.exit(1);
   }
 
-  return slides;
+  return pages;
 }
 
-async function createPdf(slides: SlideInfo[], outputPath: string) {
+async function createPdf(pages: PageInfo[], outputPath: string) {
   const pdfDoc = await PDFDocument.create();
-  pdfDoc.setAuthor("baoyu-slide-deck");
-  pdfDoc.setSubject("Generated Slide Deck");
+  pdfDoc.setAuthor("michi-comic");
+  pdfDoc.setSubject("Generated Comic");
 
-  for (const slide of slides) {
-    const imageData = readFileSync(slide.path);
-    const ext = slide.filename.toLowerCase();
+  for (const page of pages) {
+    const imageData = readFileSync(page.path);
+    const ext = page.filename.toLowerCase();
     const image = ext.endsWith(".png")
       ? await pdfDoc.embedPng(imageData)
       : await pdfDoc.embedJpg(imageData);
 
     const { width, height } = image;
-    const page = pdfDoc.addPage([width, height]);
+    const pdfPage = pdfDoc.addPage([width, height]);
 
-    page.drawImage(image, {
+    pdfPage.drawImage(image, {
       x: 0,
       y: 0,
       width,
       height,
     });
 
-    console.log(`Added: ${slide.filename}${slide.promptPath ? " (prompt available)" : ""}`);
+    console.log(`Added: ${page.filename}${page.promptPath ? " (prompt available)" : ""}`);
   }
 
   const pdfBytes = await pdfDoc.save();
   await Bun.write(outputPath, pdfBytes);
 
   console.log(`\nCreated: ${outputPath}`);
-  console.log(`Total pages: ${slides.length}`);
+  console.log(`Total pages: ${pages.length}`);
 }
 
 async function main() {
   const { dir, output } = parseArgs();
-  const slides = findSlideImages(dir);
+  const pages = findComicPages(dir);
 
-  const dirName = basename(dir) === "slide-deck" ? basename(join(dir, "..")) : basename(dir);
+  const dirName = basename(dir) === "comic" ? basename(join(dir, "..")) : basename(dir);
   const outputPath = output || join(dir, `${dirName}.pdf`);
 
-  console.log(`Found ${slides.length} slides in: ${dir}\n`);
+  console.log(`Found ${pages.length} pages in: ${dir}\n`);
 
-  await createPdf(slides, outputPath);
+  await createPdf(pages, outputPath);
 }
 
 main().catch((err) => {

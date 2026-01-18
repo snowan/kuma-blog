@@ -1,5 +1,5 @@
 ---
-name: baoyu-cover-image
+name: michi-cover-image
 description: Generate elegant cover images for articles. Analyzes content and creates eye-catching hand-drawn style cover images with multiple style options. Use when user asks to "generate cover image", "create article cover", or "make a cover for article".
 ---
 
@@ -11,25 +11,25 @@ Generate hand-drawn style cover images for articles with multiple style options.
 
 ```bash
 # From markdown file (auto-select style based on content)
-/baoyu-cover-image path/to/article.md
+/michi-cover-image path/to/article.md
 
 # Specify a style
-/baoyu-cover-image path/to/article.md --style tech
-/baoyu-cover-image path/to/article.md --style warm
-/baoyu-cover-image path/to/article.md --style bold
+/michi-cover-image path/to/article.md --style tech
+/michi-cover-image path/to/article.md --style warm
+/michi-cover-image path/to/article.md --style bold
 
 # Without title text
-/baoyu-cover-image path/to/article.md --no-title
+/michi-cover-image path/to/article.md --no-title
 
 # Combine options
-/baoyu-cover-image path/to/article.md --style minimal --no-title
+/michi-cover-image path/to/article.md --style minimal --no-title
 
 # From direct text input
-/baoyu-cover-image
+/michi-cover-image
 [paste content or describe the topic]
 
 # Direct input with style
-/baoyu-cover-image --style playful
+/michi-cover-image --style playful
 [paste content]
 ```
 

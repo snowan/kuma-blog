@@ -1,5 +1,5 @@
 ---
-name: baoyu-comic
+name: michi-comic
 description: Knowledge comic creator supporting multiple styles (Logicomix/Ligne Claire, Ohmsha manga guide). Creates original educational comics with detailed panel layouts and sequential image generation. Use when user asks to create "知识漫画", "教育漫画", "biography comic", "tutorial comic", or "Logicomix-style comic".
 ---
 
@@ -10,8 +10,8 @@ Create original knowledge comics with multiple visual styles.
 ## Usage
 
 ```bash
-/baoyu-comic posts/turing-story/source.md
-/baoyu-comic  # then paste content
+/michi-comic posts/turing-story/source.md
+/michi-comic  # then paste content
 ```
 
 ## Options

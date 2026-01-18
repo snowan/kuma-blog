@@ -1,5 +1,5 @@
 ---
-name: baoyu-article-illustrator
+name: michi-article-illustrator
 description: Smart article illustration skill. Analyzes article content and generates illustrations at positions requiring visual aids with multiple style options. Use when user asks to "add illustrations to article", "generate images for article", or "illustrate article".
 ---
 
@@ -11,15 +11,15 @@ Analyze article structure and content, identify positions requiring visual aids,
 
 ```bash
 # Auto-select style based on content
-/baoyu-article-illustrator path/to/article.md
+/michi-article-illustrator path/to/article.md
 
 # Specify a style
-/baoyu-article-illustrator path/to/article.md --style tech
-/baoyu-article-illustrator path/to/article.md --style warm
-/baoyu-article-illustrator path/to/article.md --style minimal
+/michi-article-illustrator path/to/article.md --style tech
+/michi-article-illustrator path/to/article.md --style warm
+/michi-article-illustrator path/to/article.md --style minimal
 
 # Combine with other options
-/baoyu-article-illustrator path/to/article.md --style playful
+/michi-article-illustrator path/to/article.md --style playful
 ```
 
 ## Options

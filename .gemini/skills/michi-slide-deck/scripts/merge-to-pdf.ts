@@ -1,6 +1,6 @@
 import { existsSync, readdirSync, readFileSync } from "fs";
-import { join, basename, extname } from "path";
-import PptxGenJS from "pptxgenjs";
+import { join, basename } from "path";
+import { PDFDocument, rgb } from "pdf-lib";
 
 interface SlideInfo {
   filename: string;
@@ -23,7 +23,7 @@ function parseArgs(): { dir: string; output?: string } {
   }
 
   if (!dir) {
-    console.error("Usage: bun merge-to-pptx.ts <slide-deck-dir> [--output filename.pptx]");
+    console.error("Usage: bun merge-to-pdf.ts <slide-deck-dir> [--output filename.pdf]");
     process.exit(1);
   }
 
@@ -66,57 +66,36 @@ function findSlideImages(dir: string): SlideInfo[] {
   return slides;
 }
 
-function findBasePrompt(): string | undefined {
-  const scriptDir = import.meta.dir;
-  const basePromptPath = join(scriptDir, "..", "references", "base-prompt.md");
-  if (existsSync(basePromptPath)) {
-    return readFileSync(basePromptPath, "utf-8");
-  }
-  return undefined;
-}
-
-async function createPptx(slides: SlideInfo[], outputPath: string) {
-  const pptx = new PptxGenJS();
-
-  pptx.layout = "LAYOUT_16x9";
-  pptx.author = "baoyu-slide-deck";
-  pptx.subject = "Generated Slide Deck";
-
-  const basePrompt = findBasePrompt();
-  let notesCount = 0;
+async function createPdf(slides: SlideInfo[], outputPath: string) {
+  const pdfDoc = await PDFDocument.create();
+  pdfDoc.setAuthor("michi-slide-deck");
+  pdfDoc.setSubject("Generated Slide Deck");
 
   for (const slide of slides) {
-    const s = pptx.addSlide();
     const imageData = readFileSync(slide.path);
-    const base64 = imageData.toString("base64");
-    const ext = extname(slide.filename).toLowerCase().replace(".", "");
-    const mimeType = ext === "png" ? "image/png" : "image/jpeg";
+    const ext = slide.filename.toLowerCase();
+    const image = ext.endsWith(".png")
+      ? await pdfDoc.embedPng(imageData)
+      : await pdfDoc.embedJpg(imageData);
 
-    s.addImage({
-      data: `data:${mimeType};base64,${base64}`,
+    const { width, height } = image;
+    const page = pdfDoc.addPage([width, height]);
+
+    page.drawImage(image, {
       x: 0,
       y: 0,
-      w: "100%",
-      h: "100%",
-      sizing: { type: "cover", w: "100%", h: "100%" },
+      width,
+      height,
     });
 
-    if (slide.promptPath) {
-      const slidePrompt = readFileSync(slide.promptPath, "utf-8");
-      const fullNotes = basePrompt ? `${basePrompt}\n\n---\n\n${slidePrompt}` : slidePrompt;
-      s.addNotes(fullNotes);
-      notesCount++;
-    }
-
-    console.log(`Added: ${slide.filename}${slide.promptPath ? " (with notes)" : ""}`);
+    console.log(`Added: ${slide.filename}${slide.promptPath ? " (prompt available)" : ""}`);
   }
 
-  await pptx.writeFile({ fileName: outputPath });
+  const pdfBytes = await pdfDoc.save();
+  await Bun.write(outputPath, pdfBytes);
+
   console.log(`\nCreated: ${outputPath}`);
-  console.log(`Total slides: ${slides.length}`);
-  if (notesCount > 0) {
-    console.log(`Slides with notes: ${notesCount}${basePrompt ? " (includes base prompt)" : ""}`);
-  }
+  console.log(`Total pages: ${slides.length}`);
 }
 
 async function main() {
@@ -124,11 +103,11 @@ async function main() {
   const slides = findSlideImages(dir);
 
   const dirName = basename(dir) === "slide-deck" ? basename(join(dir, "..")) : basename(dir);
-  const outputPath = output || join(dir, `${dirName}.pptx`);
+  const outputPath = output || join(dir, `${dirName}.pdf`);
 
   console.log(`Found ${slides.length} slides in: ${dir}\n`);
 
-  await createPptx(slides, outputPath);
+  await createPdf(slides, outputPath);
 }
 
 main().catch((err) => {

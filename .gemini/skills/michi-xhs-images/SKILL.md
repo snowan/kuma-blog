@@ -1,5 +1,5 @@
 ---
-name: baoyu-xhs-images
+name: michi-xhs-images
 description: Xiaohongshu (Little Red Book) infographic series generator with multiple style options. Breaks down content into 1-10 cartoon-style infographics. Use when user asks to create "小红书图片", "XHS images", or "RedNote infographics".
 ---
 
@@ -11,23 +11,23 @@ Break down complex content into eye-catching infographic series for Xiaohongshu 
 
 ```bash
 # Auto-select style and layout based on content
-/baoyu-xhs-images posts/ai-future/article.md
+/michi-xhs-images posts/ai-future/article.md
 
 # Specify style
-/baoyu-xhs-images posts/ai-future/article.md --style notion
+/michi-xhs-images posts/ai-future/article.md --style notion
 
 # Specify layout
-/baoyu-xhs-images posts/ai-future/article.md --layout dense
+/michi-xhs-images posts/ai-future/article.md --layout dense
 
 # Combine style and layout
-/baoyu-xhs-images posts/ai-future/article.md --style tech --layout list
+/michi-xhs-images posts/ai-future/article.md --style tech --layout list
 
 # Direct content input
-/baoyu-xhs-images
+/michi-xhs-images
 [paste content]
 
 # Direct input with options
-/baoyu-xhs-images --style bold --layout comparison
+/michi-xhs-images --style bold --layout comparison
 [paste content]
 ```
 
