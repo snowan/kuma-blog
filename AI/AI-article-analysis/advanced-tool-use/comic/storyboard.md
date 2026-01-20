@@ -16,6 +16,8 @@ language: en
 **Text**: "Claude's Three Tool Superpowers"
 **Subtitle**: "Discover, Execute, Learn"
 
+![Cover](00-cover.png)
+
 ---
 
 ## Page 1: The Problem
@@ -29,6 +31,8 @@ language: en
 ### Panel 2 (Bottom 40%)
 **Visual**: Three smaller images showing: wrong tool picked, slow clock (latency), error message
 **Caption**: "The result? Wrong tools. Slow inference. Malformed calls."
+
+![Page 1: The Problem](01-page-problem.png)
 
 ---
 
@@ -45,6 +49,8 @@ language: en
 
 ### Bottom Stats Bar
 **Text**: "85% fewer tokens | Accuracy: 49% → 74%"
+
+![Page 2: Tool Search](02-page-tool-search.png)
 
 ---
 
@@ -66,6 +72,8 @@ language: en
 ### Bottom Stats Bar
 **Text**: "37% fewer tokens | 19 fewer inference passes"
 
+![Page 3: Programmatic Tool Calling](03-page-ptc.png)
+
 ---
 
 ## Page 4: Superpower #3 - Tool Use Examples
@@ -81,6 +89,8 @@ language: en
 
 ### Bottom Stats Bar
 **Text**: "Accuracy: 72% → 90% on complex parameters"
+
+*[Image not yet generated]*
 
 ---
 
@@ -105,12 +115,14 @@ language: en
 **Visual**: "Try it today!" with link bubble
 **Text**: "anthropic.com/engineering/advanced-tool-use"
 
+*[Image not yet generated]*
+
 ---
 
 ## Characters Reference
 
 ### Michi (Protagonist)
-- Cute calico cat (三毛猫) with round glasses
+- Cute calico cat with round glasses
 - Expressions: overwhelmed → curious → triumphant
 - Wears a small blue bow/ribbon
 - Cream, orange, and gray patches
