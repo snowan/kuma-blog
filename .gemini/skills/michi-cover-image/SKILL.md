@@ -99,7 +99,7 @@ Save to `./cover-image/[topic-slug]/`:
 ```
 cover-image/
 └── ai-future/
-    ├── source.md           # Saved pasted content
+    ├── source-link.md           # Saved pasted content
     ├── prompts/
     │   └── cover.md
     └── cover.png
@@ -113,9 +113,10 @@ If target directory exists, rename existing to `<dirname>-backup-YYYYMMDD-HHMMSS
 
 ### Step 1: Analyze Content
 
-1. **Save source content** (if not already a file):
+1. **Save source reference** (if URL provided):
    - If user provides a file path: use as-is
-   - If user pastes content: save to `source.md` in target directory
+   - If user provides a URL: save link to `source-link.md` (not full content)
+   - If user pastes content: save reference note to `source-link.md`
 
 2. **Extract key information**:
    - **Main topic**: What is the article about?

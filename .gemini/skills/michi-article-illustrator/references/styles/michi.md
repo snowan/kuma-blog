@@ -1,6 +1,6 @@
 # michi
 
-Simple cute calico cat in Japanese manga style - Michi's signature aesthetic for article illustrations
+Simple cute calico cat in manga style - Michi's signature aesthetic for article illustrations
 
 ## Color Palette
 
@@ -10,10 +10,10 @@ Simple cute calico cat in Japanese manga style - Michi's signature aesthetic for
 
 ## Visual Elements
 
-- Cute calico cat mascot (三毛猫) interacting with content concepts
+- Cute calico cat mascot (Michi) interacting with content concepts
 - Simple manga-style expressions, expressive reactions
 - Soft hand-drawn lines, sketch-like quality
-- Japanese kawaii aesthetic with simplicity
+- Kawaii aesthetic with simplicity
 - Cat demonstrating or reacting to article topics
 - Speech bubbles, thought clouds for emphasis
 - Paw prints, fish bones, yarn balls as subtle decorations
@@ -21,7 +21,7 @@ Simple cute calico cat in Japanese manga style - Michi's signature aesthetic for
 
 ## Typography
 
-- Clean Japanese-inspired hand lettering for any text in illustrations
+- Clean hand lettering in English for any text in illustrations
 - Rounded, friendly fonts
 
 ## Illustration Contexts
@@ -37,7 +37,7 @@ Simple cute calico cat in Japanese manga style - Michi's signature aesthetic for
 
 - Gentle, cozy, inviting atmosphere
 - Studio Ghibli-inspired warmth
-- Chi's Sweet Home (ちぃずスウィートホーム) vibes
+- Chi's Sweet Home vibes
 
 ## Best For
 

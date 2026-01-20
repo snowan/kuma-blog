@@ -10,7 +10,7 @@ Create original knowledge comics with multiple visual styles.
 ## Usage
 
 ```bash
-/michi-comic posts/turing-story/source.md
+/michi-comic posts/turing-story/source-link.md
 /michi-comic  # then paste content
 ```
 
@@ -57,7 +57,7 @@ Style × Layout × Aspect can be freely combined. Custom styles can be described
 
 ```
 [target]/
-├── source.md                      # Source content (if pasted, not file)
+├── source-link.md                      # Source content (if pasted, not file)
 ├── analysis.md                    # Deep analysis results (YAML+MD)
 ├── storyboard-chronological.md    # Variant A (preserved)
 ├── storyboard-thematic.md         # Variant B (preserved)
@@ -98,10 +98,11 @@ Style × Layout × Aspect can be freely combined. Custom styles can be described
 Read source content, save it if needed, and perform deep analysis.
 
 **Actions**:
-1. **Save source content** (if not already a file):
+1. **Save source reference** (if URL provided):
    - If user provides a file path: use as-is
-   - If user pastes content: save to `source.md` in target directory
-2. Read source content
+   - If user provides a URL: save link to `source-link.md` (not full content)
+   - If user pastes content: save reference note to `source-link.md`
+2. Fetch/read source content for analysis (do not save full content)
 3. **Deep analysis** following `references/analysis-framework.md`:
    - Target audience identification
    - Value proposition for readers

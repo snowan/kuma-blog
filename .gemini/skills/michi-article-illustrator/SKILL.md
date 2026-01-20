@@ -138,7 +138,7 @@ Save to `./illustrations/[topic-slug]/`:
 ```
 illustrations/
 └── ai-future/
-    ├── source.md
+    ├── source-link.md
     ├── outline.md
     ├── prompts/
     └── *.png
@@ -454,9 +454,9 @@ Typography: Clean hand-drawn lettering, simple sans-serif labels
 Colors: Cream white (#FFFEF2), soft orange (#FFD8A8), warm brown (#D4A574), charcoal (#4A4A4A)
 Background: Warm cream (#FFF8E7), soft paper texture
 Accents: Blush pink (#FFB6C1), gentle coral (#FF7F7F), soft sky blue (#87CEEB)
-Elements: Cute calico cat (三毛猫) mascot interacting with concepts, manga-style expressions, speech bubbles, paw prints
-Animation Feel: Studio Ghibli warmth, Chi's Sweet Home vibes, Japanese kawaii aesthetic
-Typography: Clean Japanese-inspired hand lettering, rounded friendly fonts
+Elements: Cute calico cat (Michi) mascot interacting with concepts, manga-style expressions, speech bubbles, paw prints
+Animation Feel: Studio Ghibli warmth, Chi's Sweet Home vibes, cozy kawaii aesthetic
+Typography: Clean hand lettering in English, rounded friendly fonts
 ```
 
 ## Notes

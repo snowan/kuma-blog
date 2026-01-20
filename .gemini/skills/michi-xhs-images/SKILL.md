@@ -96,7 +96,7 @@ Detailed layout definitions: `references/layouts/<layout>.md`
 
 ```
 [target]/
-├── source.md                       # Source content (if pasted)
+├── source-link.md                       # Source content (if pasted)
 ├── analysis.md                     # Deep analysis results
 ├── outline-style-[slug].md         # Variant A (e.g., outline-style-tech.md)
 ├── outline-style-[slug].md         # Variant B (e.g., outline-style-notion.md)
@@ -126,10 +126,11 @@ Detailed layout definitions: `references/layouts/<layout>.md`
 Read source content, save it if needed, and perform deep analysis.
 
 **Actions**:
-1. **Save source content** (if not already a file):
+1. **Save source reference** (if URL provided):
    - If user provides a file path: use as-is
-   - If user pastes content: save to `source.md` in target directory
-2. Read source content
+   - If user provides a URL: save link to `source-link.md` (not full content)
+   - If user pastes content: save reference note to `source-link.md`
+2. Read/fetch source content for analysis (do not save full content)
 3. **Deep analysis** following `references/analysis-framework.md`:
    - Content type classification (种草/干货/测评/教程/避坑...)
    - Hook analysis (爆款标题潜力)

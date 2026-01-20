@@ -106,7 +106,7 @@ Example: `/posts/ai-intro.md` → `/posts/ai-intro/slide-deck/`
 ### Without Content Path (Pasted Content)
 ```
 slide-deck/{topic-slug}/
-├── source.md
+├── source-link.md
 ├── outline.md
 ├── prompts/
 ├── *.png
@@ -122,7 +122,7 @@ If target directory exists, rename existing to `<dirname>-backup-YYYYMMDD-HHMMSS
 
 ### Step 1: Analyze Content
 
-1. Save source content (if pasted, save as `source.md`)
+1. Save source content (if pasted, save as `source-link.md`)
 2. Follow `references/analysis-framework.md` for deep content analysis
 3. Determine style (use `--style` or auto-select from signals)
 4. Detect languages (source vs. user preference)
