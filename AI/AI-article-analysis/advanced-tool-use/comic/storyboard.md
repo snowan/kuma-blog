@@ -1,5 +1,9 @@
 ---
 title: "Advanced Tool Use: Claude's Three Superpowers"
+source: https://www.anthropic.com/engineering/advanced-tool-use
+date: 2025-11-24
+company: Anthropic
+author: Anthropic Engineering Team
 narrative_approach: problem-solution
 style: michi
 layout: mixed
@@ -8,128 +12,127 @@ page_count: 6
 language: en
 ---
 
-# Storyboard
+# Comic: Claude's Three Tool Superpowers
+
+> **Source Article**: [Introducing advanced tool use on the Claude Developer Platform](https://www.anthropic.com/engineering/advanced-tool-use)  
+> **Published**: November 24, 2025 | **Company**: Anthropic
+
+---
 
 ## Page 0: Cover
-**Layout**: splash
-**Visual**: Michi the calico cat confidently juggling three glowing orbs (magnifying glass, code block, notebook) above a sea of tools. Title banner at top.
-**Text**: "Claude's Three Tool Superpowers"
+
+**Title**: "Claude's Three Tool Superpowers"  
 **Subtitle**: "Discover, Execute, Learn"
+
+Michi the calico cat confidently juggling three glowing magical orbs representing the three new features: Tool Search (magnifying glass), Programmatic Tool Calling (code block), and Tool Use Examples (notebook with checkmarks).
 
 ![Cover](00-cover.png)
 
 ---
 
 ## Page 1: The Problem
-**Layout**: 2 panels
 
-### Panel 1 (Top 60%)
-**Visual**: Michi buried under an avalanche of 100+ tool definition scrolls. Sweat drops. Eyes spinning. Token counter in corner showing "134K TOKENS! 💸"
-**Caption**: "When you connect 5 MCP servers..."
-**Speech Bubble**: "Too... many... tools... can't... think..."
+**Theme**: Context Overload
 
-### Panel 2 (Bottom 40%)
-**Visual**: Three smaller images showing: wrong tool picked, slow clock (latency), error message
-**Caption**: "The result? Wrong tools. Slow inference. Malformed calls."
+When you connect multiple MCP servers, tool definitions can consume 100K+ tokens before the conversation even starts. This leads to:
+- Wrong tool selection
+- Slow inference (latency)
+- Malformed API calls
+
+Michi is overwhelmed by an avalanche of 100+ tool scrolls, with a token counter showing "134K TOKENS! 💸"
 
 ![Page 1: The Problem](01-page-problem.png)
 
 ---
 
 ## Page 2: Superpower #1 - Tool Search
-**Layout**: comparison (before/after)
 
-### Panel 1 (Left)
-**Visual**: Michi with ALL tools dumped in context. Confused face. "72K tokens" label.
-**Caption**: "Before: Load everything upfront"
+**Theme**: On-Demand Discovery
 
-### Panel 2 (Right)  
-**Visual**: Michi with magnifying glass, only 3 relevant tools floating nearby. Happy face. "3K tokens ✨" label.
-**Caption**: "After: Search & load on-demand"
+| Before | After |
+|--------|-------|
+| All 72K tokens loaded upfront | Only 3K tokens loaded on-demand |
+| Confused, overwhelmed | Happy, efficient |
 
-### Bottom Stats Bar
-**Text**: "85% fewer tokens | Accuracy: 49% → 74%"
+**Key Metrics**:
+- 85% fewer tokens
+- Accuracy improved: 49% → 74%
+
+Michi uses a magnifying glass to search for exactly the tools needed, instead of loading everything.
 
 ![Page 2: Tool Search](02-page-tool-search.png)
 
 ---
 
 ## Page 3: Superpower #2 - Programmatic Tool Calling
-**Layout**: flow (3 connected panels)
 
-### Panel 1
-**Visual**: Traditional approach - Michi making 20 API calls, each result piling into brain. Exhausted.
-**Caption**: "Traditional: 20 calls = 20 inference passes"
+**Theme**: Code-Based Orchestration
 
-### Panel 2
-**Visual**: Michi writing Python code on a glowing tablet. Code shows `await asyncio.gather(...)`.
-**Caption**: "PTC: Claude writes orchestration code"
+Traditional approach: 20 API calls = 20 inference passes, all results pile into context.
 
-### Panel 3
-**Visual**: Michi receiving ONE clean result slip. 2000 receipts in trash bin labeled "processed but not in context".
-**Caption**: "Only the answer enters context"
+With PTC: Claude writes Python orchestration code, processes data in sandbox, only final result enters context.
 
-### Bottom Stats Bar
-**Text**: "37% fewer tokens | 19 fewer inference passes"
+**Key Metrics**:
+- 37% fewer tokens
+- 19 fewer inference passes
+- 2000 expense records → 3 names in output
+
+Michi writes Python code on a tablet, then receives just one clean result slip while 2000 receipts go to "processed" bin.
 
 ![Page 3: Programmatic Tool Calling](03-page-ptc.png)
 
 ---
 
 ## Page 4: Superpower #3 - Tool Use Examples
-**Layout**: comparison
 
-### Panel 1 (Top)
-**Visual**: JSON Schema document. Michi scratching head. Question marks around: "date format?", "ID pattern?", "when to escalate?"
-**Caption**: "Schema tells WHAT is valid..."
+**Theme**: Learning by Example
 
-### Panel 2 (Bottom)
-**Visual**: Same schema but with 3 example cards attached. Michi has lightbulb moment. Examples show: critical bug (full params), feature request (partial), simple task (minimal).
-**Caption**: "Examples show HOW to use it correctly"
+JSON Schema defines WHAT is structurally valid, but can't express:
+- Date format conventions
+- ID patterns (USR-12345 vs UUID)
+- When to include optional parameters
 
-### Bottom Stats Bar
-**Text**: "Accuracy: 72% → 90% on complex parameters"
+Tool Use Examples show HOW to use the tool correctly with 1-5 realistic examples.
 
-*[Image not yet generated]*
+**Key Metrics**:
+- Accuracy improved: 72% → 90% on complex parameters
+
+*[Image pending generation]*
 
 ---
 
 ## Page 5: Putting It Together
-**Layout**: standard (2x2 grid)
 
-### Panel 1: Layer Strategically
-**Visual**: Pyramid diagram: "Examples" at base, "PTC" in middle, "Search" at top. Michi pointing.
-**Caption**: "Start with your biggest bottleneck"
+**Theme**: Best Practices
 
-### Panel 2: Best Practice Icons
-**Visual**: Three icons with tips:
-- 🔍 "Keep 3-5 core tools loaded"
-- 💻 "Document return formats"
-- 📝 "1-5 examples per tool"
+1. **Layer strategically** - Start with your biggest bottleneck:
+   - Context bloat → Tool Search
+   - Large intermediate results → PTC
+   - Parameter errors → Examples
 
-### Panel 3: Victory Pose
-**Visual**: Michi confidently using all three powers. Efficient, happy, tools under control.
-**Caption**: "The well-equipped agent"
+2. **Quick tips**:
+   - 🔍 Keep 3-5 core tools always loaded
+   - 💻 Document return formats for PTC
+   - 📝 1-5 examples per tool
 
-### Panel 4: Call to Action
-**Visual**: "Try it today!" with link bubble
-**Text**: "anthropic.com/engineering/advanced-tool-use"
+3. **Call to Action**: Try it at anthropic.com/engineering/advanced-tool-use
 
-*[Image not yet generated]*
+*[Image pending generation]*
 
 ---
 
-## Characters Reference
+## Character Reference
 
 ### Michi (Protagonist)
-- Cute calico cat with round glasses
-- Expressions: overwhelmed → curious → triumphant
-- Wears a small blue bow/ribbon
-- Cream, orange, and gray patches
+| Attribute | Description |
+|-----------|-------------|
+| Species | Calico cat (cream, orange, gray patches) |
+| Accessory | Round glasses, blue bow/ribbon |
+| Expression Arc | Overwhelmed → Curious → Triumphant |
 
-### Visual Style Notes
+### Visual Style: michi
 - Warm cream backgrounds (#FFF8E7)
-- Soft hand-drawn lines
-- Manga-style expressions (sweat drops, sparkles)
+- Soft hand-drawn lines, manga aesthetic
 - Speech bubbles with rounded corners
-- Stats bars have clean, modern design
+- Stats bars with clean modern design
+- Studio Ghibli-inspired warmth
