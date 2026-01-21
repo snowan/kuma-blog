@@ -1,6 +1,5 @@
-# CEO Michi and the Agent Army
+# The Future of Enterprise Software
 
-> Adapted from: [The future of enterprise software](https://x.com/levie/status/2013018817610518642) by Aaron Levie
 
 > **Article Title** The future of enterprise software 
 > **Source**  [The future of enterprise software](https://x.com/levie/status/2013018817610518642) 
