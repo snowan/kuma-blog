@@ -2,9 +2,12 @@
 
 
 > **Article Title** The future of enterprise software 
+
 > **Source**  [The future of enterprise software](https://x.com/levie/status/2013018817610518642) 
+
 > **Author**  Aaron Levie 
- **Date**  2026-01-18 
+
+> **Date**  2026-01-18 
 
 ## Summary
 
