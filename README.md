@@ -4,12 +4,15 @@ A personal knowledge repository featuring AI research, technical learning notes,
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Last Updated](https://img.shields.io/badge/updated-2026--01-brightgreen)
+[![Blog](https://img.shields.io/badge/📚_Blog-GitBook-orange)](https://snowan.gitbook.io/study-notes/)
 
 ---
 
 ## 📖 Overview
 
 **Kuma Blog** is a comprehensive collection of technical writings, research analyses, and learning materials focused primarily on Artificial Intelligence, software engineering, and problem-solving. The repository serves as both a personal knowledge base and a resource for anyone interested in staying current with AI advancements.
+
+🔗 **Read the blog**: [snowan.gitbook.io/study-notes](https://snowan.gitbook.io/study-notes/)
 
 ---
 
