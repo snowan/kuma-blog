@@ -3,6 +3,7 @@ import logging
 from typing import Callable, Optional, Dict, Any
 from parsers.intent_parser import WorkflowIntent, IntentParser
 from executors.claude_executor import ClaudeCodeExecutor
+from executors.git_executor import GitExecutor
 from workflows.state_manager import WorkflowStateManager, WorkflowState
 
 logger = logging.getLogger(__name__)
@@ -11,6 +12,7 @@ class WorkflowOrchestrator:
     def __init__(self):
         self.parser = IntentParser()
         self.executor = ClaudeCodeExecutor()
+        self.git_executor = GitExecutor()
         self.state_manager = WorkflowStateManager()
 
     async def start_workflow(
@@ -199,3 +201,52 @@ class WorkflowOrchestrator:
             return " ".join(args)
 
         return ""
+
+    async def commit_workflow_results(
+        self,
+        workflow_id: str,
+        progress_callback: Callable
+    ) -> bool:
+        workflow = self.state_manager.get_workflow(workflow_id)
+        if not workflow:
+            return False
+
+        results = workflow.get("result_data", {})
+        intent_data = workflow["intent_data"]
+
+        # Collect all created files
+        all_files = []
+        for result in results.values():
+            if isinstance(result, dict):
+                all_files.extend(result.get("files_created", []))
+
+        if not all_files:
+            logger.warning("No files to commit")
+            return False
+
+        await progress_callback("📝 Committing to GitHub...")
+
+        # Generate commit message
+        workflow_type = "comic" if "baoyu-comic" in intent_data["skills"] else "content"
+        commit_message = self.git_executor.generate_commit_message(
+            workflow_type=workflow_type,
+            url=intent_data.get("url"),
+            files_created=all_files
+        )
+
+        # Add co-author
+        co_author = "Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
+
+        # Commit and push
+        git_result = await self.git_executor.commit_and_push(
+            files=all_files,
+            commit_message=commit_message,
+            co_author=co_author
+        )
+
+        if git_result["success"]:
+            await progress_callback(f"✅ Committed: {git_result['commit_hash'][:8]}")
+            return True
+        else:
+            await progress_callback(f"❌ Commit failed: {git_result['error']}")
+            return False
