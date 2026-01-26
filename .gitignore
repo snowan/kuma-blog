@@ -38,3 +38,4 @@ lib/
 AI/kuma-ai-agents/michi-telegram-bot/bot_state.db
 AI/kuma-ai-agents/michi-telegram-bot/__pycache__/
 AI/kuma-ai-agents/michi-telegram-bot/**/__pycache__/
+AI/kuma-ai-agents/michi-telegram-bot/venv/
