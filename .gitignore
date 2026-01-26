@@ -33,3 +33,8 @@ out/
 .DS_Store
 lib/
 .venv/
+
+# michi-telegram-bot
+AI/kuma-ai-agents/michi-telegram-bot/bot_state.db
+AI/kuma-ai-agents/michi-telegram-bot/__pycache__/
+AI/kuma-ai-agents/michi-telegram-bot/**/__pycache__/
