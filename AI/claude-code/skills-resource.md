@@ -5,6 +5,7 @@ https://github.com/cclank/news-aggregator-skill
 https://github.com/yizhiyanhua-ai/media-downloader?tab=readme-ov-file
 https://skills.sh/remotion-dev/skills/remotion-best-practices
 
+https://github.com/JimLiu/baoyu-skills/tree/main
 PleasePrompto/notebooklm-skill
 
 OthmanAdi/planning-with-files
