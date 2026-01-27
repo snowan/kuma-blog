@@ -50,12 +50,21 @@ pip install -r requirements.txt
 
 ### 5. Run Bot
 
+**Easy way (recommended):**
 ```bash
+./start_bot.sh
+```
+
+**Manual way:**
+```bash
+source venv/bin/activate
 python bot.py
 ```
 
 Expected output:
 ```
+✅ Virtual environment activated
+🤖 Starting michi_ai_bot...
 2026-01-26 10:00:00 - __main__ - INFO - Starting michi_ai_bot...
 2026-01-26 10:00:00 - __main__ - INFO - Bot started. Press Ctrl+C to stop.
 ```

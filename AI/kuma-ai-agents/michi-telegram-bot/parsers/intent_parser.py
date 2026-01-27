@@ -31,7 +31,8 @@ class IntentParser:
 
     def __init__(self):
         genai.configure(api_key=settings.gemini_api_key)
-        self.model = genai.GenerativeModel("gemini-2.0-flash-exp")
+        # Using gemini-1.5-flash for better quota limits and stability
+        self.model = genai.GenerativeModel("gemini-1.5-flash")
 
     async def parse(self, user_message: str) -> WorkflowIntent:
         url = self._extract_url(user_message)
