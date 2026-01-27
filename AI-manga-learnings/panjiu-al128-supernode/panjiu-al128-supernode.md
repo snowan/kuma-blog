@@ -46,52 +46,52 @@ At the **Apsara Conference 2025**, Alibaba Cloud unveiled its new-generation **P
 
 ## Visual Story
 
-> **Note**: Images pending generation. Prompts are ready in the `prompts/` directory.
+> **Note**: This visual story explores the key concepts of the Panjiu AL128 supernode architecture through a retro-tech lens.
 
 ### Cover: The Supernode Revolution
-*Prompt: [00-cover-supernode.md](./prompts/00-cover-supernode.md)*
+![Cover Image](./00-cover-supernode.png)
 
 A retro 1960s-70s style illustration featuring the massive AL128 server rack as an art deco industrial marvel, with Dr. Lin standing beside it for scale. Title "THE SUPERNODE REVOLUTION" in bold vintage typography.
 
 ---
 
 ### Page 1: The Growing Challenge
-*Prompt: [01-page-problem.md](./prompts/01-page-problem.md)*
+![The Growing Challenge](./01-page-problem.png)
 
 Visualizes the exponential growth of AI models (from billions to trillions of parameters), traditional servers struggling to keep up, and Dr. Lin introducing the supernode solution.
 
 ---
 
 ### Page 2: Meet the AL128 Supernode
-*Prompt: [02-page-supernode.md](./prompts/02-page-supernode.md)*
+![Meet the AL128](./02-page-supernode.png)
 
 Hero reveal of the AL128 with its 128 illuminated GPU panels, copper cooling pipes, and modular architecture. Includes blueprint-style cutaway diagrams and flexibility gauges.
 
 ---
 
 ### Page 3: ScaleUp Interconnection
-*Prompt: [03-page-scaleup.md](./prompts/03-page-scaleup.md)*
+![ScaleUp Interconnection](./03-page-scaleup.png)
 
 Explains the single-stage switching topology, comparing ALink protocol advantages over traditional Ethernet, achieving 14-28 Tbit/s bandwidth with ultra-low latency.
 
 ---
 
 ### Page 4: Three-Layer Architecture
-*Prompt: [04-page-layers.md](./prompts/04-page-layers.md)*
+![Three-Layer Architecture](./04-page-layers.png)
 
 Visualizes the complete interconnect architecture using metaphors: ScaleOut as city highways connecting supernode skyscrapers, DCN as vintage switchboard, and a nested circles summary diagram.
 
 ---
 
 ### Page 5: Future Directions
-*Prompt: [05-page-future.md](./prompts/05-page-future.md)*
+![Future Directions](./05-page-future.png)
 
 Four panels covering: breaking PCIe limits, native GPU memory access, topology simplification, and optical interconnection for the light-speed future.
 
 ---
 
 ### Page 6: Conclusion
-*Prompt: [06-page-conclusion.md](./prompts/06-page-conclusion.md)*
+![Conclusion](./06-page-conclusion.png)
 
 Futuristic data center vista with rows of glowing supernodes, CXL memory pools, and optical interconnects. Dr. Lin's closing statement: "128 GPUs per supernode. Ultra-low latency. The optimal balance for AI's next decade."
 
