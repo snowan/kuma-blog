@@ -11,7 +11,11 @@ orchestrator = WorkflowOrchestrator()
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle user text messages and pass directly to Claude Code"""
 
+    logger.info(f"📨 Received message from user {update.effective_user.id}: {update.message.text[:50]}...")
+    logger.info(f"🔑 Expected admin user ID: {settings.telegram_admin_user_id}")
+
     if update.effective_user.id != settings.telegram_admin_user_id:
+        logger.warning(f"⛔ Unauthorized access attempt from user {update.effective_user.id}")
         await update.message.reply_text("⛔ Unauthorized access.")
         return
 
