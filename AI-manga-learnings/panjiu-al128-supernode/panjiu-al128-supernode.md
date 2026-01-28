@@ -54,27 +54,39 @@ At the **Apsara Conference 2025**, Alibaba Cloud unveiled its new-generation **P
 ### Page 1: The Growing Challenge
 ![The Growing Challenge](./01-page-problem.png)
 
+AI models are growing exponentially from billions to trillions of parameters. Traditional servers struggle to keep up with these massive computing demands.
+
 ---
 
 ### Page 2: Meet the AL128 Supernode
 ![Meet the AL128](./02-page-supernode.png)
+
+The AL128 Supernode features 128 GPUs, a massive 350kW power supply, and a modular design that decouples CPU, GPU, and power resources for maximum flexibility.
 
 ---
 
 ### Page 3: ScaleUp Interconnection
 ![ScaleUp Interconnection](./03-page-scaleup.png)
 
+The ScaleUp architecture uses the non-Ethernet ALink protocol to achieve ultra-low latency and 14-28 Tbit/s bandwidth per GPU through single-stage switching.
+
 ---
 
 ### Page 4: Three-Layer Architecture
 ![Three-Layer Architecture](./04-page-layers.png)
+
+A three-layer interconnect system organizes mass-scale computing: ScaleUp for internal speed, ScaleOut for supernode clusters, and DCN for data center connectivity.
 
 ---
 
 ### Page 5: Future Directions
 ![Future Directions](./05-page-future.png)
 
+Future innovations focus on breaking PCIe limits, enabling native GPU memory access, simplifying topology, and adopting optical interconnections.
+
 ---
 
 ### Page 6: Conclusion
 ![Conclusion](./06-page-conclusion.png)
+
+With 128 GPUs working as one unit, the supernode offers the optimal balance of performance and latency for the next decade of AI infrastructure.
