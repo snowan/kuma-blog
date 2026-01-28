@@ -1,5 +1,4 @@
 python-telegram-bot==21.0.1
 python-dotenv==1.0.0
-google-generativeai>=0.8.0
 pydantic==2.10.0
 pydantic-settings==2.7.0

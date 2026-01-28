@@ -8,8 +8,6 @@ class Settings(BaseSettings):
     claude_code_bin: str = "/opt/homebrew/bin/claude"
     claude_code_working_dir: str
 
-    gemini_api_key: str
-
     git_user_name: str = "Claude Sonnet 4.5"
     git_user_email: str = "noreply@anthropic.com"
     git_default_branch: str = "master"
