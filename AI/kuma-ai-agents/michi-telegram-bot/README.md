@@ -19,7 +19,7 @@ Natural language interface to Claude Code content generation workflows.
 2. Create new bot: `/newbot`
 3. Choose name: "Michi AI Bot"
 4. Choose username: `michi_ai_bot`
-5. Copy token: `1234567890:ABCdefGHIjklMNOpqrsTUVwxyz`
+5. Copy token: <token>
 
 ### 2. Get Your Telegram User ID
 
