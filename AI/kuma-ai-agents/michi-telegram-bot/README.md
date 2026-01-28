@@ -4,12 +4,12 @@ Natural language interface to Claude Code content generation workflows.
 
 ## Features
 
-- 🤖 Natural language instruction parsing via Gemini LLM
-- 🎨 Content generation: manga comics, infographics, slides
+- 🤖 Direct Claude Code CLI integration for all query handling
+- 🎨 Content generation: manga comics, infographics, slides, and more
 - 📝 Automatic git commits with conventional messages
-- ✅ Confirmation flow for expensive operations
-- 📊 Real-time progress updates
+- 📊 Real-time progress updates from Claude
 - 🔒 Single-user authorization
+- ⚡ Simple architecture - Telegram message → Claude Code → Results
 
 ## Setup
 
@@ -37,8 +37,7 @@ nano .env  # Edit with your values
 Fill in:
 - `TELEGRAM_BOT_TOKEN`: From @BotFather
 - `TELEGRAM_ADMIN_USER_ID`: From @userinfobot
-- `GEMINI_API_KEY`: From https://makersuite.google.com/app/apikey
-- Other values should be correct by default
+- Other values should be correct by default (Claude Code binary path and working directory)
 
 ### 4. Install Dependencies
 
@@ -106,21 +105,28 @@ create infographic from https://example.com/paper.pdf, publish to X
 
 ## Architecture
 
+**Simplified Direct Integration:**
+
 ```
 Telegram Message
-  ↓
-Intent Parser (Gemini) → WorkflowIntent
-  ↓
-Workflow Orchestrator → Confirmation (if needed)
-  ↓                              ↓
-  ↓                        User confirms
-  ↓                              ↓
-Claude Code Executor ←───────────┘
-  ↓
-Git Executor → Commit & Push
-  ↓
+      ↓
+Message Handler (Authorization Check)
+      ↓
+Claude Code CLI --print
+  (Handles ALL interpretation & execution)
+      ↓
+Stream Results → Telegram Progress Updates
+      ↓
+Git Commit (Optional)
+      ↓
 Completion Message
 ```
+
+**No intermediary LLM!** Your message goes directly to Claude Code which:
+- Understands your intent
+- Executes appropriate skills
+- Generates content
+- Returns results
 
 ## File Structure
 
@@ -153,17 +159,14 @@ michi-telegram-bot/
 ### "Claude Code execution failed"
 - Verify Claude Code is installed: `which claude`
 - Check working directory exists and is correct
-- Ensure skills are available: `claude --list-skills`
+- Ensure you're authenticated: `claude --version`
+- Try running Claude Code manually to test: `claude "help me test"`
 
 ### Git commit fails
 - Check git is configured: `git config user.name`
 - Verify you're in a git repository
 - Ensure working directory has no conflicts
 
-### Gemini API errors
-- Verify API key is valid
-- Check you have Gemini API quota
-- Try regenerating key at https://makersuite.google.com
 
 ## Development
 

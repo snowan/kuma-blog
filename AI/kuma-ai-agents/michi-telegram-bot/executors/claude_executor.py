@@ -13,6 +13,75 @@ class ClaudeCodeExecutor:
         self.working_dir = Path(settings.claude_code_working_dir)
         self.timeout = settings.workflow_timeout_seconds
 
+    async def execute_direct(
+        self,
+        user_message: str,
+        progress_callback=None
+    ) -> Dict[str, Any]:
+        """
+        Execute Claude Code directly with user's message.
+        Claude will interpret the request and execute accordingly.
+        """
+        logger.info(f"Executing Claude Code with message: {user_message[:100]}...")
+
+        cmd = [
+            self.claude_bin,
+            "--print",
+            user_message
+        ]
+
+        result = {
+            "success": False,
+            "output": "",
+            "files_created": [],
+            "error": None
+        }
+
+        try:
+            process = await asyncio.create_subprocess_exec(
+                *cmd,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                cwd=str(self.working_dir)
+            )
+
+            # Collect all output
+            output_lines = []
+            async for line in self._read_stream_with_timeout(process.stdout):
+                decoded = line.decode().strip()
+                output_lines.append(decoded)
+
+                # Send progress updates
+                if progress_callback and decoded:
+                    await progress_callback(decoded[:200])  # Limit to 200 chars
+
+                # Try to extract file paths from output
+                if "Created file:" in decoded or "Wrote to" in decoded:
+                    # Simple extraction - improve as needed
+                    parts = decoded.split()
+                    for i, part in enumerate(parts):
+                        if part in ["file:", "to"] and i + 1 < len(parts):
+                            result["files_created"].append(parts[i + 1])
+
+            await asyncio.wait_for(process.wait(), timeout=self.timeout)
+
+            result["output"] = "\n".join(output_lines)
+            result["success"] = process.returncode == 0
+
+            if not result["success"]:
+                stderr = await process.stderr.read()
+                result["error"] = stderr.decode()
+
+        except asyncio.TimeoutError:
+            result["error"] = f"Execution timed out after {self.timeout}s"
+            logger.error(result["error"])
+            process.kill()
+        except Exception as e:
+            result["error"] = str(e)
+            logger.error(f"Execution failed: {e}")
+
+        return result
+
     async def execute_skill(
         self,
         skill_name: str,
