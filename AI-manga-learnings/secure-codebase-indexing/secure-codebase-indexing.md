@@ -16,27 +16,27 @@ Indexing large codebases efficiently and securely is a major challenge. Cursor a
 
 ### Cover
 ![Cover](./00-cover-secure-indexing.png)
-A split-screen composition contrasting the overwhelming task of manual indexing (The Mountain of Code) with the streamlined, glowing efficiency of Cursor's automated system (The Merkle Tree).
+By securely reusing a teammate's existing index, Cursor cuts time-to-first-query from hours to seconds on the largest repos.
 
 ### Page 1: The Mountain of Code
 ![Page 1](./01-page-secure-indexing.png)
-Our developer protagonist, Dev, is overwhelmed by the sheer volume of code in a new project. Dr. Index appears to introduce a better way, revealing the core concept: the Merkle Tree.
+The indexing pipeline normally requires uploading every file when a codebase is new to Cursor. For large repositories, computing embeddings for every chunk is an expensive step that can take a significant amount of time.
 
 ### Page 2: The Merkle Tree
 ![Page 2](./02-page-secure-indexing.png)
-Dr. Index demonstrates how the Merkle Tree works. Instead of re-scanning everything, the system tracks cryptographic hashes. When a single file changes (the red leaf), only that branch needs updating, making syncs incredibly fast.
+Cursor builds its first view of a codebase using a Merkle tree. This allows it to detect exactly which files and directories have changed by comparing cryptographic hashes, syncing only the specific branches where hashes differ.
 
 ### Page 3: The Shortcut (Simhash)
 ![Page 3](./03-page-secure-indexing.png)
-Dev worries about the initial download time. Dr. Index introduces "Simhash", a digital fingerprint that finds an existing index from a teammate to reuse, saving massive amounts of time.
+When a new user joins, the client computes a similarity hash (simhash) of their codebase. The server uses this to find an existing index from a teammate that matches, allowing the new user to reuse that index instead of building one from scratch.
 
 ### Page 4: Content Proofs
 ![Page 4](./04-page-secure-indexing.png)
-Addressing security concerns, Dr. Index shows how "Content Proofs" act as keys. The server only releases index data if the client can prove it already has the corresponding file content, preventing leaks.
+To guarantee security, the server uses Content Proofs. It checks the client's Merkle tree hashes against the stored index. If the client cannot prove it has the file content (via the hash), the server drops the result, preventing data leaks.
 
 ### Page 5: Fast & Secure
 ![Page 5](./05-page-secure-indexing.png)
-The result: Instant onboarding. Dev is coding happily with full intelligence support in seconds, celebrating the victory of speed and security with Dr. Index.
+This approach allows the client to query immediately and see results only for code it shares with the copied index. It dramatically reduces time-to-first-query from hours to seconds while maintaining strict access control.
 
 ---
 
