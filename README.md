@@ -32,6 +32,7 @@ kuma-blog/
 ├── AI-manga-learnings/          # AI paper summaries in visual/comic format
 │   ├── magma-agentic-memory/      # MAGMA paper visual breakdown
 │   ├── simplemem-lifelong-memory/ # SimpleMem paper analysis
+│   ├── openai-data-agent/         # OpenAI Data Agent comic
 │   └── future-of-enterprise-software/
 │
 ├── AI-slide-learnings/          # AI concepts in slide deck format
@@ -84,6 +85,8 @@ Deep-dive analyses of cutting-edge AI research papers, including:
 ### 💡 Visual Learning Content
 Unique visual breakdowns of complex AI concepts:
 - **AI Manga Learnings**: Research papers transformed into visual comic format
+  - OpenAI Data Agent (Kawaii Style)
+  - MAGMA Agentic Memory
 - **AI Slide Decks**: Presentation-style summaries of key AI topics
 
 ### 🧮 LeetCode Solutions
