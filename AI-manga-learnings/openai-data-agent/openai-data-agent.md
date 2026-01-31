@@ -4,6 +4,9 @@ source: "https://openai.com/index/inside-our-in-house-data-agent/"
 author: "Bonnie Xu, Aravind Suresh, and Emma Tang"
 company: "OpenAI"
 date: "2026-01-29"
+tags:
+  - "Engineering"
+summary: "How OpenAI built an in-house AI data agent that uses GPT-5, Codex, and memory to reason over massive datasets and deliver reliable insights in minutes."
 ---
 
 # Inside OpenAI’s in-house data agent
