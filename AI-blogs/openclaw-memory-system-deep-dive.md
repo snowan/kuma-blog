@@ -1,7 +1,7 @@
 ---
 title: "Deep Dive: How OpenClaw's Memory System Works"
 date: 2026-01-30
-author: "Xiaowei Wan"
+author: "Michi Meow"
 categories: ["AI Agents", "Engineering"]
 tags: ["OpenClaw", "Memory System", "RAG", "Vector Search", "TypeScript", "Deep Dive"]
 description: "A comprehensive look at OpenClaw's file-first memory system, exploring its hybrid search architecture, automatic memory flush, and implementation details."
