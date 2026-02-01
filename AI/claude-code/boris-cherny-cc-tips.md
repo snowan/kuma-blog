@@ -4,7 +4,7 @@
 *Tips sourced directly from the Claude Code team — January 31, 2026*
 
 
-![boris-cherny-cc-tips](./resources/boris-cherny-cc-tips.png)
+![boris-cherny-cc-tips](./resources/boris-cherny-cc-tips-0131)
 
 ---
 
