@@ -20,6 +20,8 @@ image: "AI-blogs/resources/paged-attention-overview.png"
 | **Throughput** | Baseline | 2-4x improvement |
 | **Memory sharing** | Not supported | Copy-on-write enabled |
 
+![alt text](resources/paged-attention-overview.png)
+
 ---
 
 ## The Problem: Why LLM Serving Is Memory-Hungry
@@ -114,6 +116,8 @@ New request needs 3GB contiguous memory: ❌ FAILS (despite having 4GB free!)
 > Studies show that existing LLM serving systems waste **60-80% of KV cache memory** due to fragmentation. This directly limits how many requests can be batched together, reducing throughput.
 
 ---
+
+![alt text](resources/kv-cache-fragmentation.png)
 
 ## The Solution: PagedAttention
 
