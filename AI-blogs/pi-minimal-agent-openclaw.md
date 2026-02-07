@@ -1,5 +1,7 @@
 # Pi: The Minimal Agent Philosophy — How Less Becomes More
 
+![Pi: The Minimal Agent Architecture](resources/pi-architecture.png)
+
 *A deep dive into Pi, the minimal coding agent powering OpenClaw, and why its "less is more" philosophy might be the future of AI agents.*
 
 ---
@@ -11,8 +13,6 @@ In January 2026, a project called [OpenClaw](https://openclaw.ai/) went viral. Y
 But beneath OpenClaw's impressive capabilities lies something more interesting: **Pi**, a minimal coding agent created by Mario Zechner. According to Armin Ronacher, Pi represents a paradigm shift in how we think about AI agents.
 
 > "Pi happens to be, at this point, the coding agent that I use almost exclusively." — Armin Ronacher
-
-![Pi: The Minimal Agent Architecture](infographic/pi-minimal-agent/pi-architecture.png)
 
 ## The Problem with Traditional Agents
 
