@@ -1,6 +1,7 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pathlib import Path
 
+
 class Settings(BaseSettings):
     telegram_bot_token: str
     telegram_admin_user_id: int
@@ -17,9 +18,8 @@ class Settings(BaseSettings):
     progress_message_max_length: int = 200
 
     model_config = SettingsConfigDict(
-        env_file=".env",
-        env_file_encoding="utf-8",
-        case_sensitive=False
+        env_file=".env", env_file_encoding="utf-8", case_sensitive=False
     )
+
 
 settings = Settings()

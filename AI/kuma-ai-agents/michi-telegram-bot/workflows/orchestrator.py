@@ -8,6 +8,7 @@ from workflows.state_manager import WorkflowStateManager, WorkflowState
 
 logger = logging.getLogger(__name__)
 
+
 class WorkflowOrchestrator:
     """Simplified orchestrator that passes requests directly to Claude Code"""
 
@@ -18,10 +19,7 @@ class WorkflowOrchestrator:
         self.state_manager = WorkflowStateManager()
 
     async def start_workflow(
-        self,
-        user_message: str,
-        chat_id: int,
-        progress_callback: Callable
+        self, user_message: str, chat_id: int, progress_callback: Callable
     ) -> str:
         """
         Start workflow by passing user message directly to Claude Code
@@ -41,10 +39,7 @@ class WorkflowOrchestrator:
             self.state_manager.create_workflow(
                 workflow_id=workflow_id,
                 chat_id=chat_id,
-                intent_data={
-                    "raw_text": intent.raw_text,
-                    "url": intent.url
-                }
+                intent_data={"raw_text": intent.raw_text, "url": intent.url},
             )
 
             # Execute directly with Claude Code
@@ -53,9 +48,7 @@ class WorkflowOrchestrator:
         except Exception as e:
             logger.error(f"Workflow start failed: {e}")
             self.state_manager.update_workflow_state(
-                workflow_id,
-                WorkflowState.FAILED,
-                {"error": str(e)}
+                workflow_id, WorkflowState.FAILED, {"error": str(e)}
             )
             raise
 
@@ -63,7 +56,7 @@ class WorkflowOrchestrator:
         self,
         workflow_id: str,
         progress_callback: Callable,
-        confirmed_options: Optional[Dict[str, Any]] = None
+        confirmed_options: Optional[Dict[str, Any]] = None,
     ) -> str:
         """Execute workflow by calling Claude Code CLI directly"""
 
@@ -75,46 +68,32 @@ class WorkflowOrchestrator:
         user_message = intent_data["raw_text"]
 
         try:
-            self.state_manager.update_workflow_state(
-                workflow_id,
-                WorkflowState.EXECUTING
-            )
+            self.state_manager.update_workflow_state(workflow_id, WorkflowState.EXECUTING)
 
             await progress_callback("⚙️ Executing with Claude Code...")
 
             # Execute Claude Code with user's raw message
             # Claude Code will handle all interpretation and skill execution
             result = await self.executor.execute_direct(
-                user_message=user_message,
-                progress_callback=progress_callback
+                user_message=user_message, progress_callback=progress_callback
             )
 
             if not result["success"]:
                 raise RuntimeError(f"Execution failed: {result['error']}")
 
             # Store results
-            self.state_manager.update_workflow_state(
-                workflow_id,
-                WorkflowState.COMPLETED,
-                result
-            )
+            self.state_manager.update_workflow_state(workflow_id, WorkflowState.COMPLETED, result)
 
             return workflow_id
 
         except Exception as e:
             logger.error(f"Workflow execution failed: {e}")
             self.state_manager.update_workflow_state(
-                workflow_id,
-                WorkflowState.FAILED,
-                {"error": str(e)}
+                workflow_id, WorkflowState.FAILED, {"error": str(e)}
             )
             raise
 
-    async def commit_workflow_results(
-        self,
-        workflow_id: str,
-        progress_callback: Callable
-    ) -> bool:
+    async def commit_workflow_results(self, workflow_id: str, progress_callback: Callable) -> bool:
         """Commit generated files to git"""
 
         workflow = self.state_manager.get_workflow(workflow_id)
@@ -135,9 +114,7 @@ class WorkflowOrchestrator:
 
         # Generate commit message
         commit_message = self.git_executor.generate_commit_message(
-            workflow_type="content",
-            url=intent_data.get("url"),
-            files_created=all_files
+            workflow_type="content", url=intent_data.get("url"), files_created=all_files
         )
 
         # Add co-author
@@ -145,9 +122,7 @@ class WorkflowOrchestrator:
 
         # Commit and push
         git_result = await self.git_executor.commit_and_push(
-            files=all_files,
-            commit_message=commit_message,
-            co_author=co_author
+            files=all_files, commit_message=commit_message, co_author=co_author
         )
 
         if git_result["success"]:

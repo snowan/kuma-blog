@@ -1,10 +1,11 @@
 """
-this is from huggingface agents learning course 
+this is from huggingface agents learning course
 
 agent couse: https://huggingface.co/learn/agents-course/
 
 notebook: https://huggingface.co/agents-course/notebooks/blob/main/unit1/dummy_agent_library.ipynb
 """
+
 import os
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
@@ -86,7 +87,7 @@ Now begin! Reminder to ALWAYS use the exact characters `Final Answer:` when you 
 
 
 # Since we are running the "text_generation", we need to add the right special tokens.
-prompt=f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
+prompt = f"""<|begin_of_text|><|start_header_id|>system<|end_header_id|>
 {SYSTEM_PROMPT}
 <|eot_id|><|start_header_id|>user<|end_header_id|>
 What's the weather in London ?
@@ -108,19 +109,21 @@ What's the weather in London ?
 output = client.text_generation(
     prompt,
     max_new_tokens=150,
-    stop=["Observation:"] # Let's stop before any actual function is called
+    stop=["Observation:"],  # Let's stop before any actual function is called
 )
 
 # print(output)
+
 
 # Dummy function
 def get_weather(location):
     return f"the weather in {location} is sunny with low temperatures. \n"
 
-get_weather('London')
+
+get_weather("London")
 
 # Let's concatenate the base prompt, the completion until function execution and the result of the function as an Observation
-new_prompt=prompt+output+get_weather('London')
+new_prompt = prompt + output + get_weather("London")
 
 
 final_output = client.text_generation(
