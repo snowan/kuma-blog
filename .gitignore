@@ -1,41 +1,38 @@
+# Editor / IDE
 .vscode/
-**/.env
-target/
-!.mvn/wrapper/maven-wrapper.jar
-
-*CLAUDE.md
-.cursorrules/
-.cursorrules
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-
-### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
 out/
 
+# Environment
+**/.env
+!**/.env.example
 
-
-/target
-/.mvn
-/.settings
-/.project
-/*.classpath
-/.apt_generated/
-/.factorypath
+# OS
 .DS_Store
-lib/
-.venv/
 
-# michi-telegram-bot
-AI/kuma-ai-agents/michi-telegram-bot/bot_state.db
-AI/kuma-ai-agents/michi-telegram-bot/__pycache__/
-AI/kuma-ai-agents/michi-telegram-bot/**/__pycache__/
-AI/kuma-ai-agents/michi-telegram-bot/venv/
+# Claude / Cursor
+*CLAUDE.md
+.cursorrules/
+.cursorrules
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Python data
+*.db
+
+# Node
+node_modules/
+
+# Build artifacts
+lib/
+target/
