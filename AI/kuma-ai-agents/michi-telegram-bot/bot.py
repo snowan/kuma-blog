@@ -6,7 +6,8 @@ from handlers.message_handler import handle_message
 from handlers.callback_handler import handle_callback_query
 
 logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=getattr(logging, settings.log_level.upper(), logging.INFO),
 )
 logger = logging.getLogger(__name__)
 

@@ -41,7 +41,7 @@ class ClaudeCodeExecutor:
 
                 # Send progress updates
                 if progress_callback and decoded:
-                    await progress_callback(decoded[:200])  # Limit to 200 chars
+                    await progress_callback(decoded[: settings.progress_message_max_length])
 
                 # Try to extract file paths from output
                 if "Created file:" in decoded or "Wrote to" in decoded:
@@ -64,9 +64,12 @@ class ClaudeCodeExecutor:
             result["error"] = f"Execution timed out after {self.timeout}s"
             logger.error(result["error"])
             process.kill()
-        except Exception as e:
+        except OSError as e:
             result["error"] = str(e)
-            logger.error(f"Execution failed: {e}")
+            logger.error(f"Failed to start subprocess: {e}")
+        except ValueError as e:
+            result["error"] = str(e)
+            logger.error(f"Invalid subprocess arguments: {e}")
 
         return result
 
@@ -120,9 +123,12 @@ class ClaudeCodeExecutor:
             result["error"] = f"Skill execution timed out after {self.timeout}s"
             logger.error(result["error"])
             process.kill()
-        except Exception as e:
+        except OSError as e:
             result["error"] = str(e)
-            logger.error(f"Skill execution failed: {e}")
+            logger.error(f"Failed to start subprocess: {e}")
+        except ValueError as e:
+            result["error"] = str(e)
+            logger.error(f"Invalid subprocess arguments: {e}")
 
         return result
 

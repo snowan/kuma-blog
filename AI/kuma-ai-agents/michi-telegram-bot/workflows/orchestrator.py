@@ -79,7 +79,7 @@ class WorkflowOrchestrator:
             )
 
             if not result["success"]:
-                raise Exception(f"Execution failed: {result['error']}")
+                raise RuntimeError(f"Execution failed: {result['error']}")
 
             # Store results
             self.state_manager.update_workflow_state(workflow_id, WorkflowState.COMPLETED, result)
