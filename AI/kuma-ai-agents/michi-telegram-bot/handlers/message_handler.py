@@ -1,5 +1,6 @@
 import logging
 from telegram import Update
+from telegram.error import TelegramError
 from telegram.ext import ContextTypes
 from config import settings
 from workflows.orchestrator import WorkflowOrchestrator
@@ -29,7 +30,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if msg:
             try:
                 await status_message.edit_text(f"🤖 {msg}")
-            except Exception as e:
+            except TelegramError as e:
                 logger.warning(f"Failed to update status: {e}")
 
     try:
@@ -50,7 +51,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         logger.error(f"Message handling failed: {e}", exc_info=True)
-        await status_message.edit_text(f"❌ Error: {str(e)[:200]}")
+        await status_message.edit_text(
+            f"❌ Error: {str(e)[:settings.progress_message_max_length]}"
+        )
 
 async def _send_completion_message(update: Update, workflow_id: str, workflow: dict):
     """Send workflow completion summary"""

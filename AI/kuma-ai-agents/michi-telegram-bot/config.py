@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     git_default_branch: str = "master"
 
     workflow_timeout_seconds: int = 1800
+    log_level: str = "INFO"
+    progress_message_max_length: int = 200
 
     model_config = SettingsConfigDict(
         env_file=".env",
