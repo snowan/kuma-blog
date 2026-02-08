@@ -20,7 +20,6 @@ def extract_file_paths(line: str) -> List[str]:
     return paths
 
 
-
 class ClaudeCodeExecutor:
     def __init__(self):
         self.claude_bin = settings.claude_code_bin
