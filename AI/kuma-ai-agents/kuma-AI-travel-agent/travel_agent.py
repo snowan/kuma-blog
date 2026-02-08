@@ -18,9 +18,10 @@ genai.configure(api_key=GEMINI_API_KEY)
 # Initialize console for rich output
 console = Console()
 
+
 class TravelAgent:
     """AI Travel Agent that generates travel itineraries using Google's Gemini model."""
-    
+
     def __init__(self, model_config: Optional[Dict[str, Any]] = None):
         """Initialize the TravelAgent with default or custom model configuration."""
         self.default_config = {
@@ -30,11 +31,11 @@ class TravelAgent:
             "top_k": 40,
             "max_output_tokens": 2000,
         }
-        
+
         # Update default config with any custom config provided
         if model_config:
             self.default_config.update(model_config)
-        
+
         self.model = genai.GenerativeModel(
             model_name=self.default_config["model"],
             generation_config={
@@ -42,19 +43,19 @@ class TravelAgent:
                 "top_p": self.default_config["top_p"],
                 "top_k": self.default_config["top_k"],
                 "max_output_tokens": self.default_config["max_output_tokens"],
-            }
+            },
         )
-    
+
     def generate_itinerary(self, origin: str, destination: str, days: int) -> str:
         """Generate a travel itinerary based on the given parameters."""
         prompt = self._build_prompt(origin, destination, days)
-        
+
         try:
             response = self.model.generate_content(prompt)
             return response.text
         except Exception as e:
             return f"Error generating itinerary: {str(e)}"
-    
+
     def _build_prompt(self, origin: str, destination: str, days: int) -> str:
         """Build the system prompt for the travel agent."""
         return f"""You are an AI travel agent specializing in creating exciting and practical travel itineraries. 
@@ -80,26 +81,34 @@ Format the response in clear Markdown with appropriate headings (## for option t
 Make the itinerary practical, realistic, and tailored to the destination's highlights.
 """
 
+
 def main():
     """Main function to run the Travel Agent CLI."""
     import argparse
-    
+
     # Set up argument parser
-    parser = argparse.ArgumentParser(description='Kuma AI Travel Agent - Generate travel itineraries')
-    parser.add_argument('--from', dest='origin', help='Departure location', required=False)
-    parser.add_argument('--to', dest='destination', help='Destination', required=False)
-    parser.add_argument('--days', type=int, help='Number of days for the trip', required=False)
-    parser.add_argument('--temp', type=float, default=0.4, 
-                       help='Creativity level (0.0-1.0, default: 0.4)', required=False)
-    
+    parser = argparse.ArgumentParser(
+        description="Kuma AI Travel Agent - Generate travel itineraries"
+    )
+    parser.add_argument("--from", dest="origin", help="Departure location", required=False)
+    parser.add_argument("--to", dest="destination", help="Destination", required=False)
+    parser.add_argument("--days", type=int, help="Number of days for the trip", required=False)
+    parser.add_argument(
+        "--temp",
+        type=float,
+        default=0.4,
+        help="Creativity level (0.0-1.0, default: 0.4)",
+        required=False,
+    )
+
     args = parser.parse_args()
-    
+
     console.print("🌍 [bold blue]Welcome to Kuma AI Travel Agent![/bold blue]\n")
-    
+
     # Get user input if not provided as arguments
     origin = args.origin or console.input("✈️  [bold]Where are you traveling from?[/bold] ")
     destination = args.destination or console.input("🌎 [bold]Where would you like to go?[/bold] ")
-    
+
     if args.days is not None:
         days = args.days
         if days <= 0:
@@ -114,25 +123,28 @@ def main():
                 console.print("[red]Please enter a positive number of days.[/red]")
             except ValueError:
                 console.print("[red]Please enter a valid number.[/red]")
-    
+
     # Configure model parameters
     config = {"temperature": max(0.0, min(1.0, args.temp))}
-    
-    console.print(f"\n[bold]Generating your {days}-day trip from {origin} to {destination}...[/bold]")
+
+    console.print(
+        f"\n[bold]Generating your {days}-day trip from {origin} to {destination}...[/bold]"
+    )
     console.print(f"[dim]Creativity level: {config['temperature']}[/dim]\n")
-    
+
     try:
         # Create and use the travel agent
         agent = TravelAgent(model_config=config)
         itinerary = agent.generate_itinerary(origin, destination, days)
-        
+
         # Display the generated itinerary
         console.print(Markdown(itinerary))
-        
+
         console.print("\n✨ [bold green]Happy travels![/bold green] ✨")
     except Exception as e:
         console.print(f"\n[red]Error: {str(e)}[/red]")
         console.print("Please check your internet connection and API key in the .env file.")
+
 
 if __name__ == "__main__":
     main()

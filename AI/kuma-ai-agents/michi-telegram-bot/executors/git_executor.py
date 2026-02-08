@@ -1,10 +1,12 @@
 import asyncio
 import logging
+import subprocess
 from pathlib import Path
 from typing import List, Optional
 from config import settings
 
 logger = logging.getLogger(__name__)
+
 
 class GitExecutor:
     def __init__(self):
@@ -14,16 +16,9 @@ class GitExecutor:
         self.default_branch = settings.git_default_branch
 
     async def commit_and_push(
-        self,
-        files: List[str],
-        commit_message: str,
-        co_author: Optional[str] = None
+        self, files: List[str], commit_message: str, co_author: Optional[str] = None
     ) -> dict:
-        result = {
-            "success": False,
-            "commit_hash": None,
-            "error": None
-        }
+        result = {"success": False, "commit_hash": None, "error": None}
 
         try:
             # Stage files
@@ -38,29 +33,22 @@ class GitExecutor:
                 full_message += f"\n\n{co_author}"
 
             # Commit
-            await self._run_git_command([
-                "commit",
-                "-m", full_message
-            ])
+            await self._run_git_command(["commit", "-m", full_message])
 
             # Get commit hash
-            commit_hash = await self._run_git_command([
-                "rev-parse", "HEAD"
-            ])
+            commit_hash = await self._run_git_command(["rev-parse", "HEAD"])
             result["commit_hash"] = commit_hash.strip()
 
             logger.info(f"Created commit {result['commit_hash'][:8]}")
 
             # Push to remote
-            await self._run_git_command([
-                "push", "origin", self.default_branch
-            ])
+            await self._run_git_command(["push", "origin", self.default_branch])
 
             logger.info("Pushed to remote")
 
             result["success"] = True
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             result["error"] = str(e)
             logger.error(f"Git operation failed: {e}")
 
@@ -73,21 +61,18 @@ class GitExecutor:
             *cmd,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
-            cwd=str(self.working_dir)
+            cwd=str(self.working_dir),
         )
 
         stdout, stderr = await process.communicate()
 
         if process.returncode != 0:
-            raise Exception(f"Git command failed: {stderr.decode()}")
+            raise subprocess.SubprocessError(f"Git command failed: {stderr.decode()}")
 
         return stdout.decode()
 
     def generate_commit_message(
-        self,
-        workflow_type: str,
-        url: Optional[str] = None,
-        files_created: List[str] = []
+        self, workflow_type: str, url: Optional[str] = None, files_created: List[str] = []
     ) -> str:
         # Extract project name from files
         project_name = "content"

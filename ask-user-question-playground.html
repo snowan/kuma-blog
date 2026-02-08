@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AskUserQuestion Layout Explorer</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      grid-template-rows: 1fr auto;
+      height: 100vh;
+      gap: 1px;
+      background: #1a1a1a;
+    }
+
+    .controls {
+      background: #121212;
+      padding: 24px;
+      overflow-y: auto;
+      grid-row: 1 / 3;
+    }
+
+    .preview {
+      background: #0f0f0f;
+      padding: 48px;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .prompt-output {
+      background: #161616;
+      padding: 20px 24px;
+      border-top: 1px solid #2a2a2a;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .section {
+      margin-bottom: 32px;
+    }
+
+    .section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #888;
+      margin-bottom: 16px;
+      font-weight: 600;
+    }
+
+    .control {
+      margin-bottom: 20px;
+    }
+
+    .control-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 13px;
+      color: #b0b0b0;
+    }
+
+    .control-value {
+      color: #60a5fa;
+      font-weight: 500;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 12px;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: #2a2a2a;
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #60a5fa;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      background: #3b82f6;
+      transform: scale(1.1);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #60a5fa;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    select, input[type="text"] {
+      width: 100%;
+      padding: 8px 12px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #e0e0e0;
+      font-size: 13px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    select:focus, input[type="text"]:focus {
+      border-color: #60a5fa;
+    }
+
+    .toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+
+    .toggle input {
+      width: 42px;
+      height: 24px;
+      position: relative;
+      cursor: pointer;
+      -webkit-appearance: none;
+      background: #2a2a2a;
+      border-radius: 12px;
+      outline: none;
+      transition: background 0.2s;
+    }
+
+    .toggle input:checked {
+      background: #60a5fa;
+    }
+
+    .toggle input::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      top: 3px;
+      left: 3px;
+      background: white;
+      transition: transform 0.2s;
+    }
+
+    .toggle input:checked::before {
+      transform: translateX(18px);
+    }
+
+    .preset-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .preset-btn {
+      padding: 10px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 6px;
+      color: #b0b0b0;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+      font-weight: 500;
+    }
+
+    .preset-btn:hover {
+      background: #2a2a2a;
+      border-color: #3a3a3a;
+      color: #e0e0e0;
+    }
+
+    .preset-btn.active {
+      background: #60a5fa;
+      border-color: #60a5fa;
+      color: white;
+    }
+
+    .copy-btn {
+      padding: 10px 18px;
+      background: #60a5fa;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 12px;
+      transition: all 0.15s;
+      font-family: inherit;
+    }
+
+    .copy-btn:hover {
+      background: #3b82f6;
+    }
+
+    .copy-btn:active {
+      transform: scale(0.98);
+    }
+
+    .copy-btn.copied {
+      background: #10b981;
+    }
+
+    /* Question Component Styles */
+    .question-container {
+      max-width: 100%;
+      width: 100%;
+    }
+
+    .question-header {
+      margin-bottom: var(--header-spacing);
+    }
+
+    .question-chip {
+      display: inline-block;
+      padding: var(--chip-padding);
+      background: var(--chip-bg);
+      border-radius: var(--chip-radius);
+      font-size: var(--chip-size);
+      font-weight: 600;
+      color: var(--chip-color);
+      letter-spacing: 0.3px;
+      margin-bottom: var(--chip-margin);
+      text-transform: uppercase;
+    }
+
+    .question-text {
+      font-size: var(--question-size);
+      font-weight: var(--question-weight);
+      color: var(--question-color);
+      line-height: 1.5;
+    }
+
+    .options-container {
+      display: var(--options-display);
+      gap: var(--options-gap);
+      margin-top: var(--options-margin);
+    }
+
+    .option-card {
+      background: var(--card-bg);
+      border: var(--card-border-width) solid var(--card-border-color);
+      border-radius: var(--card-radius);
+      padding: var(--card-padding);
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .option-card:hover {
+      border-color: var(--card-hover-border);
+      background: var(--card-hover-bg);
+      transform: var(--card-hover-transform);
+    }
+
+    .option-card.selected {
+      border-color: var(--card-selected-border);
+      background: var(--card-selected-bg);
+    }
+
+    .option-label {
+      font-size: var(--label-size);
+      font-weight: var(--label-weight);
+      color: var(--label-color);
+      margin-bottom: var(--label-margin);
+    }
+
+    .option-description {
+      font-size: var(--desc-size);
+      color: var(--desc-color);
+      line-height: 1.5;
+    }
+
+    .radio-indicator {
+      width: 18px;
+      height: 18px;
+      border: 2px solid var(--card-border-color);
+      border-radius: 50%;
+      position: absolute;
+      top: var(--card-padding);
+      right: var(--card-padding);
+      transition: all 0.2s;
+    }
+
+    .option-card.selected .radio-indicator {
+      border-color: var(--card-selected-border);
+      background: var(--card-selected-border);
+    }
+
+    .option-card.selected .radio-indicator::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 11px;
+      font-weight: bold;
+    }
+
+    h1 {
+      font-size: 18px;
+      margin-bottom: 24px;
+      color: #fff;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="controls">
+      <h1>Layout Explorer</h1>
+
+      <div class="section">
+        <div class="section-title">Presets</div>
+        <div class="preset-buttons">
+          <button class="preset-btn" onclick="applyPreset('compact')">Compact</button>
+          <button class="preset-btn" onclick="applyPreset('spacious')">Spacious</button>
+          <button class="preset-btn" onclick="applyPreset('cards')">Cards</button>
+          <button class="preset-btn" onclick="applyPreset('minimal')">Minimal</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Layout</div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Options Display</span>
+          </label>
+          <select id="optionsDisplay" onchange="updateState('optionsDisplay', this.value)">
+            <option value="flex">Vertical Stack</option>
+            <option value="grid">Grid (2 columns)</option>
+          </select>
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Options Gap</span>
+            <span class="control-value"><span id="optionsGapValue">12</span>px</span>
+          </label>
+          <input type="range" id="optionsGap" min="0" max="32" value="12" oninput="updateSlider('optionsGap', this.value, 'px')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Options Top Margin</span>
+            <span class="control-value"><span id="optionsMarginValue">20</span>px</span>
+          </label>
+          <input type="range" id="optionsMargin" min="8" max="48" value="20" oninput="updateSlider('optionsMargin', this.value, 'px')">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Header</div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Show Chip</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="showChip" checked onchange="updateState('showChip', this.checked)">
+          </label>
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Chip Size</span>
+            <span class="control-value"><span id="chipSizeValue">10</span>px</span>
+          </label>
+          <input type="range" id="chipSize" min="8" max="14" value="10" oninput="updateSlider('chipSize', this.value, 'px')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Chip Padding</span>
+            <span class="control-value"><span id="chipPaddingValue">4px 10px</span></span>
+          </label>
+          <input type="range" id="chipPadding" min="2" max="12" value="4" oninput="updateChipPadding(this.value)">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Header Spacing</span>
+            <span class="control-value"><span id="headerSpacingValue">16</span>px</span>
+          </label>
+          <input type="range" id="headerSpacing" min="8" max="32" value="16" oninput="updateSlider('headerSpacing', this.value, 'px')">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Question Text</div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Font Size</span>
+            <span class="control-value"><span id="questionSizeValue">16</span>px</span>
+          </label>
+          <input type="range" id="questionSize" min="13" max="22" value="16" oninput="updateSlider('questionSize', this.value, 'px')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Font Weight</span>
+            <span class="control-value"><span id="questionWeightValue">500</span></span>
+          </label>
+          <input type="range" id="questionWeight" min="400" max="700" step="100" value="500" oninput="updateSlider('questionWeight', this.value, '')">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Option Cards</div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Border Radius</span>
+            <span class="control-value"><span id="cardRadiusValue">8</span>px</span>
+          </label>
+          <input type="range" id="cardRadius" min="0" max="20" value="8" oninput="updateSlider('cardRadius', this.value, 'px')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Padding</span>
+            <span class="control-value"><span id="cardPaddingValue">16</span>px</span>
+          </label>
+          <input type="range" id="cardPadding" min="8" max="32" value="16" oninput="updateSlider('cardPadding', this.value, 'px')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Border Width</span>
+            <span class="control-value"><span id="cardBorderWidthValue">1</span>px</span>
+          </label>
+          <input type="range" id="cardBorderWidth" min="0" max="3" value="1" oninput="updateSlider('cardBorderWidth', this.value, 'px')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Show Radio Indicator</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="showRadio" checked onchange="updateState('showRadio', this.checked)">
+          </label>
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Hover Transform</span>
+          </label>
+          <select id="hoverTransform" onchange="updateState('hoverTransform', this.value)">
+            <option value="none">None</option>
+            <option value="translateY(-2px)">Lift Up</option>
+            <option value="scale(1.02)">Scale</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Typography</div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Label Size</span>
+            <span class="control-value"><span id="labelSizeValue">14</span>px</span>
+          </label>
+          <input type="range" id="labelSize" min="12" max="18" value="14" oninput="updateSlider('labelSize', this.value, 'px')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Label Weight</span>
+            <span class="control-value"><span id="labelWeightValue">600</span></span>
+          </label>
+          <input type="range" id="labelWeight" min="400" max="700" step="100" value="600" oninput="updateSlider('labelWeight', this.value, '')">
+        </div>
+
+        <div class="control">
+          <label class="control-label">
+            <span>Description Size</span>
+            <span class="control-value"><span id="descSizeValue">13</span>px</span>
+          </label>
+          <input type="range" id="descSize" min="11" max="16" value="13" oninput="updateSlider('descSize', this.value, 'px')">
+        </div>
+      </div>
+    </div>
+
+    <div class="preview">
+      <div class="question-container">
+        <div class="question-header">
+          <div class="question-chip" id="questionChip">Auth Method</div>
+          <div class="question-text">Which authentication method should we use?</div>
+        </div>
+        <div class="options-container">
+          <div class="option-card selected">
+            <div class="radio-indicator"></div>
+            <div class="option-label">OAuth 2.0 (Recommended)</div>
+            <div class="option-description">Industry standard, supports multiple providers, secure token-based flow with refresh tokens.</div>
+          </div>
+          <div class="option-card">
+            <div class="radio-indicator"></div>
+            <div class="option-label">JWT</div>
+            <div class="option-description">Stateless authentication with signed tokens, good for microservices and API authentication.</div>
+          </div>
+          <div class="option-card">
+            <div class="radio-indicator"></div>
+            <div class="option-label">Session-based</div>
+            <div class="option-description">Traditional server-side sessions with cookies, simpler to implement but requires session storage.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-output">
+      <div id="promptText">Configure AskUserQuestion layout...</div>
+      <button class="copy-btn" onclick="copyPrompt()">Copy Prompt</button>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULTS = {
+      optionsDisplay: 'flex',
+      optionsGap: 12,
+      optionsMargin: 20,
+      showChip: true,
+      chipSize: 10,
+      chipPadding: 4,
+      chipMargin: 8,
+      chipRadius: 4,
+      headerSpacing: 16,
+      questionSize: 16,
+      questionWeight: 500,
+      cardRadius: 8,
+      cardPadding: 16,
+      cardBorderWidth: 1,
+      showRadio: true,
+      hoverTransform: 'none',
+      labelSize: 14,
+      labelWeight: 600,
+      labelMargin: 8,
+      descSize: 13
+    };
+
+    const state = { ...DEFAULTS };
+
+    const presets = {
+      compact: {
+        optionsDisplay: 'flex',
+        optionsGap: 8,
+        optionsMargin: 16,
+        chipSize: 9,
+        chipPadding: 3,
+        headerSpacing: 12,
+        questionSize: 14,
+        cardRadius: 6,
+        cardPadding: 12,
+        labelSize: 13,
+        descSize: 12
+      },
+      spacious: {
+        optionsDisplay: 'flex',
+        optionsGap: 20,
+        optionsMargin: 32,
+        chipSize: 11,
+        chipPadding: 6,
+        headerSpacing: 24,
+        questionSize: 18,
+        cardRadius: 12,
+        cardPadding: 24,
+        labelSize: 16,
+        descSize: 14
+      },
+      cards: {
+        optionsDisplay: 'grid',
+        optionsGap: 16,
+        optionsMargin: 24,
+        chipSize: 10,
+        cardRadius: 10,
+        cardPadding: 20,
+        cardBorderWidth: 2,
+        hoverTransform: 'translateY(-2px)',
+        showRadio: true
+      },
+      minimal: {
+        optionsDisplay: 'flex',
+        optionsGap: 12,
+        optionsMargin: 20,
+        showChip: false,
+        chipSize: 10,
+        headerSpacing: 16,
+        questionSize: 15,
+        questionWeight: 400,
+        cardRadius: 4,
+        cardPadding: 14,
+        cardBorderWidth: 1,
+        showRadio: false,
+        hoverTransform: 'none',
+        labelWeight: 500
+      }
+    };
+
+    function applyPreset(name) {
+      document.querySelectorAll('.preset-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const preset = presets[name];
+      Object.assign(state, DEFAULTS, preset);
+
+      // Update all controls
+      Object.keys(preset).forEach(key => {
+        const el = document.getElementById(key);
+        if (el) {
+          if (el.type === 'range') {
+            el.value = preset[key];
+            updateSlider(key, preset[key], el.id.includes('Size') || el.id.includes('Gap') || el.id.includes('Margin') || el.id.includes('Spacing') || el.id.includes('Radius') || el.id.includes('Padding') || el.id.includes('Width') ? 'px' : '');
+          } else if (el.type === 'checkbox') {
+            el.checked = preset[key];
+            updateState(key, preset[key]);
+          } else if (el.tagName === 'SELECT') {
+            el.value = preset[key];
+            updateState(key, preset[key]);
+          }
+        }
+      });
+
+      updateAll();
+    }
+
+    function updateSlider(key, value, unit) {
+      state[key] = parseFloat(value);
+      const valueEl = document.getElementById(key + 'Value');
+      if (valueEl) {
+        valueEl.textContent = value + unit;
+      }
+      updateAll();
+    }
+
+    function updateChipPadding(value) {
+      state.chipPadding = parseFloat(value);
+      document.getElementById('chipPaddingValue').textContent = `${value}px ${value * 2.5}px`;
+      updateAll();
+    }
+
+    function updateState(key, value) {
+      state[key] = value;
+      updateAll();
+    }
+
+    function updateAll() {
+      renderPreview();
+      updatePrompt();
+    }
+
+    function renderPreview() {
+      const root = document.querySelector('.question-container');
+
+      // CSS Variables
+      root.style.setProperty('--options-display', state.optionsDisplay === 'grid' ? 'grid' : 'flex');
+      root.style.setProperty('--options-gap', state.optionsGap + 'px');
+      root.style.setProperty('--options-margin', state.optionsMargin + 'px');
+      root.style.setProperty('--chip-size', state.chipSize + 'px');
+      root.style.setProperty('--chip-padding', `${state.chipPadding}px ${state.chipPadding * 2.5}px`);
+      root.style.setProperty('--chip-margin', state.chipMargin + 'px');
+      root.style.setProperty('--chip-radius', state.chipRadius + 'px');
+      root.style.setProperty('--chip-bg', '#1e40af');
+      root.style.setProperty('--chip-color', '#dbeafe');
+      root.style.setProperty('--header-spacing', state.headerSpacing + 'px');
+      root.style.setProperty('--question-size', state.questionSize + 'px');
+      root.style.setProperty('--question-weight', state.questionWeight);
+      root.style.setProperty('--question-color', '#f3f4f6');
+      root.style.setProperty('--card-bg', '#1a1a1a');
+      root.style.setProperty('--card-border-width', state.cardBorderWidth + 'px');
+      root.style.setProperty('--card-border-color', '#2a2a2a');
+      root.style.setProperty('--card-hover-border', '#3a3a3a');
+      root.style.setProperty('--card-hover-bg', '#202020');
+      root.style.setProperty('--card-selected-border', '#60a5fa');
+      root.style.setProperty('--card-selected-bg', '#1e3a5f');
+      root.style.setProperty('--card-radius', state.cardRadius + 'px');
+      root.style.setProperty('--card-padding', state.cardPadding + 'px');
+      root.style.setProperty('--card-hover-transform', state.hoverTransform);
+      root.style.setProperty('--label-size', state.labelSize + 'px');
+      root.style.setProperty('--label-weight', state.labelWeight);
+      root.style.setProperty('--label-color', '#e5e7eb');
+      root.style.setProperty('--label-margin', state.labelMargin + 'px');
+      root.style.setProperty('--desc-size', state.descSize + 'px');
+      root.style.setProperty('--desc-color', '#9ca3af');
+
+      // Grid columns
+      if (state.optionsDisplay === 'grid') {
+        document.querySelector('.options-container').style.gridTemplateColumns = 'repeat(2, 1fr)';
+      }
+
+      // Chip visibility
+      document.getElementById('questionChip').style.display = state.showChip ? 'inline-block' : 'none';
+
+      // Radio indicator visibility
+      document.querySelectorAll('.radio-indicator').forEach(el => {
+        el.style.display = state.showRadio ? 'block' : 'none';
+      });
+    }
+
+    function updatePrompt() {
+      const parts = [];
+      const changed = [];
+
+      // Layout changes
+      if (state.optionsDisplay !== DEFAULTS.optionsDisplay) {
+        changed.push(`options in ${state.optionsDisplay === 'grid' ? 'a 2-column grid' : 'a vertical stack'}`);
+      }
+
+      if (state.optionsGap !== DEFAULTS.optionsGap) {
+        const desc = state.optionsGap < 8 ? 'tight' : state.optionsGap > 16 ? 'generous' : 'moderate';
+        changed.push(`${desc} spacing between options (${state.optionsGap}px)`);
+      }
+
+      // Header changes
+      if (!state.showChip && DEFAULTS.showChip) {
+        changed.push('hide the chip header');
+      }
+
+      if (state.chipSize !== DEFAULTS.chipSize && state.showChip) {
+        changed.push(`chip text at ${state.chipSize}px`);
+      }
+
+      // Question text
+      if (state.questionSize !== DEFAULTS.questionSize) {
+        const desc = state.questionSize < 15 ? 'smaller' : state.questionSize > 17 ? 'larger' : 'standard';
+        changed.push(`${desc} question text (${state.questionSize}px)`);
+      }
+
+      if (state.questionWeight !== DEFAULTS.questionWeight) {
+        const desc = state.questionWeight <= 400 ? 'lighter' : state.questionWeight >= 600 ? 'bolder' : 'medium';
+        changed.push(`${desc} question weight (${state.questionWeight})`);
+      }
+
+      // Card styling
+      if (state.cardRadius !== DEFAULTS.cardRadius) {
+        const desc = state.cardRadius < 6 ? 'sharp' : state.cardRadius > 12 ? 'very rounded' : 'rounded';
+        changed.push(`${desc} option cards (${state.cardRadius}px radius)`);
+      }
+
+      if (state.cardPadding !== DEFAULTS.cardPadding) {
+        const desc = state.cardPadding < 14 ? 'compact' : state.cardPadding > 20 ? 'spacious' : 'standard';
+        changed.push(`${desc} card padding (${state.cardPadding}px)`);
+      }
+
+      if (state.hoverTransform !== DEFAULTS.hoverTransform && state.hoverTransform !== 'none') {
+        const desc = state.hoverTransform.includes('translateY') ? 'lift on hover' : 'scale on hover';
+        changed.push(desc);
+      }
+
+      if (!state.showRadio && DEFAULTS.showRadio) {
+        changed.push('hide radio indicators');
+      }
+
+      // Label typography
+      if (state.labelWeight !== DEFAULTS.labelWeight) {
+        const desc = state.labelWeight <= 400 ? 'lighter' : state.labelWeight >= 700 ? 'bolder' : 'medium';
+        changed.push(`${desc} option labels`);
+      }
+
+      let prompt;
+      if (changed.length === 0) {
+        prompt = 'Default AskUserQuestion layout with standard spacing, typography, and card styling.';
+      } else {
+        prompt = `Update the AskUserQuestion layout with: ${changed.join(', ')}.`;
+      }
+
+      document.getElementById('promptText').textContent = prompt;
+    }
+
+    function copyPrompt() {
+      const text = document.getElementById('promptText').textContent;
+      navigator.clipboard.writeText(text);
+
+      const btn = document.querySelector('.copy-btn');
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+
+      setTimeout(() => {
+        btn.textContent = 'Copy Prompt';
+        btn.classList.remove('copied');
+      }, 2000);
+    }
+
+    // Initialize
+    updateAll();
+  </script>
+</body>
+</html>

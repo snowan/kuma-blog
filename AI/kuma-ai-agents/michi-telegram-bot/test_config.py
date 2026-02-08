@@ -7,9 +7,7 @@ class TestSettingsDefaults:
     def test_required_fields_loaded(self):
         from config import settings
 
-        assert settings.telegram_bot_token == os.environ.get(
-            "TELEGRAM_BOT_TOKEN", "test-token-000"
-        )
+        assert settings.telegram_bot_token == os.environ.get("TELEGRAM_BOT_TOKEN", "test-token-000")
         assert isinstance(settings.telegram_admin_user_id, int)
 
     def test_default_values(self):

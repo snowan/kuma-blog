@@ -50,9 +50,7 @@ class TestExecuteDirect:
         mock_proc.wait = AsyncMock()
 
         with patch("asyncio.create_subprocess_exec", return_value=mock_proc):
-            executor._read_stream_with_timeout = _mock_stream_reader(
-                [b"line 1\n", b"line 2\n"]
-            )
+            executor._read_stream_with_timeout = _mock_stream_reader([b"line 1\n", b"line 2\n"])
             with patch("asyncio.wait_for", return_value=None):
                 result = await executor.execute_direct("test message", mock_progress)
 

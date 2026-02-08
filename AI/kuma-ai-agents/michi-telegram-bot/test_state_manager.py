@@ -38,7 +38,11 @@ class TestStateTransitions:
     def test_full_lifecycle(self, state_manager):
         state_manager.create_workflow("wf-lc", chat_id=100, intent_data={"url": "https://x.com"})
 
-        for target_state in [WorkflowState.EXECUTING, WorkflowState.COMMITTING, WorkflowState.COMPLETED]:
+        for target_state in [
+            WorkflowState.EXECUTING,
+            WorkflowState.COMMITTING,
+            WorkflowState.COMPLETED,
+        ]:
             state_manager.update_workflow_state("wf-lc", target_state)
             assert state_manager.get_workflow("wf-lc")["state"] == target_state
 
