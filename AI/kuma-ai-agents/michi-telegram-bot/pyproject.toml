@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Telegram bot for Claude Code automation"
 requires-python = ">=3.11"
 dependencies = [
-    "python-telegram-bot==21.11.1",
+    "python-telegram-bot==22.6",
     "python-dotenv==1.0.0",
     "pydantic==2.12.5",
     "pydantic-settings==2.12.0",
