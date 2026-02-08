@@ -1,5 +1,6 @@
 import pytest
-from workflows.state_manager import WorkflowStateManager, WorkflowState
+from models import WorkflowState
+from workflows.state_manager import WorkflowStateManager
 
 
 class TestWorkflowCreation:

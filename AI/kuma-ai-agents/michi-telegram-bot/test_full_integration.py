@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import AsyncMock, patch
+from models import WorkflowState
 from workflows.orchestrator import WorkflowOrchestrator
-from workflows.state_manager import WorkflowState
 
 
 @pytest.fixture

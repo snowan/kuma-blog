@@ -4,7 +4,7 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from executors.claude_executor import ClaudeCodeExecutor
+from executors.claude_executor import ClaudeCodeExecutor, extract_file_paths
 
 
 @pytest.fixture
@@ -20,6 +20,20 @@ def _mock_stream_reader(lines):
             yield line
 
     return fake_reader
+
+
+class TestExtractFilePaths:
+    def test_created_file(self):
+        assert extract_file_paths("Created file: /tmp/output.md") == ["/tmp/output.md"]
+
+    def test_wrote_to(self):
+        assert extract_file_paths("Wrote to /tmp/output.md") == ["/tmp/output.md"]
+
+    def test_no_match(self):
+        assert extract_file_paths("Just some regular output") == []
+
+    def test_empty_string(self):
+        assert extract_file_paths("") == []
 
 
 class TestFormatProgress:
