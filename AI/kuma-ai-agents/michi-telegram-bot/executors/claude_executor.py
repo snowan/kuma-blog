@@ -2,10 +2,23 @@ import asyncio
 import json
 import logging
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, List, Optional
 from config import settings
 
 logger = logging.getLogger(__name__)
+
+
+def extract_file_paths(line: str) -> List[str]:
+    """Extract created file paths from Claude Code output lines."""
+    paths = []
+    if "Created file:" not in line and "Wrote to" not in line:
+        return paths
+    parts = line.split()
+    for i, part in enumerate(parts):
+        if part in ("file:", "to") and i + 1 < len(parts):
+            paths.append(parts[i + 1])
+    return paths
+
 
 
 class ClaudeCodeExecutor:
@@ -43,13 +56,7 @@ class ClaudeCodeExecutor:
                 if progress_callback and decoded:
                     await progress_callback(decoded[: settings.progress_message_max_length])
 
-                # Try to extract file paths from output
-                if "Created file:" in decoded or "Wrote to" in decoded:
-                    # Simple extraction - improve as needed
-                    parts = decoded.split()
-                    for i, part in enumerate(parts):
-                        if part in ["file:", "to"] and i + 1 < len(parts):
-                            result["files_created"].append(parts[i + 1])
+                result["files_created"].extend(extract_file_paths(decoded))
 
             await asyncio.wait_for(process.wait(), timeout=self.timeout)
 

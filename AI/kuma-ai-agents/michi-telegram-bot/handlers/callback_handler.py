@@ -1,7 +1,9 @@
 import logging
 from telegram import Update
+from telegram.error import TelegramError
 from telegram.ext import ContextTypes
 from config import settings
+from models import WorkflowState
 from workflows.orchestrator import WorkflowOrchestrator
 
 logger = logging.getLogger(__name__)
@@ -42,7 +44,7 @@ async def _handle_confirmation(query, workflow_id: str):
     async def progress_callback(msg: str):
         try:
             await query.edit_message_text(msg)
-        except Exception as e:
+        except TelegramError as e:
             logger.warning(f"Failed to update progress: {e}")
 
     try:
@@ -77,8 +79,6 @@ Ready to commit or publish.
 
 
 async def _handle_cancellation(query, workflow_id: str):
-    from workflows.state_manager import WorkflowState
-
     orchestrator.state_manager.update_workflow_state(
         workflow_id, WorkflowState.FAILED, {"error": "User cancelled"}
     )

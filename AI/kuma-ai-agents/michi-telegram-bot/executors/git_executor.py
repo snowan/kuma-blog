@@ -72,8 +72,13 @@ class GitExecutor:
         return stdout.decode()
 
     def generate_commit_message(
-        self, workflow_type: str, url: Optional[str] = None, files_created: List[str] = []
+        self,
+        workflow_type: str,
+        url: Optional[str] = None,
+        files_created: Optional[List[str]] = None,
     ) -> str:
+        if files_created is None:
+            files_created = []
         # Extract project name from files
         project_name = "content"
         if files_created:

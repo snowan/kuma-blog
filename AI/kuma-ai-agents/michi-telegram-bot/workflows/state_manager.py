@@ -1,22 +1,13 @@
 import sqlite3
 import json
 import logging
-from typing import Optional, Dict, Any
-from datetime import datetime
+from typing import Optional, Dict, Any, List
+from datetime import datetime, timezone
 from pathlib import Path
-from enum import Enum
+
+from models import WorkflowState
 
 logger = logging.getLogger(__name__)
-
-
-class WorkflowState(Enum):
-    PARSING = "parsing"
-    CONFIRMING = "confirming"
-    EXECUTING = "executing"
-    COMMITTING = "committing"
-    PUBLISHING = "publishing"
-    COMPLETED = "completed"
-    FAILED = "failed"
 
 
 class WorkflowStateManager:
@@ -59,7 +50,7 @@ class WorkflowStateManager:
 
     def create_workflow(self, workflow_id: str, chat_id: int, intent_data: Dict[str, Any]):
         cursor = self.conn.cursor()
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
 
         cursor.execute(
             """
@@ -76,7 +67,7 @@ class WorkflowStateManager:
         self, workflow_id: str, state: WorkflowState, result_data: Optional[Dict[str, Any]] = None
     ):
         cursor = self.conn.cursor()
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
 
         if result_data:
             cursor.execute(
@@ -128,7 +119,7 @@ class WorkflowStateManager:
 
     def save_pending_confirmation(self, workflow_id: str, chat_id: int, options: Dict[str, Any]):
         cursor = self.conn.cursor()
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
 
         cursor.execute(
             """
@@ -161,7 +152,7 @@ class WorkflowStateManager:
         cursor.execute("DELETE FROM pending_confirmations WHERE workflow_id = ?", (workflow_id,))
         self.conn.commit()
 
-    def get_active_workflows(self, chat_id: int) -> list:
+    def get_active_workflows(self, chat_id: int) -> List[Dict[str, Any]]:
         cursor = self.conn.cursor()
 
         cursor.execute(
@@ -179,5 +170,5 @@ class WorkflowStateManager:
             for row in cursor.fetchall()
         ]
 
-    def close(self):
+    def close(self) -> None:
         self.conn.close()

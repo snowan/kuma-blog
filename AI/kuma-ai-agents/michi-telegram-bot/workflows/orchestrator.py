@@ -4,7 +4,8 @@ from typing import Callable, Optional, Dict, Any
 from parsers.intent_parser import IntentParser
 from executors.claude_executor import ClaudeCodeExecutor
 from executors.git_executor import GitExecutor
-from workflows.state_manager import WorkflowStateManager, WorkflowState
+from models import WorkflowState
+from workflows.state_manager import WorkflowStateManager
 
 logger = logging.getLogger(__name__)
 
