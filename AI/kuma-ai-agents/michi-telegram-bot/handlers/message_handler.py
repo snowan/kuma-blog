@@ -1,5 +1,6 @@
 import logging
 from telegram import Update
+from telegram.error import TelegramError
 from telegram.ext import ContextTypes
 from config import settings
 from workflows.orchestrator import WorkflowOrchestrator
@@ -8,10 +9,13 @@ logger = logging.getLogger(__name__)
 
 orchestrator = WorkflowOrchestrator()
 
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle user text messages and pass directly to Claude Code"""
 
-    logger.info(f"📨 Received message from user {update.effective_user.id}: {update.message.text[:50]}...")
+    logger.info(
+        f"📨 Received message from user {update.effective_user.id}: {update.message.text[:50]}..."
+    )
     logger.info(f"🔑 Expected admin user ID: {settings.telegram_admin_user_id}")
 
     if update.effective_user.id != settings.telegram_admin_user_id:
@@ -29,15 +33,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if msg:
             try:
                 await status_message.edit_text(f"🤖 {msg}")
-            except Exception as e:
+            except TelegramError as e:
                 logger.warning(f"Failed to update status: {e}")
 
     try:
         # Execute workflow (directly calls Claude Code)
         workflow_id = await orchestrator.start_workflow(
-            user_message=user_message,
-            chat_id=chat_id,
-            progress_callback=progress_callback
+            user_message=user_message, chat_id=chat_id, progress_callback=progress_callback
         )
 
         # Get final results
@@ -50,7 +52,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     except Exception as e:
         logger.error(f"Message handling failed: {e}", exc_info=True)
-        await status_message.edit_text(f"❌ Error: {str(e)[:200]}")
+        await status_message.edit_text(f"❌ Error: {str(e)[:settings.progress_message_max_length]}")
+
 
 async def _send_completion_message(update: Update, workflow_id: str, workflow: dict):
     """Send workflow completion summary"""

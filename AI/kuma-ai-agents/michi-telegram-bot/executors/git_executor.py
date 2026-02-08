@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import subprocess
 from pathlib import Path
 from typing import List, Optional
 from config import settings
@@ -60,7 +61,7 @@ class GitExecutor:
 
             result["success"] = True
 
-        except Exception as e:
+        except (subprocess.SubprocessError, OSError) as e:
             result["error"] = str(e)
             logger.error(f"Git operation failed: {e}")
 
@@ -79,7 +80,7 @@ class GitExecutor:
         stdout, stderr = await process.communicate()
 
         if process.returncode != 0:
-            raise Exception(f"Git command failed: {stderr.decode()}")
+            raise subprocess.SubprocessError(f"Git command failed: {stderr.decode()}")
 
         return stdout.decode()
 
