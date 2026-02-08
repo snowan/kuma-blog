@@ -2,6 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from config import settings
 
+
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
@@ -30,13 +31,12 @@ Commands:
 /status - Check bot status
     """
 
-    await update.message.reply_text(
-        welcome_msg,
-        parse_mode="Markdown"
-    )
+    await update.message.reply_text(welcome_msg, parse_mode="Markdown")
+
 
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await start_command(update, context)
+
 
 async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.effective_user.id != settings.telegram_admin_user_id:

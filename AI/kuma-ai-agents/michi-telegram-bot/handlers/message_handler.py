@@ -8,10 +8,13 @@ logger = logging.getLogger(__name__)
 
 orchestrator = WorkflowOrchestrator()
 
+
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle user text messages and pass directly to Claude Code"""
 
-    logger.info(f"📨 Received message from user {update.effective_user.id}: {update.message.text[:50]}...")
+    logger.info(
+        f"📨 Received message from user {update.effective_user.id}: {update.message.text[:50]}..."
+    )
     logger.info(f"🔑 Expected admin user ID: {settings.telegram_admin_user_id}")
 
     if update.effective_user.id != settings.telegram_admin_user_id:
@@ -35,9 +38,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     try:
         # Execute workflow (directly calls Claude Code)
         workflow_id = await orchestrator.start_workflow(
-            user_message=user_message,
-            chat_id=chat_id,
-            progress_callback=progress_callback
+            user_message=user_message, chat_id=chat_id, progress_callback=progress_callback
         )
 
         # Get final results
@@ -51,6 +52,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         logger.error(f"Message handling failed: {e}", exc_info=True)
         await status_message.edit_text(f"❌ Error: {str(e)[:200]}")
+
 
 async def _send_completion_message(update: Update, workflow_id: str, workflow: dict):
     """Send workflow completion summary"""

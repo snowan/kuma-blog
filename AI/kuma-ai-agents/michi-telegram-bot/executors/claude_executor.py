@@ -7,42 +7,30 @@ from config import settings
 
 logger = logging.getLogger(__name__)
 
+
 class ClaudeCodeExecutor:
     def __init__(self):
         self.claude_bin = settings.claude_code_bin
         self.working_dir = Path(settings.claude_code_working_dir)
         self.timeout = settings.workflow_timeout_seconds
 
-    async def execute_direct(
-        self,
-        user_message: str,
-        progress_callback=None
-    ) -> Dict[str, Any]:
+    async def execute_direct(self, user_message: str, progress_callback=None) -> Dict[str, Any]:
         """
         Execute Claude Code directly with user's message.
         Claude will interpret the request and execute accordingly.
         """
         logger.info(f"Executing Claude Code with message: {user_message[:100]}...")
 
-        cmd = [
-            self.claude_bin,
-            "--print",
-            user_message
-        ]
+        cmd = [self.claude_bin, "--print", user_message]
 
-        result = {
-            "success": False,
-            "output": "",
-            "files_created": [],
-            "error": None
-        }
+        result = {"success": False, "output": "", "files_created": [], "error": None}
 
         try:
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
-                cwd=str(self.working_dir)
+                cwd=str(self.working_dir),
             )
 
             # Collect all output
@@ -83,35 +71,27 @@ class ClaudeCodeExecutor:
         return result
 
     async def execute_skill(
-        self,
-        skill_name: str,
-        prompt: str,
-        skill_args: str = "",
-        progress_callback=None
+        self, skill_name: str, prompt: str, skill_args: str = "", progress_callback=None
     ) -> Dict[str, Any]:
         logger.info(f"Executing skill: {skill_name}")
 
         cmd = [
             self.claude_bin,
             "--print",
-            "--output-format", "stream-json",
+            "--output-format",
+            "stream-json",
             f"/{skill_name} {skill_args}",
-            prompt
+            prompt,
         ]
 
-        result = {
-            "success": False,
-            "output": [],
-            "files_created": [],
-            "error": None
-        }
+        result = {"success": False, "output": [], "files_created": [], "error": None}
 
         try:
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
-                cwd=str(self.working_dir)
+                cwd=str(self.working_dir),
             )
 
             async for line in self._read_stream_with_timeout(process.stdout):

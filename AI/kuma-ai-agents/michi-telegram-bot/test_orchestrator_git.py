@@ -1,14 +1,15 @@
-import asyncio
+import pytest
 from workflows.orchestrator import WorkflowOrchestrator
+from executors.git_executor import GitExecutor
 
-async def test():
-    orchestrator = WorkflowOrchestrator()
 
-    print(f"✅ Orchestrator has git_executor: {hasattr(orchestrator, 'git_executor')}")
-    print(f"✅ Git executor type: {type(orchestrator.git_executor).__name__}")
-    print(f"✅ Git executor working dir: {orchestrator.git_executor.working_dir}")
-    print(f"✅ commit_workflow_results method exists: {hasattr(orchestrator, 'commit_workflow_results')}")
+class TestOrchestratorGitIntegration:
+    def test_has_git_executor(self):
+        orch = WorkflowOrchestrator()
+        assert hasattr(orch, "git_executor")
+        assert isinstance(orch.git_executor, GitExecutor)
 
-    print("✅ Orchestrator git integration tests passed")
-
-asyncio.run(test())
+    def test_has_commit_method(self):
+        orch = WorkflowOrchestrator()
+        assert hasattr(orch, "commit_workflow_results")
+        assert callable(orch.commit_workflow_results)
