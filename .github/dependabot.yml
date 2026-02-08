@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: pip
+    directory: /AI/kuma-ai-agents/michi-telegram-bot
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  - package-ecosystem: npm
+    directory: /keanu-reeves-video-project/keanu-action-video
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
