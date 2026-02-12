@@ -9,6 +9,8 @@
 ## TL;DR
 Boris Cherny, the creator of Claude Code, shares a 12-part thread on the deep customizability of Claude Code — from terminal themes and effort levels to custom agents, hooks, sandboxing, and spinner verbs. The core message: **every engineer uses their tools differently**, and Claude Code was built from the ground up to be incredibly configurable. Check your `settings.json` into git so your whole team benefits.
 
+![12 Ways to Customize Claude Code — Infographic](./resources/cc-customization-infographic.png)
+
 ---
 
 ## Why Customization Matters
