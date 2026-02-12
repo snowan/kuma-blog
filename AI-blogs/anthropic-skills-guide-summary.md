@@ -298,6 +298,8 @@ Focus on **outcomes, not features**:
 
 Skills are the "teach once, benefit forever" layer for Claude. Whether you're building standalone workflows, enhancing MCP integrations, or standardizing how your team uses Claude, skills turn ad-hoc prompting into consistent, reliable automation. Start with the [skill-creator skill](https://github.com/anthropics/skills) — you can build and test your first skill in 15–30 minutes.
 
+![Building Skills for Claude — The Complete Guide Infographic](./infographic/anthropic-skills-guide/skills-guide-infographic.png)
+
 **Resources:**
 - [Skills Documentation](https://docs.anthropic.com)
 - [Example Skills Repository](https://github.com/anthropics/skills)
