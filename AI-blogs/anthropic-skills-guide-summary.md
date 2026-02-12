@@ -6,6 +6,8 @@
 
 ---
 
+![Building Skills for Claude — Kawaii Infographic](./resources/kawaii-skills-guide-infographic.png)
+
 ## TL;DR
 
 Anthropic just published a comprehensive 33-page guide on building **skills** for Claude — the most powerful way to customize Claude for repeatable workflows. A skill is simply a folder with a `SKILL.md` file that teaches Claude *how* to handle specific tasks. Think of it as "teach Claude once, benefit every time." This post walks through the key concepts, architecture, patterns, and practical tips from the guide so you can start building your own skills today.
@@ -298,7 +300,7 @@ Focus on **outcomes, not features**:
 
 Skills are the "teach once, benefit forever" layer for Claude. Whether you're building standalone workflows, enhancing MCP integrations, or standardizing how your team uses Claude, skills turn ad-hoc prompting into consistent, reliable automation. Start with the [skill-creator skill](https://github.com/anthropics/skills) — you can build and test your first skill in 15–30 minutes.
 
-![Building Skills for Claude — Kawaii Infographic](./infographic/anthropic-skills-guide/kawaii-skills-guide-infographic.png)
+
 
 **Resources:**
 - [Skills Documentation](https://docs.anthropic.com)
