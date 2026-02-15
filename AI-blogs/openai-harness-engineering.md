@@ -1,3 +1,10 @@
+---
+title: "OpenAI Harness Engineering: The End of Localhost?"
+date: 2026-02-15
+categories: [AI, Engineering, Agents]
+tags: [OpenAI, Codex, Harness Engineering, Agents]
+---
+
 # OpenAI Harness Engineering: The End of Localhost?
 
 > "For five months, an OpenAI team built and shipped an internal software product with 0 lines of manually-written code. Every aspect—application logic, tests, CI configuration, documentation, observability, and internal tooling—was written by Codex."
@@ -5,6 +12,8 @@
 This is the opening of OpenAI's recent engineering blog post, [Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/). It describes a fundamental shift in how we build software—from writing code to designing the "harness" that allows AI agents to write code safely and effectively.
 
 Here is my deep dive into this concept, what it means for us, and how you can apply these principles.
+
+![Harness Engineering Infographic](./resources/openai-harness-engineering.png)
 
 ## What is "Harness Engineering"?
 
