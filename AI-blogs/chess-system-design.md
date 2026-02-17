@@ -1,4 +1,4 @@
-# Designing Chess.com: A Staff+ System Design Deep Dive
+# System Design: Designing Chess.com
 
 ## Real-Time Online Chess Platform — From Two Players to Millions of Concurrent Games
 
@@ -64,7 +64,7 @@ Daily new games:        ~15M games → ~75GB/day raw
 
 ## 2. High-Level Architecture
 
-> **See Diagram: `01-high-level-architecture.mermaid`**
+![chess game hld](./resources/chess-game-hld.png)
 
 The architecture follows a **layered, microservices-based** design with clear separation between:
 
@@ -181,7 +181,7 @@ For production: wrap `chess.js` or `python-chess` in a service, with bitboard op
 
 ### 3.3 Timer Service — Server-Authoritative Clocks
 
-> **See Diagram: `04-move-propagation.mermaid`**
+![chess game move propagation](./resources/chess-game-move-propagation.png)
 
 This is one of the **most critical and subtle** components. In online chess, the clock is sacred.
 
@@ -264,7 +264,7 @@ Even though the server is authoritative, the client must show a smooth countdown
 
 ## 4. The Scaling Journey
 
-> **See Diagram: `06-scaling-journey.mermaid`**
+![chess game scaling journey](./resources/chess-game-scale.png)
 
 ### Stage 1: MVP — Single Server (2 Players, ~10 concurrent games)
 
@@ -357,7 +357,7 @@ Critical design decision: WHERE does the game live?
 
 ## 5. Server-Authoritative Clock & Timer System
 
-> **See Diagram: `04-move-propagation.mermaid`**
+![chess game move propagation](./resources/chess-game-move-propagation.png)
 
 ### Deep Dive: Why Not Individual Timers?
 
@@ -433,7 +433,7 @@ After a valid move:
 
 ## 6. Matchmaking System
 
-> **See Diagram: `03-matchmaking-flow.mermaid`**
+![chess game matchmaking](./resources/chess-game-matchmaking-flow.png)
 
 ### Rating System: Glicko-2
 
@@ -568,7 +568,7 @@ TTL policy:
 
 ## 8. WebSocket Infrastructure at Scale
 
-> **See Diagram: `07-websocket-management.mermaid`**
+![chess game websocket](./resources/chess-game-ws-management.png)
 
 ### Why WebSockets (not HTTP polling / SSE)?
 
@@ -660,7 +660,7 @@ Both players in a game might be on DIFFERENT WS gateways. When White moves, the 
 
 ## 9. Failure Modes & Resilience
 
-> **See Diagram: `05-failure-recovery.mermaid`**
+![chess game failure](./resources/chess-game-failure-recover.png)
 
 ### Failure Matrix
 
@@ -950,4 +950,3 @@ Why user_id sharding for users?
 
 ---
 
-*This document covers the design at Staff+ depth: from first principles through production-scale engineering. Each section was designed to be self-contained while building on the architectural foundations established earlier.*
