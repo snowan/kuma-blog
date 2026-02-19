@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claw-Prime Mission Control</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #38bdf8;
+            --accent: #22c55e;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: #334155;
+        }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+        }
+        h1 { color: var(--primary); margin: 0; font-size: 1.5rem; letter-spacing: -0.025em; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .label { color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+        .value { font-size: 1.5rem; font-weight: bold; color: var(--primary); }
+        .sub-value { font-size: 0.875rem; color: var(--text-dim); margin-top: 4px; }
+        
+        .progress-container {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .node-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+        }
+        .node-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .node-item:last-child { border-bottom: none; }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        
+        .console {
+            background: #000;
+            color: #22c55e;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            height: 150px;
+            overflow-y: auto;
+            border: 1px solid var(--border);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🦞 CLAW-PRIME MISSION CONTROL</h1>
+        <div id="timestamp" style="color: var(--text-dim); font-size: 0.75rem;">Initializing...</div>
+    </div>
+
+    <div class="grid">
+        <!-- Revenue Goal -->
+        <div class="card">
+            <div class="label">Target Revenue</div>
+            <div class="value">$0 / $10,000</div>
+            <div class="sub-value">Current Progress: 0%</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Token Budget -->
+        <div class="card">
+            <div class="label">Context Budget (Safety Gate: 10M)</div>
+            <div class="value" id="token-count">20,419</div>
+            <div class="sub-value">Limit: 10,000,000 tokens</div>
+            <div class="progress-container">
+                <div class="progress-bar" style="width: 0.2%; background: var(--primary);"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid">
+        <!-- Active Infrastructure -->
+        <div class="card">
+            <div class="label">Active Context Nodes (LOD)</div>
+            <div class="node-list">
+                <div class="node-item"><span><span class="status-dot"></span>MEMORY.abstract</span><span>L0</span></div>
+                <div class="node-item"><span><span class="status-dot"></span>USER.abstract</span><span>L0</span></div>
+                <div class="node-item"><span><span class="status-dot"></span>SKILL: viking-context</span><span>Active</span></div>
+                <div class="node-item"><span><span class="status-dot"></span>SKILL: orchestrator</span><span>Active</span></div>
+            </div>
+        </div>
+
+        <!-- System Logs -->
+        <div class="card">
+            <div class="label">Real-time Telemetry</div>
+            <div class="console" id="log-output">
+                [2026-02-18 23:55] Claw-Prime Initialized.<br>
+                [2026-02-18 23:56] GitHub Repo Linked.<br>
+                [2026-02-18 23:57] Viking Context LOD system active.<br>
+                [2026-02-18 23:58] Safety Gate set to 10M tokens.<br>
+                [2026-02-18 23:59] Building Mission Control UI...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('timestamp').innerText = new Date().toLocaleString();
+        // Simulate a log update
+        const log = document.getElementById('log-output');
+        setTimeout(() => {
+            log.innerHTML += "[2026-02-19 00:00] Mission Control UI Rendered.<br>";
+            log.scrollTop = log.scrollHeight;
+        }, 1000);
+    </script>
+</body>
+</html>
