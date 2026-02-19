@@ -1,7 +1,7 @@
 ---
 title: "SimpleMem: Efficient Lifelong Memory for LLM Agents"
 source: https://arxiv.org/abs/2601.02553
-date: 2026-01
+date: 2026-01-01
 authors: Jiaqi Liu, Yaofeng Su, Peng Xia, Siwei Han, Zeyu Zheng, Cihang Xie, Mingyu Ding, Huaxiu Yao
 institution: Aiming Lab
 github: https://github.com/aiming-lab/SimpleMem
