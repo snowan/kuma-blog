@@ -1,0 +1,5 @@
+# GitHub Pages build config
+# We use this to disable Jekyll so it doesn't fail on Liquid syntax in markdown files
+# This allows our custom index.html and raw markdown files to be served directly
+# (GitBook is handled separately)
+touch .nojekyll
