@@ -8,17 +8,20 @@
 
 1. [The Problem & Why It's Hard](#1-the-problem--why-its-hard)
 2. [Requirements & Scope](#2-requirements--scope)
-3. [Phase 1: Single Machine Webhook Dispatcher](#3-phase-1-single-machine-webhook-dispatcher)
-4. [Why the Naive Approach Fails (The Math)](#4-why-the-naive-approach-fails-the-math)
-5. [Phase 2: Distributed Webhook Delivery Platform](#5-phase-2-distributed-webhook-delivery-platform)
-6. [Core Component Deep Dives](#6-core-component-deep-dives)
-7. [The Scaling Journey](#7-the-scaling-journey)
-8. [Failure Modes & Resilience](#8-failure-modes--resilience)
-9. [Data Model & Storage](#9-data-model--storage)
-10. [Observability & Operations](#10-observability--operations)
-11. [Design Trade-offs](#11-design-trade-offs)
-12. [Common Interview Mistakes](#12-common-interview-mistakes)
-13. [Interview Cheat Sheet](#13-interview-cheat-sheet)
+3. [REST API Design](#3-rest-api-design)
+4. [Phase 1: Single Machine Webhook Dispatcher](#4-phase-1-single-machine-webhook-dispatcher)
+5. [Why the Naive Approach Fails (The Math)](#5-why-the-naive-approach-fails-the-math)
+6. [Phase 2: Distributed Webhook Delivery Platform](#6-phase-2-distributed-webhook-delivery-platform)
+7. [Core Component Deep Dives](#7-core-component-deep-dives)
+8. [Caching Strategy Deep Dive](#8-caching-strategy-deep-dive)
+9. [Message Queue & Failure Handling Deep Dive](#9-message-queue--failure-handling-deep-dive)
+10. [The Scaling Journey](#10-the-scaling-journey)
+11. [Failure Modes & Resilience](#11-failure-modes--resilience)
+12. [Data Model & Storage](#12-data-model--storage)
+13. [Observability & Operations](#13-observability--operations)
+14. [Design Trade-offs](#14-design-trade-offs)
+15. [Common Interview Mistakes](#15-common-interview-mistakes)
+16. [Interview Cheat Sheet](#16-interview-cheat-sheet)
 
 ---
 
@@ -62,21 +65,203 @@ Your customers' endpoints are servers you don't control. They go down, they resp
 ### Scale Estimation (Back-of-Envelope)
 
 ```
-Events per day:            500M (across all tenants)
-Peak events per second:    ~20,000 (flash sales, batch jobs)
+Events per day:            1 billion (1B across all tenants)
+Peak events per second:    ~40,000 (flash sales, batch jobs — ~3.5x average)
+Average events per second: ~11,600 (1B / 86,400)
 Average payload size:      5 KB
-Registered endpoints:      200,000 across 50,000 tenants
-Average subscriptions:     4 endpoints per tenant
-Delivery attempts/day:     ~600M (500M + ~20% retries)
-Outbound bandwidth:        500M × 5KB = 2.5 TB/day = ~230 Mbps sustained
-Storage for delivery logs: 600M × 1KB metadata = 600 GB/day → ~220 TB/year
+Registered endpoints:      500,000 across 100,000 tenants
+Mapping:                   1 eventId → 1 URL (simplified for this design)
+Delivery attempts/day:     ~1.2B (1B + ~20% retries)
+Outbound bandwidth:        1B × 5KB = 5 TB/day = ~460 Mbps sustained
+Storage for delivery logs: 1.2B × 1KB metadata = 1.2 TB/day → ~438 TB/year
+Database reads/day:        1B subscription lookups (before caching)
+Database reads/sec:        ~11,600 lookups/sec → MUST be cached
 ```
 
-> **Staff+ Signal:** The bandwidth math reveals why the claim check pattern matters. If average payload grows to 50KB (which happens as APIs mature), outbound bandwidth jumps to 25 TB/day. At that point, you're spending more on egress than compute. Offering "thin events" (just event type + resource ID, customer fetches full data via API) saves 80%+ bandwidth.
+**Why these numbers matter for the interview:**
+- 11,600 events/sec average means the database cannot handle a lookup per event without caching
+- 5 TB/day outbound bandwidth costs ~$450/day on AWS ($164K/year) — claim check pattern becomes a cost decision
+- 1.2 TB/day delivery logs means PostgreSQL is out — you need a columnar store like ClickHouse
+
+> **Staff+ Signal:** The bandwidth math reveals why the claim check pattern matters. If average payload grows to 50KB (which happens as APIs mature), outbound bandwidth jumps to 50 TB/day. At that point, you're spending more on egress than compute. Offering "thin events" (just event type + resource ID, customer fetches full data via API) saves 80%+ bandwidth. At 1B events/day, this is a $1.5M/year decision.
 
 ---
 
-## 3. Phase 1: Single Machine Webhook Dispatcher
+## 3. REST API Design
+
+An interviewer asking "design the REST API" is testing whether you can define clean resource boundaries, handle authentication, and think about the caller's experience. Here's the full API surface:
+
+### Subscription Management API (Customer-Facing)
+
+```
+POST   /api/v1/webhooks/endpoints         — Register a new webhook endpoint
+GET    /api/v1/webhooks/endpoints         — List all endpoints for this tenant
+GET    /api/v1/webhooks/endpoints/{id}    — Get endpoint details + health status
+PUT    /api/v1/webhooks/endpoints/{id}    — Update endpoint URL, events, or secret
+DELETE /api/v1/webhooks/endpoints/{id}    — Remove endpoint (stops all deliveries)
+POST   /api/v1/webhooks/endpoints/{id}/rotate-secret  — Rotate signing secret
+```
+
+**Register Endpoint — Request:**
+
+```json
+POST /api/v1/webhooks/endpoints
+Authorization: Bearer <api_key>
+Content-Type: application/json
+
+{
+  "url": "https://customer.com/webhooks",
+  "event_types": ["payment.completed", "order.shipped"],
+  "description": "Production payment handler",
+  "secret": null,
+  "metadata": {"env": "production"}
+}
+```
+
+**Register Endpoint — Response:**
+
+```json
+HTTP/1.1 201 Created
+
+{
+  "id": "ep_abc123",
+  "url": "https://customer.com/webhooks",
+  "event_types": ["payment.completed", "order.shipped"],
+  "secret": "whsec_MIGfMA0GCSq...",
+  "status": "active",
+  "created_at": "2026-02-23T10:00:00Z"
+}
+```
+
+**Key design decisions:**
+- **Auto-generate secret** if not provided — never let customers skip signing
+- **Return secret only on create and rotate** — never expose it in GET responses
+- **Wildcard support**: `order.*` matches `order.created`, `order.shipped`, etc.
+- **URL validation**: On register, make a test POST with `event_type: "endpoint.verification"` to confirm the URL is reachable. Fail the registration if it's not.
+
+### Event Ingestion API (Internal Service-Facing)
+
+```
+POST   /api/v1/events                    — Publish a new event
+GET    /api/v1/events/{id}               — Get event details + delivery status
+GET    /api/v1/events/{id}/deliveries    — List all delivery attempts for an event
+POST   /api/v1/events/{id}/retry         — Manually retry a failed delivery
+```
+
+**Publish Event — Request:**
+
+```json
+POST /api/v1/events
+Authorization: Bearer <internal_service_key>
+Idempotency-Key: evt_20260223_payment_789
+
+{
+  "event_type": "payment.completed",
+  "payload": {
+    "payment_id": "pay_789",
+    "amount": 9999,
+    "currency": "usd"
+  }
+}
+```
+
+**Publish Event — Response:**
+
+```json
+HTTP/1.1 202 Accepted
+
+{
+  "event_id": "evt_xyz789",
+  "event_type": "payment.completed",
+  "status": "pending",
+  "matched_endpoints": 1,
+  "created_at": "2026-02-23T10:00:01Z"
+}
+```
+
+**Key design decisions:**
+- **202 Accepted** (not 201 Created) — the event is accepted but delivery is async
+- **Idempotency-Key header** — prevents duplicate events when internal services retry
+- **matched_endpoints count** — caller knows immediately if the event will be delivered
+- **Rate limiting**: Per-tenant rate limit using token bucket (stored in Redis). Return `429 Too Many Requests` with `Retry-After` header.
+
+### Delivery Status API (Customer-Facing)
+
+```
+GET    /api/v1/webhooks/deliveries                    — List recent deliveries (paginated)
+GET    /api/v1/webhooks/deliveries/{id}               — Get delivery attempt details
+POST   /api/v1/webhooks/deliveries/{id}/retry         — Manual retry from customer dashboard
+```
+
+**Delivery Details — Response:**
+
+```json
+{
+  "delivery_id": "del_abc123",
+  "event_id": "evt_xyz789",
+  "endpoint_id": "ep_abc123",
+  "event_type": "payment.completed",
+  "attempts": [
+    {
+      "attempt": 1,
+      "status_code": 503,
+      "latency_ms": 2340,
+      "response_body": "Service Unavailable",
+      "attempted_at": "2026-02-23T10:00:01Z"
+    },
+    {
+      "attempt": 2,
+      "status_code": 200,
+      "latency_ms": 120,
+      "response_body": "OK",
+      "attempted_at": "2026-02-23T10:05:02Z"
+    }
+  ],
+  "status": "delivered",
+  "next_retry_at": null
+}
+```
+
+> **Staff+ Signal:** The API versioning strategy (`/v1/`) is a one-way door. Once customers build against your webhook format, changing the payload structure is a multi-year migration. Stripe versions their webhook payloads separately from their REST API. Consider including an `api_version` field in the endpoint registration so customers can pin their webhook format and upgrade on their own schedule.
+
+### Webhook Payload Format (What Customers Receive)
+
+```
+POST https://customer.com/webhooks
+Content-Type: application/json
+X-Webhook-ID: evt_xyz789
+X-Webhook-Timestamp: 1708678801
+X-Webhook-Signature: v1=sha256_hmac_of_timestamp_and_body
+User-Agent: WebhookService/1.0
+
+{
+  "id": "evt_xyz789",
+  "type": "payment.completed",
+  "created_at": "2026-02-23T10:00:01Z",
+  "data": {
+    "payment_id": "pay_789",
+    "amount": 9999,
+    "currency": "usd"
+  }
+}
+```
+
+**Signature verification** (what the customer does):
+
+```python
+expected_sig = hmac_sha256(
+    key=endpoint_secret,
+    message=f"{timestamp}.{raw_body}"
+)
+if not constant_time_compare(expected_sig, received_sig):
+    return 403
+if abs(time.now() - timestamp) > 300:  # 5-minute tolerance
+    return 403  # Replay attack protection
+```
+
+---
+
+## 4. Phase 1: Single Machine Webhook Dispatcher
 
 The simplest approach: an application server that accepts events and delivers them synchronously.
 
@@ -117,7 +302,7 @@ def handle_event(event):
 
 ---
 
-## 4. Why the Naive Approach Fails (The Math)
+## 5. Why the Naive Approach Fails (The Math)
 
 The synchronous model breaks in two dimensions simultaneously: throughput and isolation.
 
@@ -160,7 +345,7 @@ Every other tenant gets zero deliveries.
 
 ---
 
-## 5. Phase 2: Distributed Webhook Delivery Platform
+## 6. Phase 2: Distributed Webhook Delivery Platform
 
 The key architectural insight: **Separate event ingestion from delivery, and isolate delivery per-endpoint so one customer's failure never affects another.**
 
@@ -243,9 +428,9 @@ flowchart TB
 
 ---
 
-## 6. Core Component Deep Dives
+## 7. Core Component Deep Dives
 
-### 6.1 Event Router
+### 7.1 Event Router
 
 **Responsibilities:**
 - Consume events from the ingestion queue
@@ -268,7 +453,7 @@ The router is the fan-out amplifier. One inbound event becomes N delivery tasks 
 
 > **Staff+ Signal:** The router must be idempotent. If the process crashes after enqueuing 3 of 5 delivery tasks, the event will be re-consumed from the ingestion queue. Each delivery task needs a deterministic ID (e.g., `hash(event_id, endpoint_id)`) so re-routing produces deduplicable tasks, not duplicates.
 
-### 6.2 Delivery Worker
+### 7.2 Delivery Worker
 
 **Responsibilities:**
 - Pull delivery tasks from the tenant-partitioned queue
@@ -290,7 +475,7 @@ Response classification:
 
 > **Staff+ Signal:** The timeout value is a critical design decision. GitHub uses 10 seconds. Stripe is more generous. Too short and you'll false-positive on healthy-but-slow endpoints. Too long and a single stuck connection consumes a worker thread for the duration. The right answer is adaptive timeouts: start at 10s, and if an endpoint consistently responds in 50ms, tighten the timeout to 5s. If it consistently takes 8s, consider flagging it as degraded.
 
-### 6.3 Circuit Breaker (Per-Endpoint)
+### 7.3 Circuit Breaker (Per-Endpoint)
 
 **Responsibilities:**
 - Track delivery success/failure rates per endpoint
@@ -312,7 +497,7 @@ stateDiagram-v2
 
 The gradual recovery ramp is critical. When an endpoint recovers, you can't immediately blast it with the full backlog. Hookdeck uses an exponential ramp: `Rate(t) = H × (1 - e^(-t/τ))` where H is historical throughput and τ is typically 5 minutes. This reaches 63% capacity at τ and 95% at 3τ.
 
-### 6.4 Retry Scheduler
+### 7.4 Retry Scheduler
 
 **Responsibilities:**
 - Calculate next retry time using exponential backoff with jitter
@@ -339,7 +524,276 @@ The jitter prevents thundering herd: if 10,000 events fail at the same moment, w
 
 ---
 
-## 7. The Scaling Journey
+## 8. Caching Strategy Deep Dive
+
+The interviewer asks "how to use caching" because at 1 billion events/day, every database lookup on the hot path is a potential bottleneck. There are three distinct caching layers in this system, each solving a different problem.
+
+### Layer 1: Subscription Lookup Cache (Critical Path)
+
+This is the most important cache. Every incoming event triggers a subscription lookup: "which endpoint(s) are registered for this event_type?" At 11,600 events/sec, hitting PostgreSQL for each lookup is unsustainable.
+
+```
+┌────────────┐     ┌──────────────────┐     ┌──────────────┐
+│   Router    │────▶│  Redis Cache     │────▶│  PostgreSQL  │
+│   Service   │     │  (sub lookup)    │     │  (source of  │
+│             │◀────│                  │◀────│   truth)     │
+└────────────┘     └──────────────────┘     └──────────────┘
+
+Cache key:    subscription:{event_type}
+Cache value:  [{endpoint_id, url, secret, tenant_id, status}, ...]
+TTL:          300 seconds (5 minutes)
+Invalidation: Publish to Redis Pub/Sub channel "subscription_changes"
+              on any endpoint CREATE, UPDATE, or DELETE
+```
+
+**Cache lookup flow:**
+
+```python
+def get_subscriptions(event_type):
+    cache_key = f"subscription:{event_type}"
+    cached = redis.get(cache_key)
+    if cached:
+        return deserialize(cached)
+
+    # Cache miss — query database
+    subs = db.query("""
+        SELECT id, url, secret, tenant_id
+        FROM webhook_endpoints
+        WHERE status = 'active'
+          AND (event_types @> ARRAY[%s]
+               OR event_types @> ARRAY[%s])
+    """, event_type, event_type.split('.')[0] + '.*')
+
+    redis.setex(cache_key, 300, serialize(subs))
+    return subs
+```
+
+**Why not local in-memory cache?** At this scale you have multiple router instances. A local cache means each instance has its own stale copy. Redis gives you a shared cache with O(1) invalidation — when an endpoint is updated, one `PUBLISH` to the invalidation channel clears the cache across all routers.
+
+**Why not cache per-tenant instead of per-event-type?** Because the lookup is always by event_type, not by tenant_id. A tenant might subscribe to 20 event types. Per-tenant caching would require loading all 20 subscriptions when only 1 is needed.
+
+### Layer 2: Endpoint Health Cache (Redis)
+
+Already covered in Section 7.3 (Circuit Breaker), but worth noting the caching angle: the circuit breaker state is itself a cache of recent delivery outcomes. Without it, every delivery decision would require querying the delivery log database.
+
+```
+Cache key:    endpoint_health:{endpoint_id}
+Cache value:  {state, failure_count, success_count, avg_latency_ms}
+TTL:          3600 seconds
+Update:       After every delivery attempt (increment counters)
+```
+
+### Layer 3: Event Deduplication Cache (Redis)
+
+When internal services retry event publication (due to network issues), the same event can arrive twice. The idempotency key cache prevents duplicate processing.
+
+```
+Cache key:    idempotency:{idempotency_key}
+Cache value:  event_id (the ID assigned on first receipt)
+TTL:          86400 seconds (24 hours)
+```
+
+```python
+def ingest_event(event_type, payload, idempotency_key):
+    existing = redis.get(f"idempotency:{idempotency_key}")
+    if existing:
+        return {"event_id": existing, "status": "duplicate"}
+
+    event_id = generate_snowflake_id()
+    redis.setex(f"idempotency:{idempotency_key}", 86400, event_id)
+    kafka.produce("events", key=tenant_id, value=event)
+    return {"event_id": event_id, "status": "pending"}
+```
+
+### Caching Cost at Scale
+
+```
+Subscription cache entries:  ~10,000 event types × 500B avg = 5 MB
+Endpoint health entries:     500,000 endpoints × 200B = 100 MB
+Idempotency cache entries:   1B/day × 50B × 24hr TTL = ~50 GB peak
+────────────────────────────────────────────────────────────────
+Total Redis memory:          ~51 GB → fits on a single Redis cluster
+Redis read QPS:              ~25,000 (subscription lookups + health checks)
+```
+
+> **Staff+ Signal:** The idempotency cache is the hidden memory hog. At 1 billion events/day with 24-hour TTL, you're storing ~1 billion keys. Even at 50 bytes each, that's 50 GB of Redis. Options: (1) shorten TTL to 1 hour (reduces to ~2 GB but risks dedup misses for slow retries), (2) use a Bloom filter for approximate dedup (false positives are safe — they just reject a valid event, which the sender retries), or (3) move dedup to the database layer using a unique constraint on idempotency_key.
+
+---
+
+## 9. Message Queue & Failure Handling Deep Dive
+
+The interviewer asks "how to handle failures using a message queue" because this is the architectural backbone of reliable webhook delivery. Without a message queue, every failure mode — slow endpoints, crashes, network partitions — results in lost events.
+
+### Why a Message Queue Is Non-Negotiable
+
+Without a queue, the failure story looks like this:
+
+```
+Synchronous (no queue):
+  Internal Service → Webhook Server → Customer Endpoint
+                                      ↓ (timeout)
+                                    Event LOST
+                                    (server was busy, nowhere to store it)
+
+With queue:
+  Internal Service → Kafka → Router → Delivery Queue → Worker → Customer
+                     ↓                                  ↓ (timeout)
+                   DURABLE                            Re-enqueue for retry
+                   (event survives any downstream failure)
+```
+
+### Queue Architecture: Three Distinct Queues
+
+The system uses three separate queues, each with different guarantees and consumers:
+
+```mermaid
+flowchart TB
+    subgraph Ingestion["1. Ingestion Queue (Kafka)"]
+        IQ[Topic: webhook.events<br/>Partitioned by tenant_id<br/>Retention: 7 days<br/>Replication: 3]
+    end
+
+    subgraph Delivery["2. Delivery Queues (Kafka or SQS)"]
+        DQ_PRI[Priority Queue<br/>Fresh events<br/>SLA: deliver in < 30s]
+        DQ_RETRY[Retry Queue<br/>Failed deliveries<br/>Scheduled re-delivery]
+    end
+
+    subgraph Dead["3. Dead Letter Queue"]
+        DLQ[DLQ<br/>Exhausted retries<br/>Permanent failures<br/>Retention: 30 days]
+    end
+
+    IQ -->|Router fans out| DQ_PRI
+    DQ_PRI -->|Delivery fails| DQ_RETRY
+    DQ_RETRY -->|Max retries exceeded| DLQ
+    DQ_RETRY -->|Retry succeeds| DONE[✓ Delivered]
+    DQ_PRI -->|Delivery succeeds| DONE
+    DLQ -->|Manual replay| DQ_PRI
+```
+
+### Queue 1: Ingestion Queue (Kafka)
+
+**Purpose**: Decouple event producers from delivery. Internal services fire-and-forget into Kafka, getting a 202 response immediately.
+
+```
+Topic:          webhook.events
+Partitions:     64 (allows 64 parallel router consumers)
+Partition key:  tenant_id (events from same tenant go to same partition → ordering)
+Retention:      7 days (enables replay if router has bugs)
+Replication:    3 (survives any single broker failure)
+Consumer group: webhook-routers
+```
+
+**Why Kafka over SQS/RabbitMQ here?**
+- **Replay**: If the router has a bug that drops events, you can rewind the consumer offset and reprocess 7 days of events. SQS deletes messages after consumption.
+- **Ordering**: Per-partition ordering ensures events for the same tenant arrive in order.
+- **Throughput**: Kafka handles 40K+ messages/sec per partition easily. At 1B events/day (~12K/sec), 64 partitions is comfortable headroom.
+
+### Queue 2: Delivery Queue (Per-Tenant Partitioning)
+
+**Purpose**: Isolate delivery failures per tenant/endpoint. One broken endpoint cannot block another tenant's deliveries.
+
+```
+For Kafka-based delivery queues:
+  Topic:          webhook.deliveries.{priority}
+  Partitions:     256 (hashed by endpoint_id)
+  Partition key:  endpoint_id
+  Consumer group: webhook-workers-{priority}
+
+For SQS-based delivery queues (simpler ops):
+  Queue per priority level: webhook-deliveries-{high|standard|retry}
+  Visibility timeout: 60 seconds (if worker crashes, message becomes visible again)
+  Max receive count: 3 (after 3 crashes, move to DLQ)
+```
+
+**The visibility timeout is the key failure handling mechanism:**
+
+```mermaid
+sequenceDiagram
+    participant Q as Delivery Queue
+    participant W1 as Worker 1
+    participant W2 as Worker 2
+    participant EP as Customer Endpoint
+
+    Q->>W1: Deliver task (message becomes invisible)
+    W1->>EP: POST webhook
+
+    alt Worker crashes mid-delivery
+        Note over W1: Worker 1 crashes
+        Note over Q: Visibility timeout expires (60s)
+        Q->>W2: Same task redelivered to Worker 2
+        W2->>EP: POST webhook
+        EP-->>W2: 200 OK
+        W2->>Q: ACK (message deleted)
+    else Endpoint returns 5xx
+        EP-->>W1: 503
+        W1->>Q: NACK → schedule retry with backoff
+        Note over Q: Message re-enqueued with delay
+    else Success
+        EP-->>W1: 200 OK
+        W1->>Q: ACK (message deleted)
+    end
+```
+
+### Queue 3: Dead Letter Queue
+
+**Purpose**: Capture events that exhaust all retries. These are NOT lost — they're available for inspection and manual replay.
+
+```
+Trigger:         After 8 delivery attempts over 72 hours
+Retention:       30 days
+Access:          Customer-facing dashboard (GET /api/v1/webhooks/deliveries?status=failed)
+Manual replay:   POST /api/v1/webhooks/deliveries/{id}/retry → re-enqueues to delivery queue
+Auto-cleanup:    Events older than 30 days are archived to S3, then deleted from DLQ
+```
+
+### Complete Failure Recovery Flow
+
+Here's the full lifecycle of a failed event, showing how the message queue ensures nothing is lost:
+
+```mermaid
+flowchart LR
+    E[Event Created] --> IQ[Ingestion Queue]
+    IQ --> R[Router]
+    R --> DQ[Delivery Queue]
+    DQ --> W[Worker]
+    W -->|200 OK| S[✓ Success]
+    W -->|5xx/timeout| R1{Retry #1}
+    R1 -->|5min delay| DQ
+    DQ --> W
+    W -->|5xx again| R2{Retry #2}
+    R2 -->|30min delay| DQ
+    DQ --> W
+    W -->|still failing| R3{"Retries 3-8<br/>(2h → 12h delays)"}
+    R3 --> DQ
+    DQ --> W
+    W -->|exhausted| DLQ[Dead Letter Queue]
+    DLQ -->|manual| REPLAY[Customer clicks Retry]
+    REPLAY --> DQ
+    DLQ -->|30 days| ARCHIVE[S3 Archive]
+```
+
+### Handling the Retry Backlog After Outage Recovery
+
+When an endpoint recovers after being down for hours, the queue may contain thousands of backed-up events. Blasting them all at once will likely crash the endpoint again.
+
+```python
+def recover_endpoint(endpoint_id):
+    backlog = queue.get_pending_count(endpoint_id)
+    if backlog > 100:
+        # Gradual ramp: start at 10% of normal rate, double every 5 min
+        rate = max(1, endpoint.normal_rate * 0.1)
+        for batch in queue.drain(endpoint_id, batch_size=rate):
+            deliver_batch(batch)
+            sleep(1)
+            rate = min(rate * 1.2, endpoint.normal_rate)  # 20% increase per cycle
+    else:
+        deliver_all(endpoint_id)
+```
+
+> **Staff+ Signal:** The separation of ingestion queue (Kafka, 7-day retention) from delivery queues is a critical architectural decision. If you discover a bug in the router that caused 1 million events to be incorrectly dropped, you can replay from Kafka by resetting the consumer offset. This replay capability is worth the operational cost of running Kafka. With SQS alone, those events would be gone. This is the difference between "we had a bug and recovered in an hour" and "we lost a day of customer webhooks."
+
+---
+
+## 10. The Scaling Journey
 
 ### Stage 1: Startup (0–10K events/day)
 
@@ -433,7 +887,7 @@ Everything in Stage 3, plus:
 
 ---
 
-## 8. Failure Modes & Resilience
+## 11. Failure Modes & Resilience
 
 ### Delivery Flow with Failure Handling
 
@@ -488,7 +942,7 @@ sequenceDiagram
 
 ---
 
-## 9. Data Model & Storage
+## 12. Data Model & Storage
 
 ### Core Tables (PostgreSQL)
 
@@ -557,18 +1011,90 @@ Value:  {
 TTL:    3600 (auto-expire stale health data)
 ```
 
+### Database Query Patterns and Indexing Strategy
+
+At 1 billion events/day, database design is not about "what tables do I need" — it's about "which queries are on the hot path and how do I make them fast?"
+
+**Hot-path queries (>10K QPS — must be cached or indexed):**
+
+```sql
+-- Q1: Subscription lookup (11,600/sec — CACHED in Redis, fallback to DB)
+SELECT id, url, secret, tenant_id
+FROM webhook_endpoints
+WHERE status = 'active'
+  AND event_types @> ARRAY['payment.completed'];
+-- Index: GIN index on event_types + partial index on status
+CREATE INDEX idx_endpoints_active_events
+  ON webhook_endpoints USING GIN (event_types)
+  WHERE status = 'active';
+
+-- Q2: Idempotency check (11,600/sec — CACHED in Redis, fallback to DB)
+SELECT id FROM webhook_events
+WHERE idempotency_key = 'evt_20260223_payment_789';
+-- Index: unique constraint serves as index
+ALTER TABLE webhook_events
+  ADD CONSTRAINT uniq_idempotency UNIQUE (idempotency_key);
+```
+
+**Warm-path queries (100-1K QPS — indexed but not cached):**
+
+```sql
+-- Q3: List deliveries for a specific event (customer dashboard)
+SELECT * FROM delivery_log
+WHERE event_id = 'evt_xyz789'
+ORDER BY created_at;
+-- ClickHouse primary key covers this: ORDER BY (tenant_id, created_at)
+-- But event_id lookups need a secondary index:
+ALTER TABLE delivery_log ADD INDEX idx_event_id event_id TYPE bloom_filter;
+
+-- Q4: List recent deliveries for a tenant (customer dashboard)
+SELECT * FROM delivery_log
+WHERE tenant_id = 'tenant_42'
+  AND created_at > now() - INTERVAL 24 HOUR
+ORDER BY created_at DESC
+LIMIT 50;
+-- Covered by ClickHouse primary key: ORDER BY (tenant_id, created_at)
+```
+
+**Cold-path queries (<10 QPS — full scans acceptable):**
+
+```sql
+-- Q5: Count failed deliveries by endpoint (admin analytics)
+SELECT endpoint_id, count(*) as failures
+FROM delivery_log
+WHERE status_code >= 400
+  AND created_at > now() - INTERVAL 7 DAY
+GROUP BY endpoint_id
+ORDER BY failures DESC;
+-- ClickHouse handles this with columnar scan — no special index needed
+
+-- Q6: Find all endpoints for a tenant (management API)
+SELECT * FROM webhook_endpoints
+WHERE tenant_id = 'tenant_42';
+-- Covered by idx_endpoints_tenant
+```
+
+**Table partitioning strategy:**
+
+| Table | Partition Strategy | Why |
+|---|---|---|
+| webhook_events | Range by created_at (monthly) | Old events can be dropped; queries are always time-bounded |
+| delivery_log (ClickHouse) | Range by created_at (monthly) with 90-day TTL | Auto-expire old logs; most queries are "last 24 hours" |
+| webhook_endpoints | None (500K rows total) | Small table; fits in memory |
+
 ### Storage Engine Choice
 
 | Engine | Role | Why |
 |---|---|---|
-| PostgreSQL | Events, endpoints, subscriptions | ACID for subscription changes; complex queries for management API |
-| Kafka | Event ingestion queue, tenant-partitioned delivery queues | Durable, replayable, ordered within partition; handles burst traffic |
-| ClickHouse | Delivery log analytics | Columnar, handles 600M+ rows/day writes; efficient time-range aggregation |
-| Redis | Endpoint health, circuit breaker state, subscription cache | Sub-millisecond reads for hot-path decisions; TTL for auto-cleanup |
+| PostgreSQL | Events, endpoints, subscriptions | ACID for subscription changes; complex queries for management API. At 500K endpoints, the full table fits in ~500MB — easily memory-resident |
+| Kafka | Event ingestion queue, tenant-partitioned delivery queues | Durable, replayable, ordered within partition; handles burst traffic. 7-day retention enables replay after bugs |
+| ClickHouse | Delivery log analytics | Columnar, handles 1.2B+ rows/day writes; efficient time-range aggregation. 90-day TTL auto-manages storage |
+| Redis | Subscription cache, endpoint health, idempotency dedup, circuit breaker state | Sub-millisecond reads for hot-path decisions; ~51GB total memory for all cache layers |
+| S3 | DLQ archive, large payloads (claim check) | Virtually unlimited storage; 11 nines durability; cheap at $0.023/GB/month |
 
 ---
 
-## 10. Observability & Operations
+## 13. Observability & Operations
 
 ### Key Metrics
 
@@ -612,7 +1138,7 @@ Each delivery task carries a trace ID derived from the original event, so you ca
 
 ---
 
-## 11. Design Trade-offs
+## 14. Design Trade-offs
 
 | Decision | Option A | Option B | Recommended | Why |
 |---|---|---|---|---|
@@ -627,7 +1153,7 @@ Each delivery task carries a trace ID derived from the original event, so you ca
 
 ---
 
-## 12. Common Interview Mistakes
+## 15. Common Interview Mistakes
 
 1. **Designing synchronous delivery**: "The API accepts the event and delivers it before responding." → This couples your API latency to the slowest customer endpoint. Staff+ answer: decouple ingestion from delivery. Return 202 immediately, deliver asynchronously.
 
@@ -645,30 +1171,32 @@ Each delivery task carries a trace ID derived from the original event, so you ca
 
 ---
 
-## 13. Interview Cheat Sheet
+## 16. Interview Cheat Sheet
 
 ### Time Allocation (45-minute interview)
 
 | Phase | Time | What to Cover |
 |---|---|---|
-| Clarify requirements | 5 min | Event types, delivery guarantees (at-least-once), scale, multi-tenant? |
-| High-level design | 10 min | Ingestion → queue → router → per-tenant delivery queues → workers |
-| Deep dive | 15 min | Circuit breaker per endpoint, retry with backoff, tenant isolation |
-| Scale + failures | 10 min | Noisy neighbor, retry storms, DLQ, gradual recovery |
-| Trade-offs + wrap-up | 5 min | Full vs. thin payloads, queue backend choice, signature scheme |
+| Clarify requirements | 5 min | 1:1 vs 1:N event-URL mapping, scale (1B events/day), delivery guarantees |
+| REST API design | 5 min | Registration endpoints, event ingestion, webhook payload format, idempotency |
+| High-level design | 10 min | Ingestion → Kafka → router → per-tenant delivery queues → workers |
+| Deep dive: caching + DB | 10 min | Three cache layers (subscription, health, dedup), DB indexing strategy, query patterns |
+| Deep dive: MQ + failures | 10 min | Three queues (ingestion/delivery/DLQ), visibility timeout, retry schedule, gradual recovery |
+| Trade-offs + wrap-up | 5 min | Kafka vs SQS, full vs thin payloads, tenant isolation strategy |
 
 ### Step-by-Step Answer Guide
 
-1. **Clarify**: "Is this for sending webhooks (platform-side) or receiving them? How many tenants and endpoints? What delivery guarantee — at-least-once or best-effort?"
-2. **Key insight**: "The hard part isn't sending HTTP requests — it's isolating tenants so one broken endpoint doesn't affect others."
-3. **Single machine**: Synchronous delivery from app server, PostgreSQL for state. Works under 1K events/day.
-4. **Prove it fails**: "One endpoint responding in 10s consumes 200x more worker capacity than a 50ms endpoint. The thread pool is exhausted."
-5. **Distributed design**: Kafka ingestion → router → per-tenant queues → worker pools → circuit breakers
-6. **Components**: Router (fan-out + dedup), workers (delivery + classification), circuit breaker (per-endpoint health), retry scheduler (exponential backoff + jitter)
-7. **Failure handling**: Circuit breaker states, DLQ for permanent failures, gradual recovery ramp, idempotency keys for customers
-8. **Scale levers**: Partition queues by tenant, scale workers per queue depth, ClickHouse for delivery logs, thin events for bandwidth
-9. **Trade-offs**: Per-tenant queues (isolation) vs. shared queue (simplicity). Full payload (convenience) vs. thin events (bandwidth + freshness). HMAC (fast) vs. Ed25519 (no shared secret).
-10. **Observe**: Queue drain time (best single metric), circuit breaker state heatmap, delivery success rate by tenant
+1. **Clarify**: "Is this 1:1 (one eventId → one URL) or 1:N? 1 billion events/day = ~12K events/sec average, ~40K peak. At-least-once or best-effort?"
+2. **REST API**: Show the registration endpoint (`POST /api/v1/webhooks/endpoints`), the event ingestion (`POST /api/v1/events` → 202 Accepted), and the webhook payload format with HMAC signature.
+3. **Key insight**: "The hard part isn't sending HTTP requests — it's isolating tenants so one broken endpoint doesn't affect others."
+4. **Single machine**: Synchronous delivery from app server, PostgreSQL for state. Works under 1K events/day.
+5. **Prove it fails**: "One endpoint responding in 10s consumes 200x more worker capacity than a 50ms endpoint. The thread pool is exhausted. Also, 12K subscription lookups/sec saturates PostgreSQL without caching."
+6. **Caching strategy**: Three layers — Redis for subscription lookups (11.6K/sec), endpoint health (circuit breaker state), and idempotency dedup (~50GB at peak). Cache invalidation via Redis Pub/Sub on endpoint changes.
+7. **Database design**: Show the schema with indexes. Explain GIN index for event_type array lookup, partial index on active endpoints, ClickHouse for delivery logs with TTL. Partition webhook_events by created_at monthly.
+8. **Message queue for failures**: Three queues — Kafka ingestion (7-day replay), delivery queue (visibility timeout for crash recovery), DLQ (30-day retention + manual replay). Explain the visibility timeout mechanism: if worker crashes, message becomes visible again after 60s and another worker picks it up.
+9. **Failure handling**: Circuit breaker per endpoint, exponential backoff retries (8 attempts over 72 hours), gradual recovery ramp, idempotency keys for customers.
+10. **Scale levers**: Partition queues by tenant, scale workers per queue depth, ClickHouse for delivery logs, thin events for bandwidth.
+11. **Trade-offs**: Kafka (replay, ordering) vs SQS (simpler ops). Per-tenant queues (isolation) vs shared (simplicity). Full payload vs thin events ($1.5M/year bandwidth at scale).
 
 ### What the Interviewer Wants to Hear
 
