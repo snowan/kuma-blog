@@ -1,23 +1,21 @@
 # System Design: Designing Chess.com
 
-## Real-Time Online Chess Platform — From Two Players to Millions of Concurrent Games
+## Real-Time Online Chess Platform — An Evolutionary Architecture from Two Players to Millions of Concurrent Games
 
 ---
 
 ## Table of Contents
 
 1. [Requirements & Scope](#1-requirements--scope)
-2. [High-Level Architecture](#2-high-level-architecture)
-3. [Core Component Deep Dives](#3-core-component-deep-dives)
-4. [The Scaling Journey: Simple → Enterprise](#4-the-scaling-journey)
-5. [Server-Authoritative Clock & Timer System](#5-server-authoritative-clock--timer-system)
-6. [Matchmaking System](#6-matchmaking-system)
-7. [Game State Management & Event Sourcing](#7-game-state-management--event-sourcing)
-8. [WebSocket Infrastructure at Scale](#8-websocket-infrastructure-at-scale)
-9. [Failure Modes & Resilience](#9-failure-modes--resilience)
-10. [Design Trade-offs & Alternative Choices](#10-design-trade-offs--alternative-choices)
-11. [Data Model & Storage Architecture](#11-data-model--storage-architecture)
-12. [Observability & Operations](#12-observability--operations)
+2. [Stage 1: Single Server — "Two Friends Playing Chess"](#2-stage-1-single-server--two-friends-playing-chess)
+3. [Stage 2: Shared State — "Surviving Server Crashes"](#3-stage-2-shared-state--surviving-server-crashes)
+4. [Stage 3: Separation of Concerns — "Real-Time at Scale"](#4-stage-3-separation-of-concerns--real-time-at-scale)
+5. [Stage 4: Distributed Matchmaking & Event-Driven Architecture](#5-stage-4-distributed-matchmaking--event-driven-architecture)
+6. [Stage 5: Global Scale — "Chess.com Level"](#6-stage-5-global-scale--chesscom-level)
+7. [Failure Modes & Resilience](#7-failure-modes--resilience)
+8. [Design Trade-offs & Alternative Choices](#8-design-trade-offs--alternative-choices)
+9. [Data Model & Storage Architecture](#9-data-model--storage-architecture)
+10. [Key Design Principles](#10-key-design-principles)
 
 ---
 
@@ -60,60 +58,34 @@ Storage per game:       ~2KB (metadata) + ~3KB (moves) = ~5KB
 Daily new games:        ~15M games → ~75GB/day raw
 ```
 
----
-
-## 2. High-Level Architecture
-
-![chess game hld](./resources/chess-game-hld.png)
-
-The architecture follows a **layered, microservices-based** design with clear separation between:
-
-### Layer Breakdown
-
-**Edge Layer** — CDN (CloudFlare) for static assets (board images, piece sprites, JS bundles). GeoDNS routes players to the nearest regional cluster.
-
-**Gateway Layer** — Two distinct gateways:
-- **API Gateway**: Handles REST requests (auth, matchmaking initiation, game history queries). Stateless, horizontally scalable.
-- **WebSocket Gateway**: Maintains persistent connections. Stateful by nature (holds TCP connections), so requires sticky sessions and special scaling patterns.
-
-**Core Services Layer** — Each service owns a single domain:
-- **Game Service**: The brain — validates moves, manages game state machine, enforces rules
-- **Matchmaking Service**: Pairs players by rating, time control, and fairness criteria
-- **Timer Service**: Server-authoritative clock countdown (critical for fairness)
-- **Spectator Service**: Fan-out engine for broadcasting to watchers
-
-**Data Layer** — Polyglot persistence:
-- **Redis Cluster**: Active game state (hot path), WebSocket session registry, matchmaking queues, leaderboard sorted sets
-- **PostgreSQL**: Users, ratings, completed game records (cold path, durable)
-- **Kafka**: Event bus for decoupled communication — rating updates, analytics, anti-cheat signals
-- **S3/Object Store**: PGN game archives, analysis data
-
-### Why This Layering?
-
-The key architectural insight for chess (vs. FPS games) is that each game is **independently stateful but low-throughput**. A chess game produces ~0.2 moves/second on average. The challenge isn't per-game throughput — it's the **sheer number of simultaneous independent games** with strong per-game consistency requirements.
-
-This means:
-- Games can be **trivially sharded** by `gameId` — no cross-game state dependencies
-- Each game server can manage hundreds of concurrent games
-- Horizontal scaling is straightforward: more game servers = more games
+These numbers frame our entire scaling journey. We won't need to handle 500K concurrent games on day one — but every architectural choice we make should have a path toward it. Let's start from the very beginning.
 
 ---
 
-## 3. Core Component Deep Dives
+## 2. Stage 1: Single Server — "Two Friends Playing Chess"
 
-### 3.1 Game Service (The Brain)
+**Target: ~10 concurrent games, proof of concept**
 
-The Game Service is the **single source of truth** for all game state. Clients are untrusted; they only submit move intentions.
+At this stage, we're building the simplest thing that could possibly work. One server, one process, everything in memory.
 
-**Responsibilities:**
-- Accept move commands from WebSocket layer
-- Validate move legality using server-side chess engine
-- Update game state (FEN string, move list)
-- Detect game-ending conditions (checkmate, stalemate, draw)
-- Coordinate with Timer Service for clock updates
-- Emit game events to Kafka for downstream processing
+### Architecture
 
-**Game State Data Structure (in Redis):**
+```mermaid
+graph LR
+    C1[Player A<br/>Browser] -->|WebSocket| S[Node.js Server<br/>Express + socket.io<br/>+ chess.js]
+    C2[Player B<br/>Browser] -->|WebSocket| S
+    S -->|Persist completed games| DB[(PostgreSQL)]
+    S --- MEM[In-Memory<br/>Map gameId → GameState]
+```
+
+**Stack:**
+- Single Node.js/Express server
+- `socket.io` for WebSocket connections
+- `chess.js` for move validation
+- PostgreSQL for persisting completed games
+- `Map<gameId, GameState>` in-memory for active games
+
+### Game State Data Structure (in-memory)
 
 ```json
 {
@@ -139,22 +111,7 @@ The Game Service is the **single source of truth** for all game state. Clients a
 - Move list enables: threefold repetition detection, 50-move rule, game replay
 - This is essentially **event sourcing** — the move list IS the event log, FEN is the materialized view
 
-**Move Validation Pipeline:**
-
-```
-1. Deserialize move: {from: "e2", to: "e4", promotion?: "q"}
-2. Load game state from Redis (with optimistic lock)
-3. Verify it's this player's turn
-4. Verify player clock > 0 (compute elapsed since lastMoveTimestamp)
-5. Validate move legality against current FEN (chess engine)
-6. Apply move → generate new FEN
-7. Check: is this checkmate? stalemate? draw?
-8. Update clocks: deduct elapsed time, add increment
-9. Persist to Redis atomically (MULTI/EXEC)
-10. Publish move event to Kafka + WebSocket broadcast
-```
-
-### 3.2 Chess Move Validation Engine
+### Chess Move Validation Engine
 
 The server-side chess engine must handle **all** rules:
 
@@ -163,7 +120,7 @@ The server-side chess engine must handle **all** rules:
 - **Castling**: Requires tracking whether king/rooks have moved (FEN castling flags)
 - **Pawn promotion**: Must specify promotion piece
 - **Check/Checkmate/Stalemate detection**: After each move, compute all legal moves for the opponent. Zero legal moves + in check = checkmate. Zero legal moves + not in check = stalemate.
-- **Draw conditions**: 
+- **Draw conditions**:
   - Threefold repetition (same position 3 times — requires full move history)
   - 50-move rule (50 moves without pawn move or capture — tracked in FEN halfmove clock)
   - Insufficient material (K vs K, K+B vs K, K+N vs K)
@@ -179,17 +136,24 @@ The server-side chess engine must handle **all** rules:
 
 For production: wrap `chess.js` or `python-chess` in a service, with bitboard optimizations for hot paths (legal move generation).
 
-### 3.3 Timer Service — Server-Authoritative Clocks
+### Move Validation Pipeline
 
-![chess game move propagation](./resources/chess-game-move-propagation.png)
+```
+1. Deserialize move: {from: "e2", to: "e4", promotion?: "q"}
+2. Load game state from in-memory Map
+3. Verify it's this player's turn
+4. Verify player clock > 0 (compute elapsed since lastMoveTimestamp)
+5. Validate move legality against current FEN (chess engine)
+6. Apply move → generate new FEN
+7. Check: is this checkmate? stalemate? draw?
+8. Update clocks: deduct elapsed time, add increment
+9. Update in-memory Map
+10. Broadcast move to both players via WebSocket
+```
 
-This is one of the **most critical and subtle** components. In online chess, the clock is sacred.
+### Server-Authoritative Clocks (Even at Stage 1)
 
-**The Core Problem:**
-- Each player has a countdown clock (e.g., 300 seconds for 5-minute blitz)
-- When it's your turn, your clock ticks down
-- When you move, your clock stops and the opponent's starts
-- If your clock reaches 0, you lose on time (unless opponent has insufficient material for checkmate)
+Even at this stage, the clock must be **server-authoritative**. Clients cannot be trusted.
 
 **Why Server-Authoritative (not client clocks)?**
 - Clients can be manipulated (hacked clocks, artificial lag)
@@ -201,7 +165,7 @@ This is one of the **most critical and subtle** components. In online chess, the
 ```
 State stored per game:
   white_clock_ms: 284100       # Time remaining when clock was LAST STOPPED
-  black_clock_ms: 300000       # Time remaining when clock was LAST STOPPED  
+  black_clock_ms: 300000       # Time remaining when clock was LAST STOPPED
   last_move_timestamp_ms: T    # Server timestamp when last move was processed
   active_clock: "white"        # Whose clock is currently ticking
 
@@ -216,150 +180,400 @@ On move received from White:
   7. Broadcast to both clients: {white_clock: X, black_clock: Y}
 ```
 
-**Clock is NEVER "running" on the server.** It's a "last snapshot + elapsed" calculation. This is crucial:
-- No background timers per game (impossible at 500K concurrent games)
-- Clock is computed on-demand when a move arrives
-- For timeout detection: a separate lightweight sweep checks `last_move_timestamp + remaining_clock < now()`
+**Clock is NEVER "running" on the server.** It's a "last snapshot + elapsed" calculation. This is the **lazy evaluation pattern** — and it's critical even at small scale because it means we never need background timers per game.
 
-**Timeout Detection: The Sweep Approach**
+### What Works at Stage 1
 
-You cannot run 500K individual timers. Instead:
+- Simple, fast to build
+- In-memory state = lowest possible latency
+- Single process = no coordination needed
+- Perfect for prototyping and validating game logic
 
+### What Breaks — Why We Need Stage 2
+
+- **Server crash = all games lost** (in-memory state is gone)
+- **Single machine limits**: ~10K WebSocket connections
+- **No redundancy**: one server goes down, the entire platform is offline
+- **No horizontal scaling**: can't add more servers to handle more players
+
+Once you have more than a handful of concurrent players, you need to survive a server restart without losing everyone's games. That leads us to Stage 2.
+
+---
+
+## 3. Stage 2: Shared State — "Surviving Server Crashes"
+
+**Target: ~1K concurrent games**
+
+### The Problem
+
+In Stage 1, game state lives in a Node.js process's memory. If that process crashes — or you need to deploy a new version — every active game is destroyed. You also can't run multiple servers because two players in the same game might connect to different servers, and neither server has the other's game state.
+
+### The Solution: Redis as External State Store
+
+Move game state out of server memory and into **Redis**. Servers become stateless processors that read from and write to Redis. Multiple servers can now share the same game state.
+
+```mermaid
+graph TB
+    C1[Player A] -->|WebSocket| LB[Nginx Load Balancer<br/>Sticky Sessions - IP Hash]
+    C2[Player B] -->|WebSocket| LB
+    C3[Player C] -->|WebSocket| LB
+    C4[Player D] -->|WebSocket| LB
+
+    LB --> S1[Game Server 1]
+    LB --> S2[Game Server 2]
+    LB --> S3[Game Server 3]
+
+    S1 --> R[(Redis<br/>Game State Store)]
+    S2 --> R
+    S3 --> R
+
+    S1 --> PG[(PostgreSQL<br/>Completed Games)]
+    S2 --> PG
+    S3 --> PG
+
+    R -.->|Pub/Sub| S1
+    R -.->|Pub/Sub| S2
+    R -.->|Pub/Sub| S3
 ```
-Sorted set in Redis:
-  Key: "timeouts"
-  Score: last_move_timestamp_ms + remaining_clock_ms (= deadline)
-  Value: gameId
 
-Every 100ms, a timer sweep worker:
-  1. ZRANGEBYSCORE timeouts -inf current_timestamp_ms
-  2. For each expired game:
-     - Load game state
-     - Verify it's truly expired (recompute, avoid race)
-     - End game: "timeout" result
-     - Remove from sorted set
-```
+### What Changed from Stage 1
 
-**Handling Network Latency Compensation:**
-
-When a player's move arrives at the server, some time was spent in transit. Should this transit time count against the player?
-
-| Policy | How | Chess.com Approach |
+| Component | Stage 1 | Stage 2 |
 |---|---|---|
-| Count transit time | Simple — just use server timestamps | Penalizes players with bad connections |
-| Subtract estimated RTT | Server tracks avg RTT per player, deducts half | Fairer, but gameable |
-| **Hybrid** (recommended) | Cap compensation at e.g., 200ms, based on measured RTT | Balance between fairness and anti-cheat |
+| Game state | In-memory `Map` | Redis (external) |
+| Server count | 1 | 2-3 behind load balancer |
+| Load balancing | None | Nginx with sticky sessions (IP hash) |
+| Cross-server messaging | N/A | Redis Pub/Sub |
+| Crash recovery | Games lost | Games survive (state in Redis) |
 
-Chess.com uses a **server-timestamp approach with some compensation** — they don't penalize obvious network delays but also don't allow clients to claim arbitrary timestamps.
+### Why Redis?
 
-**Client-Side Clock Display:**
+When two players are on different servers, both servers need access to the same game state. Redis gives us:
+- **Sub-millisecond reads**: Game state access in < 1ms
+- **Atomic operations**: `MULTI/EXEC` for safe concurrent updates
+- **Pub/Sub**: Cross-server message routing for broadcasting moves
 
-Even though the server is authoritative, the client must show a smooth countdown:
-1. After receiving a server clock update, set local clock to server value
-2. Run a local `setInterval(100ms)` decrementing the active clock
-3. When the next move arrives from server, **override** local values with server values
-4. Visual discrepancy is typically < 100ms — imperceptible
+### Move Validation Pipeline (Updated for Redis)
+
+```
+1. Deserialize move: {from: "e2", to: "e4", promotion?: "q"}
+2. Load game state from Redis (with optimistic lock via WATCH)
+3. Verify it's this player's turn
+4. Verify player clock > 0 (compute elapsed since lastMoveTimestamp)
+5. Validate move legality against current FEN (chess engine)
+6. Apply move → generate new FEN
+7. Check: is this checkmate? stalemate? draw?
+8. Update clocks: deduct elapsed time, add increment
+9. Persist to Redis atomically (MULTI/EXEC)
+10. Publish move event via Redis Pub/Sub → all servers forward to connected clients
+```
+
+### Event Sourcing: A Natural Fit for Chess
+
+Chess is **inherently event-sourced**. The sequence of moves IS the complete history. The current board position (FEN) is a **derived materialized view** of the move list.
+
+```
+Event Log (Source of Truth):
+  Move 1: e2→e4  (timestamp, clock_state)
+  Move 2: e7→e5  (timestamp, clock_state)
+  Move 3: Ng1→f3 (timestamp, clock_state)
+  ...
+
+Materialized View (derived):
+  FEN: "rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"
+```
+
+**Benefits of event sourcing at this stage:**
+1. **Complete audit trail**: Every move with timestamps — essential for anti-cheat
+2. **Game replay**: Play back any game move by move
+3. **Crash recovery**: Replay events to reconstruct state on any server
+4. **Spectator catch-up**: New spectator can receive the event log to sync up
+5. **Analysis**: Post-game engine analysis per move
+
+**Performance Optimization: Snapshots**
+
+For long games (60+ moves), replaying from scratch is expensive. Use periodic snapshots:
+
+```
+Every N moves (e.g., every 20):
+  Snapshot = {fen, clocks, moveCount, castling_flags, ...}
+
+Recovery:
+  1. Load latest snapshot
+  2. Replay only moves since snapshot
+```
+
+### Redis Data Model
+
+```
+Active game state (hot):
+  game:{gameId}:state → JSON blob (FEN, clocks, status)
+  game:{gameId}:moves → List of move strings (event log)
+
+Session mapping:
+  player:{userId}:game → current gameId
+
+TTL policy:
+  Active game keys: no TTL (explicit cleanup on game end)
+  Completed game keys: 1 hour TTL (async archival to PostgreSQL)
+```
+
+### Sticky Sessions for WebSocket
+
+WebSocket is a persistent connection. If Player A's WebSocket connects to Server 1, that connection MUST stay on Server 1 for the lifetime of the game. IP hash ensures this:
+
+```
+Nginx config:
+  upstream game_servers {
+    ip_hash;
+    server game1:3000;
+    server game2:3000;
+    server game3:3000;
+  }
+```
+
+### Cross-Server Message Routing via Redis Pub/Sub
+
+When White (on Server 1) makes a move, Black (on Server 2) must receive it:
+
+```
+1. Server 1 processes White's move, writes to Redis
+2. Server 1 publishes to Redis channel: "game:{gameId}"
+3. Server 2 is subscribed to "game:{gameId}" (because Black is connected there)
+4. Server 2 receives the message and forwards to Black's WebSocket
+```
+
+### What Works at Stage 2
+
+- **Crash resilience**: Server crashes don't lose game state
+- **Horizontal scaling**: 2-3 servers behind a load balancer
+- **~1K concurrent games**: Comfortably handled
+- **Event sourcing**: Full game history for replay and recovery
+
+### What Breaks — Why We Need Stage 3
+
+- **Single Redis instance**: One Redis server is a single point of failure and a scaling bottleneck
+- **Monolith coupling**: The game server handles everything — WebSocket connections, move validation, matchmaking, spectating. These have very different scaling characteristics:
+  - WebSocket connections are **memory-bound** (~20-50KB per connection)
+  - Move validation is **CPU-bound**
+  - Matchmaking is **I/O-bound**
+- **Clock fairness at scale**: With thousands of games, we need a systematic approach to timeout detection — not per-game timers
+- **Deployment friction**: Updating matchmaking logic requires redeploying the entire server
 
 ---
 
-## 4. The Scaling Journey
+## 4. Stage 3: Separation of Concerns — "Real-Time at Scale"
 
-![chess game scaling journey](./resources/chess-game-scale.png)
+**Target: ~50K concurrent games**
 
-### Stage 1: MVP — Single Server (2 Players, ~10 concurrent games)
+### The Problem
 
-```
-Architecture:
-  - Single Node.js/Express server
-  - socket.io for WebSocket
-  - chess.js for validation
-  - PostgreSQL for persistence
-  - In-memory Map<gameId, GameState>
+The monolith server does everything: WebSocket management, move validation, matchmaking, spectator broadcasting, and timer management. At 50K concurrent games with 100K+ WebSocket connections, these responsibilities have fundamentally different scaling needs:
 
-Why this works:
-  - Simple, fast to build
-  - In-memory state = lowest possible latency
-  - Single process = no coordination needed
+| Responsibility | Scaling Dimension | Bottleneck |
+|---|---|---|
+| WebSocket connections | Memory (20-50KB each) | RAM |
+| Move validation | CPU (chess engine) | Compute |
+| Matchmaking | I/O (Redis queries) | Queue throughput |
+| Spectator broadcast | Bandwidth (fan-out) | Network |
 
-Why it breaks:
-  - Server crash = all games lost (in-memory state gone)
-  - Single machine limits: ~10K WS connections
-  - No redundancy
-```
+You can't efficiently scale a monolith when one part needs more memory while another needs more CPU.
 
-### Stage 2: Multiple Servers (~1K concurrent games)
+### The Solution: Microservices Decomposition
 
-```
-What changes:
-  + Redis for shared game state (moved out of in-memory)
-  + Nginx load balancer with sticky sessions (IP hash)
-  + 2-3 game server instances behind LB
-  + Redis Pub/Sub for cross-server message routing
+Split the monolith into specialized services, each scaled independently.
 
-Key decision: WHY move state to Redis?
-  - When two players are on different servers, both servers need
-    access to the same game state
-  - Redis gives us: sub-millisecond reads, atomic operations (MULTI/EXEC),
-    pub/sub for broadcasting
+![chess game hld](./resources/chess-game-hld.png)
 
-Sticky sessions needed because:
-  - WebSocket is a persistent connection
-  - Player A's WS connects to Server 1; that WS MUST stay on Server 1
-  - IP hash or connection-ID hash ensures this
-```
+```mermaid
+graph TB
+    subgraph Edge Layer
+        CDN[CDN - CloudFlare]
+        GDNS[GeoDNS]
+    end
 
-### Stage 3: Microservices (~50K concurrent games)
+    subgraph Gateway Layer
+        API[API Gateway<br/>REST - Auth, History]
+        WSG1[WS Gateway 1<br/>~50K connections]
+        WSG2[WS Gateway 2<br/>~50K connections]
+        WSG3[WS Gateway N<br/>~50K connections]
+    end
 
-```
-What changes:
-  + Decompose monolith into: Matchmaking, Game, Timer, Spectator services
-  + Dedicated WebSocket Gateway fleet (separate from game logic)
-  + Kafka event bus for async communication
-  + Redis Cluster (3 shards) for horizontal Redis scaling
-  + PostgreSQL read replicas for query traffic
-  + Auto-scaling game servers in Kubernetes
+    subgraph Core Services
+        GS[Game Service<br/>Move Validation<br/>State Machine]
+        TS[Timer Service<br/>Timeout Sweep]
+        MS[Matchmaking Service<br/>Rating + Queue]
+        SS[Spectator Service<br/>Fan-Out Engine]
+    end
 
-Why decompose?
-  - Matchmaking has different scaling characteristics than game logic
-    (CPU-light, I/O-heavy vs. CPU-moderate, latency-critical)
-  - WebSocket gateways are memory-bound (each connection = ~20KB)
-    while game servers are CPU-bound
-  - Independent deployment: can update matchmaking without touching game logic
-  
-New complexity:
-  - Service discovery (Consul/K8s DNS)
-  - Distributed tracing (Jaeger/Zipkin)
-  - More failure modes to handle
-```
+    subgraph Data Layer
+        RC[(Redis Cluster<br/>3 Shards)]
+        PG[(PostgreSQL<br/>+ Read Replicas)]
+        K[Kafka<br/>Event Bus]
+    end
 
-### Stage 4: Global Platform (~500K+ concurrent games)
+    GDNS --> API
+    GDNS --> WSG1
+    GDNS --> WSG2
+    GDNS --> WSG3
 
-```
-What changes:
-  + Multi-region deployment (US-East, US-West, EU-West, Asia-Pacific)
-  + GeoDNS routing players to nearest region
-  + Regional Redis clusters (game state stays in the region where the game was created)
-  + Cross-region matchmaking coordination
-  + Database sharding by userId for users table, by gameId for games
-  + Kafka cluster with partitioning by gameId
-  + Full observability stack (Prometheus, Grafana, PagerDuty)
+    WSG1 --> GS
+    WSG2 --> GS
+    WSG3 --> GS
 
-Critical design decision: WHERE does the game live?
-  - Game is created in the region of the first-matched player
-  - Both players connect to that region's game server
-  - If Player A is in US-East and Player B is in EU-West,
-    the game runs in one region, and the remote player has higher latency
-  - This is acceptable for chess (turn-based, sub-200ms is fine)
-  - Alternative: run game in the region closest to both (median latency optimization)
+    GS --> RC
+    GS --> K
+    TS --> RC
+    MS --> RC
+    SS --> RC
+
+    K --> SS
+    K --> PG
+
+    API --> MS
+    API --> PG
 ```
 
----
+### Layer Breakdown
 
-## 5. Server-Authoritative Clock & Timer System
+**Edge Layer** — CDN (CloudFlare) for static assets (board images, piece sprites, JS bundles). GeoDNS routes players to the nearest regional cluster.
+
+**Gateway Layer** — Two distinct gateways:
+- **API Gateway**: Handles REST requests (auth, matchmaking initiation, game history queries). Stateless, horizontally scalable.
+- **WebSocket Gateway**: Maintains persistent connections. Stateful by nature (holds TCP connections), so requires sticky sessions and special scaling patterns.
+
+**Core Services Layer** — Each service owns a single domain:
+- **Game Service**: The brain — validates moves, manages game state machine, enforces rules
+- **Matchmaking Service**: Pairs players by rating, time control, and fairness criteria
+- **Timer Service**: Server-authoritative clock countdown (critical for fairness)
+- **Spectator Service**: Fan-out engine for broadcasting to watchers
+
+**Data Layer** — Polyglot persistence:
+- **Redis Cluster**: Active game state (hot path), WebSocket session registry, matchmaking queues, leaderboard sorted sets
+- **PostgreSQL**: Users, ratings, completed game records (cold path, durable)
+- **Kafka**: Event bus for decoupled communication — rating updates, analytics, anti-cheat signals
+
+### Why This Layering?
+
+The key architectural insight for chess (vs. FPS games) is that each game is **independently stateful but low-throughput**. A chess game produces ~0.2 moves/second on average. The challenge isn't per-game throughput — it's the **sheer number of simultaneous independent games** with strong per-game consistency requirements.
+
+This means:
+- Games can be **trivially sharded** by `gameId` — no cross-game state dependencies
+- Each game server can manage hundreds of concurrent games
+- Horizontal scaling is straightforward: more game servers = more games
+
+### Deep Dive: WebSocket Gateway Separation
+
+![chess game websocket](./resources/chess-game-ws-management.png)
+
+Each WebSocket connection consumes **~20-50KB** of memory (TCP buffers, TLS state, application-level session data). At 1M connections:
+
+```
+1M connections × 30KB avg = ~30GB RAM
+Split across 20 WS gateway pods = ~50K connections per pod (~1.5GB RAM each)
+```
+
+**Why WebSockets (not HTTP polling / SSE)?**
+
+| Protocol | Direction | Overhead | Latency | Use Case |
+|---|---|---|---|---|
+| HTTP Polling | Client→Server | High (headers per request) | 1-5s (poll interval) | Too slow for chess |
+| Long Polling | Client→Server (held open) | Moderate | ~500ms | Acceptable but wasteful |
+| SSE | Server→Client only | Low | Real-time | Can't send moves upstream |
+| **WebSocket** | **Bidirectional** | **Minimal (2-byte frame header)** | **Real-time** | **Perfect for chess** |
+
+Chess requires **bidirectional real-time** — both players send moves AND receive opponent's moves. WebSocket is the clear winner.
+
+**Key design: Separate WS Gateways from Game Servers**
+
+```
+WS Gateway (stateful):
+  - Maintains TCP connections
+  - Routes messages to/from game servers
+  - Does NOT contain game logic
+  - Scaled based on connection count
+
+Game Server (stateless):
+  - Contains all game logic
+  - Reads/writes game state from Redis
+  - Scaled based on CPU (move validation)
+  - Any game server can handle any game
+```
+
+This separation means:
+- A WS gateway crash only drops connections (clients reconnect)
+- A game server crash doesn't drop any connections
+- Can scale each independently
+
+### Deep Dive: Cross-Gateway Message Routing (Redis Pub/Sub)
+
+Both players in a game might be on DIFFERENT WS gateways. When White moves, the message must reach Black on a different gateway.
+
+**Solution: Redis Pub/Sub per game**
+
+```mermaid
+sequenceDiagram
+    participant W as White (WS Gateway 1)
+    participant GS as Game Service
+    participant R as Redis
+    participant B as Black (WS Gateway 2)
+    participant S as Spectators (WS Gateway 3)
+
+    W->>GS: move: e2→e4
+    GS->>R: WATCH + validate + MULTI/EXEC
+    R-->>GS: OK (state updated)
+    GS->>R: PUBLISH game:{id} move_event
+    R-->>W: Subscribed → forward to White
+    R-->>B: Subscribed → forward to Black
+    R-->>S: Subscribed → forward to Spectators
+```
+
+```
+1. When a client connects to a game:
+   - WS gateway subscribes to Redis channel: "game:{gameId}"
+
+2. When game server processes a move:
+   - PUBLISH to "game:{gameId}" → {type: "move", data: ...}
+
+3. All WS gateways subscribed to that channel receive the message:
+   - Forward to the client connected to them
+```
+
+**At 500K games, that's 500K Redis channels.** Redis handles this well — each channel is a linked list of subscribers. Memory cost is ~100 bytes per subscription.
+
+### Connection Lifecycle
+
+```
+1. CONNECT:
+   - Client establishes WS connection to gateway
+   - Gateway authenticates JWT token
+   - Register: HSET player:{userId} gateway_id, game_id
+   - Subscribe to game channel
+
+2. MESSAGE (move):
+   - Gateway forwards to game server (via internal RPC or direct Redis queue)
+   - Game server validates, updates state, publishes result
+   - All subscribed gateways receive and forward to clients
+
+3. HEARTBEAT:
+   - Client sends ping every 15s
+   - Gateway responds with pong
+   - If no ping for 30s → consider disconnected
+
+4. DISCONNECT:
+   - Gateway detects closed connection
+   - Unregister from Redis
+   - Notify game server → start disconnect grace period
+   - Unsubscribe from game channel
+```
+
+### Deep Dive: Server-Authoritative Clocks at Scale
 
 ![chess game move propagation](./resources/chess-game-move-propagation.png)
 
-### Deep Dive: Why Not Individual Timers?
+At 50K concurrent games, the "lazy evaluation" pattern from Stage 1 becomes essential — and we add a **timeout sweep** for detecting time-outs without running individual timers.
+
+**Why Not Individual Timers?**
 
 At 500K concurrent games, if each game has an active timer, that's 500K `setTimeout()` calls. Even if each fires only when time expires:
 
@@ -367,12 +581,11 @@ At 500K concurrent games, if each game has an active timer, that's 500K `setTime
 - Timer resolution in Node.js is ~1ms, but accuracy degrades under load
 - Each game server might handle 5K-10K games — still manageable with careful design
 
-**The "Lazy Evaluation" Pattern (Recommended):**
+**The "Lazy Evaluation" Pattern:**
 
 Instead of running a timer for every game, **compute time remaining on-demand**:
 
 ```python
-# Pseudocode for time calculation
 def get_remaining_time(game):
     if game.active_clock == game.turn:
         elapsed = current_time_ms() - game.last_move_timestamp_ms
@@ -387,6 +600,20 @@ def is_timed_out(game):
 **But how do we detect timeouts if no one moves?**
 
 If a player's clock runs out and they simply don't move, the server must still end the game. This requires the **Timeout Sweep**:
+
+```mermaid
+graph TB
+    subgraph "Redis Sorted Set: timeouts"
+        Z["ZADD timeouts deadline_ms gameId<br/>deadline = last_move_timestamp + remaining_clock"]
+    end
+
+    SW[Timer Sweep Worker<br/>Runs every 100ms] -->|ZRANGEBYSCORE<br/>-inf to now| Z
+    Z -->|Expired game IDs| SW
+    SW -->|Load game state| R[(Redis)]
+    SW -->|"Verify truly expired<br/>(recompute, avoid race)"| END[End Game:<br/>timeout result]
+
+    MV[On Every Move] -->|"Update deadline:<br/>ZADD timeouts new_deadline gameId"| Z
+```
 
 ```python
 # Redis sorted set: ZADD timeouts <deadline_ms> <gameId>
@@ -429,13 +656,82 @@ After a valid move:
   # Net: gained 0.5s
 ```
 
+### Handling Network Latency Compensation
+
+When a player's move arrives at the server, some time was spent in transit. Should this transit time count against the player?
+
+| Policy | How | Chess.com Approach |
+|---|---|---|
+| Count transit time | Simple — just use server timestamps | Penalizes players with bad connections |
+| Subtract estimated RTT | Server tracks avg RTT per player, deducts half | Fairer, but gameable |
+| **Hybrid** (recommended) | Cap compensation at e.g., 200ms, based on measured RTT | Balance between fairness and anti-cheat |
+
+Chess.com uses a **server-timestamp approach with some compensation** — they don't penalize obvious network delays but also don't allow clients to claim arbitrary timestamps.
+
+### Client-Side Clock Display
+
+Even though the server is authoritative, the client must show a smooth countdown:
+1. After receiving a server clock update, set local clock to server value
+2. Run a local `setInterval(100ms)` decrementing the active clock
+3. When the next move arrives from server, **override** local values with server values
+4. Visual discrepancy is typically < 100ms — imperceptible
+
+### What Works at Stage 3
+
+- **Independent scaling**: WS gateways scale by memory, game servers by CPU
+- **~50K concurrent games**: Redis Cluster with 3 shards handles the throughput
+- **Fault isolation**: A game server crash doesn't drop WebSocket connections
+- **Independent deployment**: Update matchmaking without touching game logic
+- **Kafka event bus**: Decoupled downstream processing (archival, analytics, ratings)
+
+### What Breaks — Why We Need Stage 4
+
+- **Single matchmaking queue bottleneck**: One matchmaker processing all players becomes a bottleneck at peak load
+- **Tight coupling in matchmaking**: The matchmaker directly writes to Redis and creates games — no async pipeline
+- **No game archival pipeline**: Completed games need to flow from Redis → PostgreSQL → S3 reliably
+- **Matchmaking fairness**: Simple rating range ± 25 doesn't account for rating uncertainty (Glicko-2 RD)
+
 ---
 
-## 6. Matchmaking System
+## 5. Stage 4: Distributed Matchmaking & Event-Driven Architecture
+
+**Target: ~200K concurrent games**
+
+### The Problem
+
+At 200K concurrent games, matchmaking is processing thousands of match requests per second. A single matchmaking process scanning a Redis sorted set becomes a bottleneck — especially during peak hours when thousands of players queue simultaneously for popular time controls like blitz 5+0.
+
+Additionally, completed games need a reliable pipeline to flow from Redis (hot storage) → PostgreSQL (warm) → S3 (cold archive), and rating updates need to happen asynchronously without blocking game flow.
+
+### The Solution: Kafka Event Bus + Sharded Matchmaking + Glicko-2
 
 ![chess game matchmaking](./resources/chess-game-matchmaking-flow.png)
 
-### Rating System: Glicko-2
+```mermaid
+graph TB
+    subgraph "Sharded Matchmaking"
+        P[Players Join Queue] --> SH{Shard by<br/>time_control × rating_bucket}
+        SH --> MM1[Matchmaker: Blitz 0-1500]
+        SH --> MM2[Matchmaker: Blitz 1500-2000]
+        SH --> MM3[Matchmaker: Rapid 0-1500]
+        SH --> MMN[Matchmaker: ...]
+    end
+
+    subgraph "Event-Driven Pipeline"
+        MM1 -->|game_created| K[Kafka]
+        MM2 -->|game_created| K
+        GS[Game Service] -->|game_completed| K
+
+        K --> AW[Archival Worker<br/>Redis → PG → S3]
+        K --> RW[Rating Worker<br/>Glicko-2 Update]
+        K --> LW[Leaderboard Worker<br/>Redis Sorted Sets]
+        K --> AC[Anti-Cheat<br/>Analysis]
+    end
+```
+
+### Deep Dive: Matchmaking Queue Architecture
+
+**Rating System: Glicko-2**
 
 Chess.com transitioned from Elo to **Glicko-2** (developed by Mark Glickman). Glicko-2 adds two dimensions beyond a single number:
 
@@ -448,7 +744,7 @@ Chess.com transitioned from Elo to **Glicko-2** (developed by Mark Glickman). Gl
 - Glicko-2's RD means inactive players' ratings are "less certain," so matchmaking can account for this
 - Elo can create rating inflation/deflation pools; Glicko-2 self-corrects
 
-### Matchmaking Queue Architecture
+**Matchmaking Queue Data Structure:**
 
 ```
 Data structure: Redis Sorted Set per (time_control, rated/unrated)
@@ -475,7 +771,7 @@ Race condition prevention:
   - Alternative: Lua script for atomic find-and-remove
 ```
 
-**Matchmaking at Scale — Distributed Matchmakers:**
+**Distributed Matchmakers — Sharding Strategy:**
 
 With 500K concurrent seekers, a single matchmaker becomes a bottleneck. Solutions:
 
@@ -492,65 +788,23 @@ Chess.com doesn't randomly assign colors. It tracks your recent color history an
 - If you played White last 3 games, you get Black
 - If both players have same imbalance, random assignment
 
----
+### Deep Dive: Game State Archival Pipeline (Redis → PostgreSQL → S3)
 
-## 7. Game State Management & Event Sourcing
+```mermaid
+graph LR
+    GE[Game Ends] -->|"Publish<br/>game_completed"| K[Kafka]
+    K --> AW[Archival Worker]
+    AW -->|"Read game state<br/>+ move list"| R[(Redis)]
+    AW -->|Generate PGN| PG[(PostgreSQL<br/>games table)]
+    AW -->|Upload PGN| S3[(S3<br/>Long-term Archive)]
+    AW -->|"Delete / let TTL expire"| R
 
-### Why Event Sourcing is a Natural Fit for Chess
+    K --> RW[Rating Worker]
+    RW -->|"Glicko-2 update"| PG
 
-Chess is **inherently event-sourced**. The sequence of moves IS the complete history. The current board position (FEN) is a **derived materialized view** of the move list.
-
+    K --> LW[Leaderboard Worker]
+    LW -->|"ZADD"| RL[(Redis<br/>Leaderboards)]
 ```
-Event Log (Source of Truth):
-  Move 1: e2→e4  (timestamp, clock_state)
-  Move 2: e7→e5  (timestamp, clock_state)
-  Move 3: Ng1→f3 (timestamp, clock_state)
-  ...
-
-Materialized View (derived):
-  FEN: "rnbqkb1r/pppp1ppp/5n2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3"
-```
-
-**Benefits:**
-1. **Complete audit trail**: Every move with timestamps — essential for anti-cheat
-2. **Game replay**: Play back any game move by move
-3. **Crash recovery**: Replay events to reconstruct state on any server
-4. **Spectator catch-up**: New spectator can receive the event log to sync up
-5. **Analysis**: Post-game engine analysis per move
-
-**Performance Optimization: Snapshots**
-
-For long games (60+ moves), replaying from scratch is expensive. Use periodic snapshots:
-
-```
-Every N moves (e.g., every 20):
-  Snapshot = {fen, clocks, moveCount, castling_flags, ...}
-  
-Recovery:
-  1. Load latest snapshot
-  2. Replay only moves since snapshot
-```
-
-### State Storage: Redis Design
-
-```
-Active game state (hot):
-  game:{gameId}:state → JSON blob (FEN, clocks, status)
-  game:{gameId}:moves → List of move strings (event log)
-  
-Session mapping:
-  player:{userId}:game → current gameId
-  game:{gameId}:sockets → set of WS gateway IDs
-
-Timeout tracking:
-  timeouts → Sorted set {gameId: deadline_ms}
-
-TTL policy:
-  Active game keys: no TTL (explicit cleanup on game end)
-  Completed game keys: 1 hour TTL (async archival to PostgreSQL)
-```
-
-### Archival Pipeline (Redis → PostgreSQL → S3)
 
 ```
 1. Game ends → publish "game_completed" event to Kafka
@@ -564,101 +818,162 @@ TTL policy:
 5. Update leaderboard (separate consumer)
 ```
 
----
+### What Works at Stage 4
 
-## 8. WebSocket Infrastructure at Scale
+- **Parallel matchmaking**: Sharded by time_control × rating_bucket
+- **Reliable event pipeline**: Kafka ensures no game data is lost between Redis and PostgreSQL
+- **Decoupled services**: Rating updates, analytics, anti-cheat all consume events independently
+- **~200K concurrent games**: Infrastructure scales horizontally
 
-![chess game websocket](./resources/chess-game-ws-management.png)
+### What Breaks — Why We Need Stage 5
 
-### Why WebSockets (not HTTP polling / SSE)?
-
-| Protocol | Direction | Overhead | Latency | Use Case |
-|---|---|---|---|---|
-| HTTP Polling | Client→Server | High (headers per request) | 1-5s (poll interval) | ❌ Too slow for chess |
-| Long Polling | Client→Server (held open) | Moderate | ~500ms | ⚠️ Acceptable but wasteful |
-| SSE | Server→Client only | Low | Real-time | ❌ Can't send moves upstream |
-| **WebSocket** | **Bidirectional** | **Minimal (2-byte frame header)** | **Real-time** | **✅ Perfect for chess** |
-
-Chess requires **bidirectional real-time** — both players send moves AND receive opponent's moves. WebSocket is the clear winner.
-
-### WebSocket Gateway: Stateful, Memory-Bound
-
-Each WebSocket connection consumes **~20-50KB** of memory (TCP buffers, TLS state, application-level session data). At 1M connections:
-
-```
-1M connections × 30KB avg = ~30GB RAM
-Split across 20 WS gateway pods = ~50K connections per pod (~1.5GB RAM each)
-```
-
-**Key design: Separate WS Gateways from Game Servers**
-
-```
-WS Gateway (stateful):
-  - Maintains TCP connections
-  - Routes messages to/from game servers
-  - Does NOT contain game logic
-  - Scaled based on connection count
-
-Game Server (stateless):
-  - Contains all game logic
-  - Reads/writes game state from Redis
-  - Scaled based on CPU (move validation)
-  - Any game server can handle any game
-```
-
-This separation means:
-- A WS gateway crash only drops connections (clients reconnect)
-- A game server crash doesn't drop any connections
-- Can scale each independently
-
-### Cross-Gateway Message Routing
-
-Both players in a game might be on DIFFERENT WS gateways. When White moves, the message must reach Black on a different gateway.
-
-**Solution: Redis Pub/Sub per game**
-
-```
-1. When a client connects to a game:
-   - WS gateway subscribes to Redis channel: "game:{gameId}"
-   
-2. When game server processes a move:
-   - PUBLISH to "game:{gameId}" → {type: "move", data: ...}
-   
-3. All WS gateways subscribed to that channel receive the message:
-   - Forward to the client connected to them
-```
-
-**At 500K games, that's 500K Redis channels.** Redis handles this well — each channel is a linked list of subscribers. Memory cost is ~100 bytes per subscription.
-
-### Connection Lifecycle
-
-```
-1. CONNECT:
-   - Client establishes WS connection to gateway
-   - Gateway authenticates JWT token
-   - Register: HSET player:{userId} gateway_id, game_id
-   - Subscribe to game channel
-
-2. MESSAGE (move):
-   - Gateway forwards to game server (via internal RPC or direct Redis queue)
-   - Game server validates, updates state, publishes result
-   - All subscribed gateways receive and forward to clients
-
-3. HEARTBEAT:
-   - Client sends ping every 15s
-   - Gateway responds with pong
-   - If no ping for 30s → consider disconnected
-
-4. DISCONNECT:
-   - Gateway detects closed connection
-   - Unregister from Redis
-   - Notify game server → start disconnect grace period
-   - Unsubscribe from game channel
-```
+- **Single region**: All servers are in one data center. Players in Asia connecting to US servers experience 200ms+ latency
+- **Global latency**: For competitive bullet chess, even 150ms cross-continent latency is noticeable
+- **Regional failure**: If the one data center goes down, the entire platform is offline
 
 ---
 
-## 9. Failure Modes & Resilience
+## 6. Stage 5: Global Scale — "Chess.com Level"
+
+**Target: ~500K+ concurrent games**
+
+### The Problem
+
+With a single-region deployment, players on the other side of the world suffer from high latency. A bullet chess player in Tokyo connecting to US-East servers faces ~150ms round-trip time — that's 150ms of their 60-second clock consumed just by network transit on every move. And if that single region goes down, the entire platform disappears.
+
+### The Solution: Multi-Region Deployment
+
+![chess game scaling journey](./resources/chess-game-scale.png)
+
+```mermaid
+graph TB
+    subgraph "Global Edge"
+        GDNS[GeoDNS<br/>Routes to Nearest Region]
+    end
+
+    subgraph "US-East"
+        USE_LB[Load Balancer]
+        USE_WS[WS Gateways]
+        USE_GS[Game Servers]
+        USE_R[(Redis Cluster)]
+        USE_PG[(PostgreSQL Primary)]
+    end
+
+    subgraph "EU-West"
+        EUW_LB[Load Balancer]
+        EUW_WS[WS Gateways]
+        EUW_GS[Game Servers]
+        EUW_R[(Redis Cluster)]
+        EUW_PG[(PostgreSQL Replica)]
+    end
+
+    subgraph "Asia-Pacific"
+        AP_LB[Load Balancer]
+        AP_WS[WS Gateways]
+        AP_GS[Game Servers]
+        AP_R[(Redis Cluster)]
+        AP_PG[(PostgreSQL Replica)]
+    end
+
+    subgraph "Shared"
+        GK[Global Kafka Cluster]
+        S3[(S3 - Game Archives)]
+    end
+
+    GDNS --> USE_LB
+    GDNS --> EUW_LB
+    GDNS --> AP_LB
+
+    USE_R -.->|Cross-region<br/>matchmaking| GK
+    EUW_R -.->|Cross-region<br/>matchmaking| GK
+    AP_R -.->|Cross-region<br/>matchmaking| GK
+```
+
+### Infrastructure at Global Scale
+
+```
+Multi-region deployment (US-East, US-West, EU-West, Asia-Pacific):
+  + GeoDNS routing players to nearest region
+  + Regional Redis clusters (game state stays in the region where the game was created)
+  + Cross-region matchmaking coordination
+  + Database sharding by userId for users table, by gameId for games
+  + Kafka cluster with partitioning by gameId
+  + Full observability stack (Prometheus, Grafana, PagerDuty)
+```
+
+### Deep Dive: Where Does the Game Live?
+
+This is the most critical design decision for a multi-region chess platform:
+
+```
+Critical design decision: WHERE does the game live?
+  - Game is created in the region of the first-matched player
+  - Both players connect to that region's game server
+  - If Player A is in US-East and Player B is in EU-West,
+    the game runs in one region, and the remote player has higher latency
+  - This is acceptable for chess (turn-based, sub-200ms is fine)
+  - Alternative: run game in the region closest to both (median latency optimization)
+```
+
+**Why not replicate game state across regions?** Because chess requires **strong per-game consistency** — both players must see the exact same board. Cross-region replication introduces latency that's worse than just having one player with slightly higher latency to a single region.
+
+### Deep Dive: Database Sharding Strategy
+
+```
+Users + Ratings: Shard by user_id (consistent hash)
+  - ~150M registered users
+  - Each shard handles ~10M users
+  - Cross-shard queries (e.g., leaderboard) use pre-computed Redis sorted sets
+
+Games: Shard by game_id (range-based by date)
+  - Older games are cold data → moved to cheaper storage / archived partitions
+  - Recent games (last 30 days) in hot shards
+  - Partition by month naturally segments data
+
+Why user_id sharding for users?
+  - User profiles are read-heavy (every matchmaking request, every game start)
+  - Access pattern is almost always by userId → perfect for hash sharding
+  - Avoids hotspots (userId is UUID, uniform distribution)
+```
+
+### Deep Dive: Observability at Scale
+
+**Key Metrics to Monitor**
+
+*Game Health:*
+- Active games count (should match expected from matchmaking rate)
+- Average move processing time (target: < 50ms p99)
+- Clock accuracy (server time vs. measured elapsed)
+- Games ended by timeout vs. checkmate vs. resignation (shifts in ratio = possible issues)
+
+*Infrastructure Health:*
+- WebSocket connection count per gateway
+- Redis memory usage and command latency
+- Kafka consumer lag (if growing → archival is falling behind)
+- Game server CPU utilization
+
+*Player Experience:*
+- Matchmaking wait time (p50, p95, p99 by rating tier)
+- Move round-trip latency (client → server → opponent client)
+- Reconnection rate (high rate = network issues or bugs)
+- Game abandonment rate
+
+**Alerting Thresholds**
+
+| Metric | Warning | Critical |
+|---|---|---|
+| Move processing p99 | > 100ms | > 500ms |
+| WS connections per pod | > 40K | > 55K |
+| Redis memory | > 70% | > 85% |
+| Kafka consumer lag | > 10K messages | > 100K messages |
+| Matchmaking wait p95 | > 15s | > 30s |
+| Game server error rate | > 0.1% | > 1% |
+
+---
+
+## 7. Failure Modes & Resilience
+
+These failure modes apply primarily to Stage 3+ architectures, where the system is distributed enough for partial failures to be meaningful.
 
 ![chess game failure](./resources/chess-game-failure-recover.png)
 
@@ -676,7 +991,7 @@ Both players in a game might be on DIFFERENT WS gateways. When White moves, the 
 | Kafka broker failure | Event processing delayed | Consumer lag monitoring | Kafka replication handles it | < 10s |
 | Full region failure | All games in region lost | Cross-region health checks | Players reconnect to other region | Minutes |
 
-### Deep Dive: Game Server Crash Recovery
+### Game Server Crash Recovery (Why Stateless Servers + Redis Works)
 
 This is the most interesting failure mode. When a game server crashes mid-game:
 
@@ -713,7 +1028,7 @@ Recovery:
 Key invariant: Redis state is always consistent. At worst, a move is retried.
 ```
 
-### Deep Dive: Redis Failure
+### Redis Failure + Kafka as Backup Event Log
 
 **Redis Sentinel (for single-node Redis):**
 - Sentinel monitors Redis primary
@@ -741,6 +1056,29 @@ Fallback: Kafka event log
 
 ### Client Reconnection Protocol
 
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as WS Gateway
+    participant GS as Game Service
+    participant R as Redis
+
+    Note over C: Connection drops
+    C->>C: Show "Reconnecting..." UI<br/>Don't clear board state
+
+    loop Exponential Backoff (100ms, 200ms, 400ms... max 5s)
+        C->>G: Attempt WebSocket connect
+    end
+
+    C->>G: {type: "reconnect", gameId, lastMoveNum: 42}
+    G->>GS: Validate session token
+    GS->>R: Load game state
+    R-->>GS: Current state (moveCount: 44)
+    GS-->>G: {type: "sync", moves_since: [move43, move44], clocks, status}
+    G-->>C: Sync payload
+    C->>C: Apply missed moves, sync clocks
+```
+
 ```
 Client detects disconnect:
   1. Show "Reconnecting..." UI (don't clear board state)
@@ -764,16 +1102,16 @@ Grace period (server-side):
 
 ---
 
-## 10. Design Trade-offs & Alternative Choices
+## 8. Design Trade-offs & Alternative Choices
 
 ### Trade-off 1: Game State Storage
 
 | Approach | How | Pros | Cons | Verdict |
 |---|---|---|---|---|
-| **In-memory (per game server)** | Each server holds game state in a HashMap | Fastest reads/writes | Lost on crash, can't share across servers | ❌ MVP only |
-| **Redis (external)** | Game state in Redis, servers are stateless | Survives crashes, shareable, fast | Network hop per operation (~0.5ms) | ✅ **Recommended** |
-| **Database (PostgreSQL)** | Game state directly in relational DB | Durable, transactional | Too slow for hot path (~5-20ms per query) | ❌ For archival only |
-| **Actor model (Akka/Orleans)** | Each game is an actor with persistent state | Natural model, built-in recovery | Complex infrastructure, vendor lock-in | ⚠️ Valid alternative |
+| **In-memory (per game server)** | Each server holds game state in a HashMap | Fastest reads/writes | Lost on crash, can't share across servers | Stage 1 only |
+| **Redis (external)** | Game state in Redis, servers are stateless | Survives crashes, shareable, fast | Network hop per operation (~0.5ms) | **Recommended** (Stage 2+) |
+| **Database (PostgreSQL)** | Game state directly in relational DB | Durable, transactional | Too slow for hot path (~5-20ms per query) | For archival only |
+| **Actor model (Akka/Orleans)** | Each game is an actor with persistent state | Natural model, built-in recovery | Complex infrastructure, vendor lock-in | Valid alternative |
 
 ### Trade-off 2: Event Sourcing vs. State Snapshotting
 
@@ -789,9 +1127,9 @@ The hybrid approach is overwhelmingly the right choice. Storage is cheap. The mo
 
 | Protocol | Bidirectional | Browser Support | Overhead | Load Balancing |
 |---|---|---|---|---|
-| **WebSocket** | ✅ | ✅ Native | Very low | Sticky sessions (L4) |
-| **gRPC streaming** | ✅ | ⚠️ Needs grpc-web proxy | Low | Complex (HTTP/2 streams) |
-| **Socket.IO** | ✅ (wraps WS) | ✅ | Moderate (extra protocol layer) | Adapter needed (Redis) |
+| **WebSocket** | Yes | Native | Very low | Sticky sessions (L4) |
+| **gRPC streaming** | Yes | Needs grpc-web proxy | Low | Complex (HTTP/2 streams) |
+| **Socket.IO** | Yes (wraps WS) | Yes | Moderate (extra protocol layer) | Adapter needed (Redis) |
 
 **Verdict: Raw WebSocket** for the game protocol (minimal overhead), with Socket.IO as a fallback for environments where WebSocket doesn't work. gRPC is better for server-to-server communication (e.g., game server ↔ timer service).
 
@@ -816,7 +1154,7 @@ The hybrid approach is overwhelmingly the right choice. Storage is cheap. The mo
 
 ---
 
-## 11. Data Model & Storage Architecture
+## 9. Data Model & Storage Architecture
 
 ### PostgreSQL Schema (Simplified)
 
@@ -895,42 +1233,7 @@ Why user_id sharding for users?
 
 ---
 
-## 12. Observability & Operations
-
-### Key Metrics to Monitor
-
-**Game Health:**
-- Active games count (should match expected from matchmaking rate)
-- Average move processing time (target: < 50ms p99)
-- Clock accuracy (server time vs. measured elapsed)
-- Games ended by timeout vs. checkmate vs. resignation (shifts in ratio = possible issues)
-
-**Infrastructure Health:**
-- WebSocket connection count per gateway
-- Redis memory usage and command latency
-- Kafka consumer lag (if growing → archival is falling behind)
-- Game server CPU utilization
-
-**Player Experience:**
-- Matchmaking wait time (p50, p95, p99 by rating tier)
-- Move round-trip latency (client → server → opponent client)
-- Reconnection rate (high rate = network issues or bugs)
-- Game abandonment rate
-
-### Alerting Thresholds
-
-| Metric | Warning | Critical |
-|---|---|---|
-| Move processing p99 | > 100ms | > 500ms |
-| WS connections per pod | > 40K | > 55K |
-| Redis memory | > 70% | > 85% |
-| Kafka consumer lag | > 10K messages | > 100K messages |
-| Matchmaking wait p95 | > 15s | > 30s |
-| Game server error rate | > 0.1% | > 1% |
-
----
-
-## Summary: Key Design Principles
+## 10. Key Design Principles
 
 1. **Server is the single source of truth** — Clients are untrusted. All game state, move validation, and clock management is server-authoritative.
 
@@ -949,4 +1252,3 @@ Why user_id sharding for users?
 8. **Start simple, scale when needed** — Chess.com itself ran on a single MySQL database for years. Don't over-engineer day one. Add Redis, then sharding, then multi-region as traffic demands.
 
 ---
-
