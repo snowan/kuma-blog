@@ -1,166 +1,1054 @@
-# Designing a CI/CD System Like GitHub Actions: From Single-Machine to Enterprise-Scale Distributed Architecture
+# System Design: CI/CD Pipeline Like GitHub Actions
 
-> A deep technical dive into how GitHub Actions works under the hood — from a single `git push` to production deployment — and the architectural patterns that make it scale to millions of workflow runs per day.
+## From a Single Runner to Enterprise-Scale Distributed Execution: A Staff Engineer's Guide
 
 ---
 
 ## Table of Contents
 
-1. [Introduction: Why Study CI/CD Architecture?](#1-introduction)
-2. [The Full Request Lifecycle: git push → Production](#2-full-lifecycle)
-3. [How GitHub Actions Works on a Single Machine](#3-single-machine)
-4. [The Runner Binary: Listener and Worker Architecture](#4-runner-internals)
-5. [Job Dependency DAG: How `needs:` Creates Execution Order](#5-job-dag)
-6. [Scaling to Enterprise: Distributed Architecture](#6-enterprise-scale)
-7. [Speed Optimizations: Caching, Parallelism, and Image Building](#7-speed)
-8. [Failure Handling and Reliability](#8-failures)
-9. [Design Choices and Trade-offs](#9-design-choices)
-10. [Comparison with Alternative Systems](#10-comparison)
-11. [Conclusion: Key Takeaways for System Designers](#11-conclusion)
+1. [The Problem & Why It's Hard](#1-the-problem--why-its-hard)
+2. [Clarifying Questions](#2-clarifying-questions)
+3. [Requirements & Scope](#3-requirements--scope)
+4. [REST API Design](#4-rest-api-design)
+5. [Phase 1: Single Machine CI Runner](#5-phase-1-single-machine-ci-runner)
+6. [Why the Naive Approach Fails (The Math)](#6-why-the-naive-approach-fails-the-math)
+7. [Phase 2: Distributed Architecture](#7-phase-2-distributed-architecture)
+8. [Core Component Deep Dives](#8-core-component-deep-dives)
+9. [Exactly-Once Execution Deep Dive](#9-exactly-once-execution-deep-dive)
+10. [Database Design Deep Dive](#10-database-design-deep-dive)
+11. [The Scaling Journey](#11-the-scaling-journey)
+12. [Failure Modes & Resilience](#12-failure-modes--resilience)
+13. [Observability & Operations](#13-observability--operations)
+14. [Design Trade-offs](#14-design-trade-offs)
+15. [Common Interview Mistakes](#15-common-interview-mistakes)
+16. [Interview Cheat Sheet](#16-interview-cheat-sheet)
 
 ---
 
-## 1. Introduction: Why Study CI/CD Architecture? {#1-introduction}
+## 1. The Problem & Why It's Hard
 
-Every modern software team relies on CI/CD, yet few engineers understand the distributed systems engineering behind platforms like GitHub Actions. At its core, a CI/CD system must solve several hard problems simultaneously: it must react to events in real time, parse declarative configurations into executable plans, schedule work across a heterogeneous fleet of machines, manage complex dependency graphs, handle failures gracefully, and do all of this at massive scale while maintaining strong isolation guarantees.
+You're asked to design a CI/CD execution system like GitHub Actions. When a developer pushes code, the system must parse a workflow definition (YAML), execute a series of steps (build, test, deploy) on isolated compute, and report results in real time. Millions of workflow runs per day across hundreds of thousands of repositories.
 
-GitHub Actions processes millions of workflow runs daily across hundreds of thousands of repositories. Understanding how it achieves this — and the design trade-offs involved — gives senior engineers a blueprint for designing any large-scale task orchestration system, not just CI/CD.
+On the surface, it's "just run some shell commands when code is pushed." The trap is thinking the hard part is execution. The hard part is guaranteeing that every job runs **exactly once** — even when workers crash, networks partition, and thousands of jobs are queued simultaneously.
 
-This post dissects the entire architecture: from what happens the instant you `git push`, through how jobs are scheduled and executed, to how the system recovers when runners crash mid-build.
+> **The interviewer's real question**: Can you design a multi-tenant job execution system that guarantees exactly-once semantics, scales horizontally, and recovers gracefully from worker crashes — while explaining the state machine that makes it all work?
 
-High-level architecture diagram:
+The interviewer isn't asking you to build GitHub Actions. They're testing whether you understand:
+1. How to turn a declarative workflow into an executable plan
+2. How to distribute that plan across unreliable workers
+3. How to ensure no job is skipped or double-executed
+4. How to provide real-time feedback to users watching their builds
+
+> **Staff+ Signal:** "Exactly-once execution" is mentioned in 3 out of 5 interview stories for this question. Most candidates hand-wave it. The staff-level answer is: exactly-once is impossible in a distributed system — what you actually build is **at-least-once delivery + idempotent execution**. The lease-based job acquisition pattern (heartbeat + TTL) is the mechanism. If you can explain why this works and where it breaks, you've answered the core question.
+
+---
+
+## 2. Clarifying Questions
+
+Before drawing a single box, ask these questions. Each one narrows the design space and shows the interviewer you think before you build.
+
+### Questions to Ask
+
+| Question | Why It Matters | What Changes |
+|---|---|---|
+| "Are jobs in a workflow independent, or do they have dependencies?" | Determines whether you need a DAG scheduler or a simple linear executor | Most interviewers say **linear first** — jobs run sequentially. This is a gift: it simplifies scheduling enormously. Offer DAG as an extension. |
+| "How many concurrent workflows do we need to support?" | Drives queue depth, worker fleet size, and database throughput | If the answer is "many customers, like GitHub" → design for multi-tenancy from the start |
+| "Do users need real-time log streaming, or is post-completion sufficient?" | Determines whether you need WebSocket/SSE infrastructure | Real-time is almost always required — it's table stakes for CI/CD UX |
+| "What's the isolation model? Containers? VMs? Bare metal?" | Affects security boundaries and startup latency | Docker containers for cost efficiency, ephemeral VMs for security-critical workloads |
+| "Do we need to support self-hosted runners, or only managed compute?" | Determines whether runners pull work or the system pushes to them | Pull-based is the industry standard — it's firewall-friendly and scales independently |
+| "What's the maximum workflow duration?" | Affects heartbeat TTL and resource reservation | GitHub Actions caps at 6 hours. This bounds your lease duration. |
+
+### The Key Simplification
+
+Interviewers often say: **"Start with linear execution — jobs run one after another, not as a complex graph."** This is intentional. They want to see:
+1. You can build a working system with simple sequential execution
+2. You know that DAG scheduling is the natural extension
+3. You don't over-engineer from the start
+
+> **Staff+ Signal:** The best candidates ask about linear vs. DAG upfront, then say: "I'll design for linear execution first, then show how the same state machine extends to DAG with the `needs:` keyword." This demonstrates progressive complexity — the hallmark of a senior system designer.
+
+---
+
+## 3. Requirements & Scope
+
+### Functional Requirements
+
+- **Workflow registration**: Users define workflows in YAML (trigger events, jobs, steps)
+- **Event-driven triggering**: `git push`, pull request, schedule (cron), manual dispatch
+- **Job execution**: Run steps (shell commands, Docker containers, reusable actions) in isolated environments
+- **Step sequencing**: Steps within a job execute sequentially, sharing a filesystem
+- **Job dependencies**: Support `needs:` for job ordering (linear first, DAG as extension)
+- **Real-time status**: Live log streaming and status updates (pending → running → success/failed)
+- **Artifact management**: Upload/download build artifacts between jobs
+- **Secret management**: Encrypted secrets injected at runtime, masked in logs
+- **Multi-tenancy**: Complete isolation between organizations/repositories
+
+### Non-Functional Requirements
+
+| Requirement | Target | Rationale |
+|---|---|---|
+| Job pickup latency (p99) | < 30s from trigger event | Developer experience — fast feedback loop |
+| Throughput | 1 billion jobs/day | GitHub Actions scale (millions of repos, matrix expansion) |
+| Availability | 99.95% | CI/CD is critical but not user-facing; brief queuing delays are acceptable |
+| Job execution guarantee | Exactly-once semantics | No skipped jobs, no double deployments |
+| Max workflow duration | 6 hours | Bound resource consumption; force efficient pipelines |
+| Log delivery latency | < 2s from step output | Real-time streaming is expected by developers |
+
+### Scale Estimation (Back-of-Envelope)
+
+```
+Jobs per day:              1 billion (1B across all tenants)
+Peak jobs per second:      ~40,000 (merge queues, business hours — ~3.5x average)
+Average jobs per second:   ~11,600 (1B / 86,400)
+Average steps per job:     5
+Step executions per day:   5 billion
+Average job duration:      3 minutes
+Concurrent running jobs:   ~11,600 × 180s = ~2.1M concurrent (at average)
+Peak concurrent jobs:      ~40K × 180s = ~7.2M concurrent
+Log lines per job:         500 lines × 200 bytes = 100 KB
+Log storage per day:       1B × 100KB = 100 TB/day
+Worker machines needed:    7.2M peak / 1 job per worker = 7.2M ephemeral containers
+                           (with 4 containers/machine = 1.8M machines at peak)
+Database writes per sec:   ~58,000 (5 step state transitions × 11,600 jobs/sec)
+```
+
+**Why these numbers matter for the interview:**
+- 2.1M concurrent jobs means you cannot schedule from a single machine — you need distributed, stateless schedulers
+- 58K DB writes/sec for step state transitions means PostgreSQL needs sharding or you use CDC (Change Data Capture) to avoid hot writes
+- 100 TB/day of logs means PostgreSQL is out for log storage — you need object storage (S3) with a streaming layer
+- 7.2M peak containers means autoscaling must be event-driven (not metric-based) to react in seconds
+
+> **Staff+ Signal:** The derived number most candidates miss is **concurrent running jobs**. They estimate throughput (jobs/sec) but forget to multiply by duration. At 3 minutes average duration, 11,600 jobs/sec means 2.1 million jobs running simultaneously. This single number drives fleet sizing, database connection pooling, and determines whether your scheduler can be centralized or must be distributed.
+
+---
+
+## 4. REST API Design
+
+### Workflow Registration & Triggering
+
+```
+POST   /api/v1/workflows                    — Register a workflow (YAML definition)
+GET    /api/v1/workflows                    — List workflows for a repository
+GET    /api/v1/workflows/{id}              — Get workflow definition and status
+PATCH  /api/v1/workflows/{id}              — Enable/disable a workflow
+DELETE /api/v1/workflows/{id}              — Remove a workflow
+
+POST   /api/v1/workflows/{id}/dispatches   — Manually trigger a workflow run
+```
+
+### Workflow Runs & Jobs
+
+```
+GET    /api/v1/runs                        — List workflow runs (filterable by status, branch)
+GET    /api/v1/runs/{run_id}              — Get run details (status, timing, trigger info)
+POST   /api/v1/runs/{run_id}/cancel       — Cancel a running workflow
+POST   /api/v1/runs/{run_id}/rerun        — Re-run all jobs in a workflow
+
+GET    /api/v1/runs/{run_id}/jobs         — List jobs in a run (with status, timing)
+GET    /api/v1/jobs/{job_id}              — Get job details (steps, runner info)
+GET    /api/v1/jobs/{job_id}/logs         — Get job logs (full text, paginated)
+```
+
+### Real-Time Log Streaming
+
+```
+GET    /api/v1/jobs/{job_id}/logs/stream  — SSE endpoint for live log streaming
+                                            Content-Type: text/event-stream
+
+WebSocket /api/v1/ws/runs/{run_id}        — WebSocket for run status updates
+                                            Pushes: job status changes, step progress
+```
+
+### Webhook Payload (Git Push Trigger)
+
+```json
+{
+  "event": "push",
+  "repository": {
+    "id": "repo_abc123",
+    "full_name": "acme/web-app",
+    "default_branch": "main"
+  },
+  "ref": "refs/heads/main",
+  "head_commit": {
+    "sha": "a1b2c3d4e5f6",
+    "message": "Fix payment flow",
+    "author": "alice@acme.com"
+  },
+  "sender": { "id": "user_42", "login": "alice" }
+}
+```
+
+### Key API Design Decisions
+
+| Decision | Choice | Rationale |
+|---|---|---|
+| Trigger response | `202 Accepted` with `run_id` | Workflow execution is async; don't block the push |
+| Log streaming | SSE over WebSocket | Simpler, HTTP-compatible, works through proxies. WebSocket for bidirectional status updates. |
+| Pagination | Cursor-based | Job lists grow; offset pagination degrades on large datasets |
+| Idempotency | `Idempotency-Key` header on POST endpoints | Prevents duplicate workflow triggers on network retries |
+| Versioning | `/v1/` path prefix | One-way door — webhook consumers depend on these formats |
+
+> **Staff+ Signal:** The log streaming endpoint is the most technically interesting. You're streaming output from a container running on a worker machine, through a log aggregation service, to an SSE endpoint the browser consumes. The challenge is backpressure: a build generating 10,000 lines/sec must not overwhelm the browser. The solution is server-side buffering with configurable flush intervals (e.g., batch every 100ms or 100 lines, whichever comes first).
+
+---
+
+## 5. Phase 1: Single Machine CI Runner
+
+Start simple. One machine, one runner binary, sequential job execution.
+
+```
+┌──────────────────────────────────────────────┐
+│              Single CI Runner                │
+│                                              │
+│  ┌──────────┐    ┌────────────────────────┐  │
+│  │  Webhook  │    │     Job Executor       │  │
+│  │ Receiver  │───▶│                        │  │
+│  │ (HTTP)    │    │  for step in steps:    │  │
+│  └──────────┘    │    run(step.command)   │  │
+│                  │    capture(stdout)     │  │
+│                  │    check(exit_code)    │  │
+│                  └────────────────────────┘  │
+│       │                    │                 │
+│       ▼                    ▼                 │
+│  ┌──────────┐    ┌────────────────────────┐  │
+│  │  SQLite   │    │   Workspace Dir        │  │
+│  │  (state)  │    │   /work/<repo>/<repo>  │  │
+│  └──────────┘    └────────────────────────┘  │
+└──────────────────────────────────────────────┘
+```
+
+### How It Works
+
+1. **Webhook arrives**: An HTTP server receives the `push` event payload
+2. **YAML parsing**: Read `.github/workflows/*.yml`, evaluate `on:` triggers against the event
+3. **Step execution**: For each matching workflow, iterate through jobs and steps sequentially:
+
+```python
+def execute_workflow(workflow, event):
+    for job in workflow.jobs:
+        workspace = create_workspace(event.repo, event.sha)
+        checkout(workspace, event.sha)
+
+        for step in job.steps:
+            result = run_step(step, workspace, job.env)
+            log_output(result.stdout)
+
+            if result.exit_code != 0:
+                mark_job_failed(job)
+                break
+
+        cleanup_workspace(workspace)
+```
+
+4. **Status reporting**: Update a SQLite database with job/step status. Serve a simple dashboard.
+
+### What Works at This Scale
+
+- **Simple and correct**: No distributed systems complexity. Easy to debug.
+- **Steps share a filesystem**: Build step produces binary → test step finds it on disk. No artifact passing needed within a job.
+- **One job at a time**: The runner processes one job, finishes, then picks up the next. No concurrency bugs.
+
+### Architectural Properties (preserved in the distributed version)
+
+- **Jobs are isolated from each other**: Different jobs get separate workspace directories
+- **Steps within a job share state**: Same filesystem, same environment
+- **Container-based isolation is optional**: `container:` in the YAML triggers Docker; otherwise steps run on the host
+
+This single-machine model is exactly how a self-hosted GitHub Actions runner works. You install the runner binary, register it with GitHub, and it processes jobs sequentially. GitHub's open-source runner is a C# codebase forked from the Azure Pipelines Agent.
+
+---
+
+## 6. Why the Naive Approach Fails (The Math)
+
+The single-machine runner works perfectly for a small team. Here's where it breaks:
+
+### Problem 1: Throughput Ceiling
+
+```
+Single runner capacity:    1 job at a time
+Average job duration:      3 minutes
+Max throughput:            20 jobs/hour = 480 jobs/day
+Target:                    1 billion jobs/day
+Gap:                       2,083,333x
+```
+
+Even with multiple runners on one machine, you're limited by CPU, memory, and I/O. A beefy 96-core machine running 20 parallel containers handles ~10,000 jobs/day. You need **100,000 machines** to hit 1B jobs/day — you need distributed scheduling.
+
+### Problem 2: Single Database Bottleneck
+
+```
+Step state transitions:    5 steps/job × 11,600 jobs/sec = 58,000 writes/sec
+SQLite max writes:         ~5,000/sec (WAL mode, SSD)
+PostgreSQL single node:    ~20,000 writes/sec (with connection pooling)
+Gap at target scale:       3-12x over single-node capacity
+```
+
+### Problem 3: No Isolation Between Tenants
+
+One user's `npm install` pulling 2GB of dependencies starves other users' builds of disk I/O. One user's infinite loop consumes 100% CPU. There's no resource boundary between tenants.
+
+### Problem 4: The Exactly-Once Problem Emerges
+
+```
+Scenario: Runner starts Job #42, executes the "deploy to production" step,
+          then crashes before reporting completion.
+
+With single machine:  Easy — job is either done or not. Check the deploy target.
+With 1000 machines:   Which machine had Job #42? Did the deploy succeed?
+                      If we re-queue it, will we deploy twice?
+                      If we don't re-queue it, the job is silently lost.
+```
+
+This is where the real system design begins. At scale, you need:
+- A **stateless scheduler** that can crash and restart without losing state
+- A **lease-based job acquisition** protocol so workers can claim jobs without conflicts
+- A **step-level state machine** so crashed jobs can be resumed, not restarted
+- **Per-tenant resource isolation** so noisy neighbors can't degrade the platform
+
+---
+
+## 7. Phase 2: Distributed Architecture
 
 ![High-level architecture diagram](./resources/ci-cd-hld.png)
 
----
+### Architecture Overview
 
-## 2. The Full Request Lifecycle: git push → Production {#2-full-lifecycle}
+```mermaid
+graph TB
+    subgraph Trigger Layer
+        GIT[Git Push / PR / Cron] --> EB[Event Bus<br/>Kafka]
+    end
 
-Let's trace the complete journey of a code change from push to deployment. This is the single most important flow to understand in any CI/CD system.
+    subgraph Control Plane
+        EB --> WE[Workflow Engine<br/>Parse YAML + Create Jobs]
+        WE --> JS[Job Scheduler<br/>Stateless + CDC]
+        JS --> JQ[Job Queues<br/>Partitioned by Runner Label]
+        WE --> DB[(PostgreSQL<br/>workflows / jobs / steps)]
+    end
+
+    subgraph Worker Fleet
+        JQ --> R1[Runner Pool: ubuntu-latest<br/>Ephemeral K8s Pods]
+        JQ --> R2[Runner Pool: gpu-runner<br/>Dedicated VMs]
+        JQ --> R3[Runner Pool: self-hosted<br/>Customer Machines]
+    end
+
+    subgraph Observability
+        R1 & R2 & R3 --> LS[Log Streaming Service<br/>SSE / WebSocket]
+        R1 & R2 & R3 --> AS[Artifact Store<br/>S3]
+        LS --> UI[Developer Dashboard]
+    end
+
+    subgraph Data Stores
+        DB
+        REDIS[(Redis<br/>Leases + Caching)]
+        S3[(S3<br/>Logs + Artifacts)]
+    end
+```
+
+### How Real Companies Built This
+
+The architecture above isn't theoretical — it's derived from how GitHub Actions, GitLab CI, and Buildkite actually work.
 
 ![End-to-end request flow diagram](./resources/ci-cd-e2e-request-flow.png)
 
-Here is every step, in detail:
+**GitHub Actions** uses a pull-based model where runners long-poll a **Broker API** (`broker.actions.githubusercontent.com`). Each runner's Listener process makes `GET /message` requests with a 50-second long-poll timeout. When a job is available, the runner calls `POST /acquirejob` to claim it within a 2-minute window. A heartbeat loop calls `POST /renewjob` every 60 seconds with a 10-minute TTL — this is the lease mechanism that enables exactly-once semantics.
 
-### Step 1–3: Event Detection and Routing
+**GitLab CI** uses a similar pull model with its own runner binary. Runners register with the GitLab instance and poll for jobs. GitLab's unique contribution is the `stages:` concept (in addition to `needs:`), providing a simpler mental model for linear pipelines.
 
-When a developer runs `git push`, GitHub's API server processes the Git objects and refs update. Once the push is persisted, the system emits an **internal event** — a structured message containing the event type (`push`), the repository ID, the commit SHA, the branch name, and the actor. This event enters a high-throughput **event bus** (conceptually similar to Kafka or a pub/sub system).
+**Buildkite** takes the "bring your own compute" approach — Buildkite provides orchestration, you host all runners. Their Elastic CI Stack for AWS auto-scales runners using CloudFormation.
 
-The event bus fans out the event to all subscribed internal services. The **Workflow Engine** is one such subscriber. It receives the raw event and begins evaluating whether any workflows should be triggered.
+| Feature | GitHub Actions | GitLab CI | Buildkite |
+|---------|---------------|-----------|-----------|
+| Runner model | Pull (Broker API) | Pull (GitLab API) | Pull (API) |
+| Default runners | Hosted ephemeral VMs | Shared or self-hosted | Self-hosted only |
+| Job dependency | `needs:` keyword | `needs:` + `stages:` | `depends_on:` |
+| Autoscaling | Webhook-driven (`workflow_job` events) | Docker Machine / K8s executor | Elastic CI Stack |
+| Isolation | Fresh VM per job (hosted) | Docker/K8s (configurable) | Customer-managed |
 
-### Step 4–6: Workflow Parsing and DAG Construction
+### Key Data Structure: Job/Step State Machine
 
-The Workflow Engine reads every `.yml` file under `.github/workflows/` in the repository at the push's HEAD commit. For each file, it evaluates the `on:` trigger section against the incoming event. Filters are checked: branch names (`branches:`), path filters (`paths:`), and activity types.
+Every job and step moves through a strict state machine. This is the foundation of crash recovery and exactly-once semantics:
 
-For each matching workflow, the engine parses the `jobs:` section and constructs a **Directed Acyclic Graph (DAG)** of job dependencies. Jobs without a `needs:` key become root nodes (no dependencies) and can execute immediately. Jobs with `needs: [job-a, job-b]` become downstream nodes that wait for their parents to complete.
+```
+Job States:     QUEUED → ACQUIRED → RUNNING → COMPLETED / FAILED / CANCELLED
+Step States:    PENDING → RUNNING → COMPLETED / FAILED / SKIPPED
 
-The DAG is topologically sorted to determine execution phases. Matrix strategies (`strategy.matrix`) expand a single job definition into multiple concrete jobs — for example, a test job with `matrix.os: [ubuntu, macos, windows]` becomes three independent jobs.
+Transitions are one-way (no going back to QUEUED from RUNNING).
+Each transition is a database write with optimistic locking.
+```
 
-### Step 7–8: Job Scheduling and Queuing
-
-The engine creates a **Check Suite** via the GitHub Status API, marking the workflow as "queued." It then submits all root-level jobs (those with no unmet dependencies) to the **Job Scheduler**.
-
-The scheduler places each job into a **queue partitioned by runner label**. A job with `runs-on: ubuntu-latest` goes into the Ubuntu queue; `runs-on: self-hosted-arm64` goes to a separate queue. This is a critical architectural decision: queues are organized by the compute capability required, not by repository or workflow.
-
-### Step 9–12: Runner Long-Polling and Job Acquisition
-
-This is where the **pull-based architecture** shines. Runner machines (whether GitHub-hosted ephemeral VMs or self-hosted machines) each run a **Listener process** that continuously long-polls the **Broker API** at `broker.actions.githubusercontent.com`.
-
-The long-poll request includes the runner's labels (e.g., `ubuntu-latest`, `self-hosted`), session ID, and runner version. The Broker service holds the HTTP connection open for up to 50 seconds. If a matching job exists in the queue, the Broker returns a `RunnerJobRequest` message immediately. If not, it returns `202 Accepted` with an empty body, and the Listener loops.
-
-When the Listener receives a job message, it extracts a `runner_request_id` and a `run_service_url`. It then has approximately **2 minutes** to `POST /acquirejob` to the Run Service to claim the job. The Run Service returns the full job payload: every step's definition, environment variables, secrets (encrypted), and action references.
-
-### Step 13–18: Job Execution
-
-The Listener spawns a **Worker process**, passing the job payload via IPC. The Worker executes each step sequentially:
-
-1. **Checkout**: Downloads the repository at the specified commit SHA.
-2. **Action Resolution**: For `uses:` steps, downloads the action from GitHub (or a Docker image from a registry).
-3. **Step Execution**: Runs shell commands or action entrypoints inside the job's environment. Environment variables and secrets are injected. Output variables are captured via special `::set-output` or `$GITHUB_OUTPUT` commands written to stdout.
-4. **Log Streaming**: Every line of stdout/stderr is streamed in real-time to GitHub's Log Service, which persists it and makes it available in the UI.
-5. **Artifact Upload**: If steps use `actions/upload-artifact`, files are uploaded to GitHub's Artifact Store (backed by Azure Blob Storage).
-
-Meanwhile, the Listener runs a **heartbeat loop** that calls `POST /renewjob` every 60 seconds. The lock has a 10-minute TTL. If the Broker doesn't receive a renewal within 10 minutes, it assumes the runner is dead and re-queues the job.
-
-### Step 19–24: Completion and DAG Progression
-
-When all steps finish (or a step fails without `continue-on-error: true`), the Worker reports the job result to the Check Suite API. The Listener cleans up the session and — if the runner is ephemeral — the VM self-terminates.
-
-Back in the Workflow Engine, the **DAG Scheduler** evaluates whether any downstream jobs are now unblocked. If Job C has `needs: [A, B]` and both A and B have succeeded, Job C transitions from "blocked" to "queued" and is submitted to the Job Scheduler. This evaluation continues until all jobs are complete or the workflow is cancelled.
-
-The final workflow status is reported to the Check Suite, which updates the PR's merge status check.
+> **Staff+ Signal:** The state machine is the single most important data structure in the system. If you get this right, crash recovery and exactly-once semantics fall out naturally. If you get it wrong, you'll spend months debugging ghost jobs and double deployments. The key insight is that **state transitions are idempotent** — writing `COMPLETED` twice has no effect, but transitioning from `QUEUED` to `RUNNING` must happen exactly once (via a conditional UPDATE with version check).
 
 ---
 
-## 3. How GitHub Actions Works on a Single Machine {#3-single-machine}
+## 8. Core Component Deep Dives
 
-Before scaling horizontally, let's understand the simplest case: a single self-hosted runner executing jobs from a small repository.
+### 8.1 Workflow Engine (Event → Parse YAML → Create Steps)
 
-In this model, you install the runner binary on a machine (Linux, macOS, or Windows). The binary registers itself with GitHub's API, receiving a configuration containing its pool ID, agent ID, and RSA credentials. You start the runner, and it enters its long-poll loop.
+The Workflow Engine is the first component in the pipeline. It receives events from the event bus and turns them into executable job records.
 
-The key architectural properties at the single-machine level are:
+**Responsibilities:**
+1. **Event matching**: Read every `.yml` file under `.github/workflows/` at the push's HEAD commit. Evaluate `on:` triggers (branch filters, path filters, event types) against the incoming event.
+2. **YAML parsing**: Extract jobs, steps, matrix strategies, environment variables, and secrets references.
+3. **Job record creation**: For each matching workflow, create job records in the database with status `QUEUED`. For linear execution, jobs are ordered by sequence number. For DAG execution, jobs record their `needs:` dependencies.
+4. **Matrix expansion**: A matrix strategy like `{os: [ubuntu, macos], node: [18, 20]}` expands one job definition into 4 concrete jobs.
 
-**Jobs run on the same machine, steps share a filesystem.** Each job gets a workspace directory (typically `/home/runner/work/<repo>/<repo>`). Steps within a job execute sequentially on the same runner, which means they share the filesystem. A build step can produce a binary, and the next test step can find it on disk. This is by design — it eliminates the need for artifact passing between steps within the same job.
+**Design choice**: The Workflow Engine is **stateless**. It reads the event, writes job records to the database, and moves on. If it crashes mid-processing, the event is re-consumed from Kafka and the engine re-creates the same jobs (idempotent via `idempotency_key = hash(event_id, workflow_file, commit_sha)`).
 
-**Jobs are isolated from each other.** Different jobs may run on the same machine (if using a persistent, non-ephemeral runner), but they get separate workspace directories. There is no filesystem sharing between jobs. If Job B depends on Job A's output, you must explicitly use `actions/upload-artifact` and `actions/download-artifact`.
+### 8.2 Job Scheduler (Stateless, CDC-Based)
 
-**The runner can only execute one job at a time.** This is a fundamental constraint. Each runner runs one Listener, which spawns one Worker, which processes one job. If you want parallelism on a single machine, you must run multiple runner instances (each bound to a different work directory).
+The scheduler is the brain of the system. It determines which jobs are ready to run and places them in the appropriate queue.
 
-**Container-based isolation is optional.** If a step uses `container:` or a job defines `container:`, Docker is used to isolate execution. Otherwise, steps run directly on the host OS with full access to installed tooling. This is why ephemeral VMs are strongly preferred for security.
+**The CDC Pattern (from real interview feedback — Story 2):**
 
----
+Instead of the scheduler actively polling the database for ready jobs, use **Change Data Capture**:
 
-## 4. The Runner Binary: Listener and Worker Architecture {#4-runner-internals}
+1. Workflow Engine creates all steps with status `PENDING` in the database
+2. Scheduler queues the **first step** (or all root jobs in DAG mode)
+3. When a step completes, the database triggers a CDC event
+4. CDC event is consumed by the scheduler, which evaluates whether the **next step** is now ready
+5. If ready, scheduler queues the next step
+
+```
+Step 1 COMPLETED → CDC event → Scheduler checks Step 2 dependencies → Step 2 QUEUED
+```
+
+**Why CDC instead of polling?**
+- Polling at 58K state transitions/sec requires aggressive database queries
+- CDC is event-driven — zero wasted reads
+- Decouples the scheduler from the database's read capacity
+- The scheduler becomes truly stateless — its entire state is "read CDC events, write to queue"
+
+**Why stateless?**
+- If the scheduler crashes, restart it. It reads from the CDC stream (which has a durable offset) and resumes.
+- No in-memory state to lose. No failover election. No split-brain.
+- Multiple scheduler instances can run concurrently, partitioned by tenant or event stream partition.
+
+> **Staff+ Signal:** The stateless scheduler with CDC is the pattern that separates L5 from L6 answers. An L5 candidate designs a scheduler that polls the database. An L6 candidate uses CDC to make the scheduler event-driven and stateless. The key phrase: "The scheduler has no state of its own — it's a pure function from CDC events to queue operations."
+
+### 8.3 Worker/Runner (K8s Pods + Docker)
 
 ![Runner internal architecture diagram](./resources/ci-cd-runner-internal.png)
 
-The GitHub Actions runner is an open-source C# codebase, forked from the **Azure Pipelines Agent**. It consists of two processes:
+The worker is the component that actually executes code. In GitHub Actions, this is the open-source runner binary, which consists of two processes:
 
-### The Listener
+**The Listener (long-lived orchestrator):**
+1. **Session management**: Creates a session with the Broker API, sending runner agent ID, name, version, and OS info
+2. **Message polling**: Long-polls `GET /message?sessionId=X&status=Online` with 50-second timeout. Returns a `RunnerJobRequest` or `202 Accepted` (no work)
+3. **Job acquisition**: Extracts `runner_request_id`, calls `POST /acquirejob` on the Run Service. Has ~2 minutes to claim the job (the lease window)
+4. **Lock renewal (heartbeat)**: Background task calls `POST /renewjob` every 60 seconds. Lock TTL is 10 minutes. If heartbeat stops, the job is considered abandoned.
 
-The Listener is the long-lived orchestrator. Its responsibilities are:
+**The Worker (short-lived, spawned per job):**
+1. **Checkout**: Download repository at the specified commit SHA
+2. **Action resolution**: For `uses:` steps, download the action from GitHub or Docker Hub
+3. **Step execution**: Run shell commands or action entrypoints. Inject environment variables and decrypted secrets. Mask secrets in log output.
+4. **Log streaming**: Capture stdout/stderr and stream to the Log Service in real-time (batched every 100ms)
+5. **Artifact upload**: Handle `actions/upload-artifact` by uploading to S3-compatible artifact store
+6. **Output variables**: Monitor `$GITHUB_OUTPUT` file for variables passed to subsequent steps
 
-1. **Session Management**: On startup, it creates a session with the Broker API, sending the runner's agent ID, name, version, and OS info. The Broker returns a `sessionId` used for all subsequent requests. If the runner version is too old, the Broker rejects with `400 Bad Request`.
+**Kubernetes-Based Execution (production pattern):**
 
-2. **Message Polling**: The Listener makes `GET /message?sessionId=X&status=Online` requests in a tight loop. Each request uses a 50-second long-poll timeout. The Broker either responds with a `RunnerJobRequest` message or returns `202 Accepted` (no work).
+For managed runners at scale, each job runs in an ephemeral K8s pod:
+- Pod spec is generated from the `runs-on:` label (maps to a node pool with matching resources)
+- Pod lifecycle: create → pull image → execute steps → upload logs → terminate
+- Resource limits enforced by K8s: CPU, memory, disk, network
+- Each pod gets a unique workspace volume (ephemeral storage or PVC)
+- Pod is deleted after job completion — perfect isolation, no state leaks
 
-3. **Job Acquisition**: When a message arrives, the Listener extracts the `runner_request_id` and calls `POST /acquirejob` on the Run Service URL. This is a recent architectural change — previously, this endpoint was on the Azure DevOps API. The response is the full job definition, often tens of kilobytes of JSON.
+### 8.4 Real-Time Status Service (SSE/WebSocket)
 
-4. **Lock Renewal**: A background task runs every 60 seconds, calling `POST /renewjob` with the `planId` and `jobId`. The lock expires after 10 minutes. This is the runner's heartbeat — if it stops, the job is considered abandoned.
+Developers expect to watch their builds in real time. This requires a streaming infrastructure:
 
-5. **Worker Lifecycle**: The Listener spawns the Worker as a child process, passing the job payload. It monitors the Worker for exit, crash, or timeout.
+**Architecture:**
+```
+Worker → Log Service (gRPC) → Log Aggregator → SSE/WebSocket Gateway → Browser
+                                    ↓
+                              S3 (persistent storage)
+```
 
-### The Worker
+**SSE for log streaming:**
+```
+GET /api/v1/jobs/{job_id}/logs/stream
+Content-Type: text/event-stream
 
-The Worker is a short-lived process spawned per job. Its responsibilities are:
+data: {"line": 1, "text": "Checking out repository...", "timestamp": "2026-03-01T10:00:01Z"}
+data: {"line": 2, "text": "Installing dependencies...", "timestamp": "2026-03-01T10:00:03Z"}
+data: {"line": 3, "text": "npm install completed in 12.3s", "timestamp": "2026-03-01T10:00:15Z"}
+```
 
-1. **Step Execution**: Iterates through the job's step definitions. For `uses:` steps, it downloads the action (from GitHub or Docker Hub). For `run:` steps, it shells out to bash/sh/powershell.
+**WebSocket for status updates:**
+```json
+{
+  "type": "job_status_changed",
+  "job_id": "job_42",
+  "status": "running",
+  "step": 3,
+  "total_steps": 7,
+  "timestamp": "2026-03-01T10:00:15Z"
+}
+```
 
-2. **Environment and Secrets**: Injects environment variables, GitHub context (`github.sha`, `github.ref`, etc.), and decrypted secrets. Secrets are masked in log output.
-
-3. **Log Streaming**: Captures stdout/stderr from each step and sends batched log lines to GitHub's Log Service in real-time.
-
-4. **Artifact and Cache Management**: Handles `actions/cache` and `actions/upload-artifact` by communicating with GitHub's Cache API and Artifact API.
-
-5. **Output Variables**: Monitors stdout for special `::set-output` commands (deprecated) or writes to `$GITHUB_OUTPUT` file, making variables available to subsequent steps.
-
-### Recent Migration: Azure DevOps → GitHub Broker API
-
-A critical architectural shift has been underway: the runner is migrating from Azure DevOps backend APIs to GitHub's own **Broker API**. The `UseV2Flow` boolean in the runner configuration enables this. The Broker API at `broker.actions.githubusercontent.com` replaces the old Azure Pipeline API for session management and message polling, while the Run Service at `run-actions-*.actions.githubusercontent.com` handles job acquisition and lock renewal.
-
-The data formats remain largely compatible (the Azure heritage is visible in field names like `planId`, `agentId`), but the Broker API returns less data in its responses — a sign of a purpose-built replacement stripping away Azure-specific fields.
+**Key design decisions:**
+- **Backpressure**: Server-side buffering batches log lines (100ms or 100 lines, whichever first) to prevent overwhelming the browser
+- **Reconnection**: SSE has built-in reconnection. Client sends `Last-Event-ID` header to resume from where it left off
+- **Fan-out**: Multiple users watching the same build share a single log subscription (pub/sub at the gateway layer)
+- **Persistence**: Logs are simultaneously streamed to S3 for permanent storage and served from a time-windowed buffer for live viewing
 
 ---
 
-## 5. Job Dependency DAG: How `needs:` Creates Execution Order {#5-job-dag}
+## 9. Exactly-Once Execution Deep Dive
+
+This is the core question in 3 out of 5 interview stories for CI/CD system design. Dedicate 5 minutes of your interview to this.
+
+### Why It's Hard
+
+```
+Timeline of a worker crash:
+
+T=0:    Worker A acquires Job #42 (lease granted, TTL = 10 min)
+T=30s:  Worker A starts "deploy to production" step
+T=45s:  Worker A's deploy command succeeds (production is updated)
+T=46s:  Worker A crashes before reporting step completion
+T=10m:  Lease expires. Scheduler re-queues Job #42.
+T=10m5s: Worker B acquires Job #42.
+T=10m30s: Worker B runs "deploy to production" step again.
+         → Double deployment. Possible data corruption.
+```
+
+### The Solution: Lease-Based Acquisition + Idempotent Execution
+
+**1. Lease-based job acquisition (prevents concurrent execution):**
+
+```sql
+-- Worker tries to acquire a job (atomic conditional update)
+UPDATE jobs
+SET status = 'ACQUIRED',
+    worker_id = 'worker-a-uuid',
+    lease_expires_at = NOW() + INTERVAL '10 minutes',
+    version = version + 1
+WHERE id = 'job-42'
+  AND status = 'QUEUED'
+  AND version = 5;  -- optimistic locking
+
+-- Returns 1 row affected = acquired
+-- Returns 0 rows affected = someone else got it (no conflict, just retry another job)
+```
+
+**2. Heartbeat renewal (extends the lease while working):**
+
+```
+Every 60 seconds:
+  UPDATE jobs
+  SET lease_expires_at = NOW() + INTERVAL '10 minutes'
+  WHERE id = 'job-42'
+    AND worker_id = 'worker-a-uuid'
+    AND status = 'RUNNING';
+```
+
+**3. Lease expiry (detects dead workers):**
+
+```sql
+-- Reaper process runs every 30 seconds
+UPDATE jobs
+SET status = 'QUEUED',
+    worker_id = NULL,
+    lease_expires_at = NULL,
+    retry_count = retry_count + 1
+WHERE status IN ('ACQUIRED', 'RUNNING')
+  AND lease_expires_at < NOW()
+  AND retry_count < 3;
+```
+
+**4. Idempotency keys for step execution:**
+
+Each step execution gets a deterministic idempotency key:
+
+```
+idempotency_key = hash(job_id + step_index + attempt_number)
+```
+
+For deployment steps, this key is passed to the deployment system, which checks:
+- Has this exact deployment already been applied?
+- If yes, return the cached result without re-executing
+- If no, execute and record the key
+
+### What "Exactly-Once" Really Means
+
+Exactly-once execution is impossible in a distributed system (proven by the Two Generals Problem). What we actually implement:
+
+```
+Exactly-once = At-least-once delivery + Idempotent execution
+
+At-least-once:   The lease mechanism ensures a crashed job is always retried.
+                  A job may be delivered to 2+ workers (lease expired, original worker recovers).
+
+Idempotent:      Each step checks its idempotency key before executing.
+                  Running the same step twice produces the same result.
+
+Together:         Every job runs at least once, but re-execution is a no-op.
+                  The user observes exactly-once behavior.
+```
+
+### The State Machine That Makes It Work
+
+```
+Job State Machine:
+                                    ┌──── timeout ────┐
+                                    ▼                  │
+  QUEUED ──acquire──▶ ACQUIRED ──start──▶ RUNNING ─────┤
+    ▲                                        │         │
+    │                                        ▼         │
+    └── lease expired ◀─────── RUNNING (crashed) ──────┘
+                                        │
+                                   retry < max?
+                                   yes → QUEUED
+                                   no  → FAILED
+
+Step State Machine:
+  PENDING ──start──▶ RUNNING ──complete──▶ COMPLETED
+                        │                      │
+                        ▼                      ▼
+                      FAILED              (trigger next
+                        │                  step via CDC)
+                        ▼
+                   continue-on-error?
+                   yes → next step
+                   no  → job FAILED
+```
+
+> **Staff+ Signal:** The 10-minute heartbeat TTL is a critical design trade-off. Shorter TTL (2 min) detects dead workers faster but causes false positives during GC pauses or network blips. Longer TTL (30 min) wastes time when workers genuinely crash. GitHub Actions uses 10 minutes. The right answer in an interview is to state the trade-off, pick a number, and explain when you'd adjust it.
+
+---
+
+## 10. Database Design Deep Dive
+
+### Core Tables (PostgreSQL)
+
+```sql
+CREATE TABLE workflows (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tenant_id       UUID NOT NULL,
+    repo_id         UUID NOT NULL,
+    name            VARCHAR(255) NOT NULL,
+    yaml_content    TEXT NOT NULL,
+    trigger_events  TEXT[] NOT NULL,        -- ['push', 'pull_request']
+    status          VARCHAR(20) DEFAULT 'active',
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    updated_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_workflows_repo ON workflows(repo_id);
+CREATE INDEX idx_workflows_tenant ON workflows(tenant_id);
+
+CREATE TABLE workflow_runs (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    workflow_id     UUID NOT NULL REFERENCES workflows(id),
+    tenant_id       UUID NOT NULL,
+    trigger_event   VARCHAR(50) NOT NULL,   -- 'push', 'pull_request', 'schedule'
+    commit_sha      VARCHAR(40) NOT NULL,
+    branch          VARCHAR(255),
+    status          VARCHAR(20) NOT NULL DEFAULT 'QUEUED',
+    idempotency_key VARCHAR(255) UNIQUE,    -- hash(event_id, workflow_id, commit_sha)
+    started_at      TIMESTAMPTZ,
+    completed_at    TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_runs_workflow ON workflow_runs(workflow_id, created_at DESC);
+CREATE INDEX idx_runs_tenant_status ON workflow_runs(tenant_id, status);
+CREATE INDEX idx_runs_idempotency ON workflow_runs(idempotency_key);
+
+CREATE TABLE jobs (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    run_id          UUID NOT NULL REFERENCES workflow_runs(id),
+    tenant_id       UUID NOT NULL,
+    name            VARCHAR(255) NOT NULL,
+    runner_label    VARCHAR(100) NOT NULL,  -- 'ubuntu-latest', 'self-hosted-arm64'
+    status          VARCHAR(20) NOT NULL DEFAULT 'QUEUED',
+    worker_id       UUID,
+    lease_expires_at TIMESTAMPTZ,
+    needs           UUID[],                 -- job IDs this depends on (DAG)
+    sequence_num    INT NOT NULL DEFAULT 0, -- for linear ordering
+    retry_count     INT DEFAULT 0,
+    version         INT DEFAULT 1,          -- optimistic locking
+    started_at      TIMESTAMPTZ,
+    completed_at    TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_jobs_run ON jobs(run_id);
+CREATE INDEX idx_jobs_status_label ON jobs(status, runner_label)
+    WHERE status = 'QUEUED';               -- partial index for scheduler queries
+CREATE INDEX idx_jobs_lease ON jobs(lease_expires_at)
+    WHERE status IN ('ACQUIRED', 'RUNNING');  -- for reaper process
+CREATE INDEX idx_jobs_tenant ON jobs(tenant_id);
+
+CREATE TABLE steps (
+    id              UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    job_id          UUID NOT NULL REFERENCES jobs(id),
+    tenant_id       UUID NOT NULL,
+    name            VARCHAR(255) NOT NULL,
+    step_index      INT NOT NULL,
+    command         TEXT,                   -- shell command for 'run:' steps
+    action_ref      VARCHAR(255),           -- 'actions/checkout@v4' for 'uses:' steps
+    status          VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    exit_code       INT,
+    idempotency_key VARCHAR(255),           -- hash(job_id, step_index, attempt)
+    started_at      TIMESTAMPTZ,
+    completed_at    TIMESTAMPTZ,
+    created_at      TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX idx_steps_job ON steps(job_id, step_index);
+CREATE INDEX idx_steps_status ON steps(status) WHERE status = 'PENDING';
+```
+
+### Step State Machine with CDC
+
+The key insight: instead of the scheduler polling for ready steps, use CDC to react to state changes.
+
+```
+                          ┌─────────────────────┐
+                          │    PostgreSQL        │
+                          │                      │
+  Step 1 → COMPLETED ────▶│  WAL (Write-Ahead   │──▶ CDC Consumer
+                          │       Log)           │     (Debezium)
+                          │                      │        │
+                          └─────────────────────┘        │
+                                                          ▼
+                                                   Scheduler evaluates:
+                                                   "Is step 2 ready?"
+                                                   If yes → queue step 2
+                                                   If no  → wait for more
+                                                            CDC events
+```
+
+**CDC tool**: Debezium connected to PostgreSQL's WAL (logical replication). Publishes step status changes to Kafka. Scheduler consumes from this topic.
+
+**Why this matters**: At 58K step transitions/sec, polling the database every 100ms would generate 10 queries/sec per scheduler instance. With 100 scheduler instances, that's 1,000 queries/sec just for scheduling — wasted read capacity. CDC makes it zero.
+
+### Indexing Strategy and Query Patterns
+
+**Hot-path queries (>10K QPS — must be cached or indexed):**
+
+```sql
+-- Q1: Find queued jobs for a runner label (scheduler, 40K/sec at peak)
+SELECT id, run_id, tenant_id FROM jobs
+WHERE status = 'QUEUED' AND runner_label = 'ubuntu-latest'
+ORDER BY created_at LIMIT 10;
+-- Covered by: idx_jobs_status_label (partial index)
+
+-- Q2: Update job status on acquisition (worker, 40K/sec at peak)
+UPDATE jobs SET status = 'ACQUIRED', worker_id = $1,
+    lease_expires_at = NOW() + '10 min', version = version + 1
+WHERE id = $2 AND status = 'QUEUED' AND version = $3;
+-- Uses primary key + optimistic lock
+```
+
+**Warm-path queries (100-1K QPS):**
+
+```sql
+-- Q3: Get all jobs for a workflow run (dashboard, ~1K/sec)
+SELECT * FROM jobs WHERE run_id = $1 ORDER BY sequence_num;
+-- Covered by: idx_jobs_run
+
+-- Q4: Get all steps for a job (log viewer, ~1K/sec)
+SELECT * FROM steps WHERE job_id = $1 ORDER BY step_index;
+-- Covered by: idx_steps_job
+```
+
+### Sharding Strategy
+
+At 1B jobs/day, a single PostgreSQL instance can't handle the write volume. Shard by `tenant_id`:
+
+```
+Shard key:  tenant_id (UUID, high cardinality)
+Strategy:   Hash-based (tenant_id % num_shards)
+Shards:     16 → 64 → 256 (grow with traffic)
+
+Why tenant_id?
+- All queries include tenant_id (natural partition key)
+- No cross-tenant queries needed
+- Hot tenants can be migrated to dedicated shards
+- Matches multi-tenancy isolation requirements
+```
+
+> **Staff+ Signal:** The partial indexes on `jobs` are critical for scheduler performance. Without the `WHERE status = 'QUEUED'` filter, the index includes all 1B+ historical jobs. With the partial index, it only includes the ~100K currently queued jobs — orders of magnitude smaller, fitting entirely in memory. This is the difference between a 1ms and a 100ms scheduler query.
+
+---
+
+## 11. The Scaling Journey
+
+### Stage 1: Single Runner (0–1K jobs/day)
+
+The Phase 1 architecture. One machine, one runner binary, SQLite for state.
+
+```
+Developer → git push → Webhook → Single Runner → Execute → Report Status
+```
+
+**Capability**: Sequential job execution. No parallelism. No isolation.
+**Limit**: One job at a time. One machine's resources.
+
+### Stage 2: Multiple Runners + Queue (1K–100K jobs/day)
+
+```
+Event Bus → Workflow Engine → Job Queue (Redis) → Runner Pool (10-50 machines)
+                                                        │
+                                                   PostgreSQL (state)
+```
+
+**New capabilities at this stage:**
+- Multiple runners poll from a shared Redis queue
+- Pull-based model: runners self-register and poll for work
+- Basic heartbeat (60s) with lease renewal
+- PostgreSQL replaces SQLite for shared state
+- Ephemeral containers (Docker) for job isolation
+
+**Limit**: Single queue becomes bottleneck. No tenant isolation. Single PostgreSQL node limits write throughput.
+
+### Stage 3: K8s-Based with Autoscaling (100K–10M jobs/day)
+
+![Enterprise autoscaling architecture diagram](./resources/ci-cd-enterprise-autoscale.png)
+
+```mermaid
+graph TB
+    subgraph Ingestion
+        EB[Event Bus<br/>Kafka] --> WE[Workflow Engine<br/>3 replicas]
+    end
+    subgraph Scheduling
+        WE --> DB[(PostgreSQL<br/>primary + 2 replicas)]
+        DB --> CDC[CDC Consumer<br/>Debezium]
+        CDC --> SCHED[Stateless Scheduler<br/>5 replicas]
+        SCHED --> Q[Job Queues<br/>partitioned by label]
+    end
+    subgraph Execution
+        Q --> K8S[K8s Runner Pods<br/>autoscaled 100-10,000]
+        K8S --> LS[Log Streaming<br/>→ S3]
+    end
+```
+
+**New capabilities at this stage:**
+- Kafka for event ingestion (durability, replay, partitioning)
+- CDC-based stateless scheduler (no polling)
+- K8s pods for job execution (ephemeral, auto-scaled)
+- Webhook-driven autoscaling: `workflow_job.queued` events trigger pod creation
+- Runner pools segmented by label (capability-based routing)
+- Per-tenant queue partitioning begins
+
+**Runner Pool Architecture (enterprise pattern):**
+
+| Pool | Label | Instance Type | Use Case |
+|------|-------|--------------|----------|
+| General Linux | `ubuntu-latest` | c5.2xlarge spot | Most CI jobs |
+| ARM Builds | `self-hosted-arm64` | m6g.2xlarge | ARM container images |
+| GPU Testing | `gpu-runner` | p3.2xlarge | ML model training/testing |
+| Secure Builds | `sox-compliant` | Isolated VPC | Compliance-sensitive builds |
+| Large Monorepo | `xlarge` | c5.4xlarge, 500GB SSD | Builds requiring > 14GB RAM |
+
+**Autoscaling algorithm:**
+```
+desired_runners = pending_jobs + active_jobs - available_idle_runners
+if desired_runners > current_runners:
+    scale_up(desired_runners - current_runners)
+if idle_runners > min_idle && cooldown_elapsed:
+    scale_down(idle_runners - min_idle)
+```
+
+**Limit**: Single-region. Single PostgreSQL cluster. Need dedicated ops team for Kafka + K8s.
+
+### Stage 4: Multi-Tenant Enterprise (10M+ jobs/day)
+
+Everything in Stage 3, plus:
+- **Database sharding** by tenant_id (16 → 256 shards)
+- **Multi-region deployment** with geo-routed job queues
+- **Dedicated runner pools** for enterprise tenants (SLA-backed)
+- **Spot/preemptible instances** for 60-90% cost savings on non-critical jobs
+- **Pre-baked VM images** with runner binary + common tools pre-installed (boot-to-first-step < 15 seconds)
+- **Multi-level caching**: dependency cache (per repo), Docker layer cache (per runner pool), build cache (Bazel/Gradle)
+
+> **Staff+ Signal:** Autoscaling must be event-driven, not metric-driven. Webhook-based autoscaling (scaling on `workflow_job.queued` events) reacts in seconds. Metric-based autoscaling (watching CPU) reacts in minutes. For bursty CI workloads — merge queues, business-hours spikes, monorepo matrix expansions — the difference between 5-second and 5-minute scaling is the difference between "builds are fast" and "builds are queued."
+
+---
+
+## 12. Failure Modes & Resilience
+
+![Failure handling and recovery flow diagram](./resources/ci-cd-failure-handle.png)
+
+### Failure Scenarios
+
+| Failure | Detection | Recovery | Blast Radius |
+|---|---|---|---|
+| Worker crash mid-job | Heartbeat timeout (10 min) | Lease expires → job re-queued → another worker picks up | Single job; idempotency keys prevent double execution |
+| Worker crash mid-deploy step | Heartbeat timeout | Re-queued; deploy step checks idempotency key before re-executing | Single job; deployment system must support idempotent deploys |
+| Scheduler crash | Process monitor / K8s restart | Stateless restart; resumes from CDC stream offset | Zero — scheduler has no state. Brief scheduling delay while restarting. |
+| Database failure (PostgreSQL) | Connection pool errors, health checks | Failover to synchronous replica (RDS Multi-AZ) | All new job scheduling pauses; running jobs continue unaffected (workers have job payload in memory) |
+| Kafka broker failure | ISR replication; consumer lag alerts | Automatic leader election; producers retry | Brief event ingestion delay; no data loss if replication factor ≥ 3 |
+| Log streaming service down | Health checks; SSE connection drops | Workers buffer logs locally; flush to S3 on reconnection | Developers can't watch live logs but builds continue normally |
+| Network partition (worker ↔ control plane) | Heartbeat fails to reach server | Worker continues executing (optimistic); if lease expires before reconnection, job is re-queued | May cause duplicate execution — mitigated by idempotency keys |
+| Poison YAML (workflow causes OOM) | Container OOM-killed signal | K8s restarts pod; job marked FAILED with OOM error | Single job in single tenant; K8s resource limits contain blast radius |
+
+### Worker Crash Recovery Flow
+
+```mermaid
+sequenceDiagram
+    participant W as Worker A
+    participant DB as Database
+    participant S as Scheduler
+    participant W2 as Worker B
+
+    W->>DB: Acquire Job #42 (lease = 10 min)
+    W->>W: Execute steps 1, 2, 3...
+    Note over W: CRASH at step 3
+
+    Note over DB: 10 minutes pass, lease expires
+
+    S->>DB: Reaper: Find expired leases
+    DB-->>S: Job #42 lease expired
+    S->>DB: Set Job #42 → QUEUED, retry_count++
+    S->>S: Queue Job #42
+
+    W2->>DB: Acquire Job #42
+    W2->>W2: Execute steps 1, 2, 3...
+    Note over W2: Steps 1-2 check idempotency keys<br/>Already completed → skip<br/>Step 3: not completed → execute
+    W2->>DB: Job #42 → COMPLETED
+```
+
+### Multi-Tenancy Isolation
+
+At enterprise scale, isolation is the difference between a P1 and a P4 incident:
+
+1. **VM-level isolation**: Each GitHub-hosted job runs in a fresh VM destroyed after use. No state leaks between jobs.
+2. **Network isolation**: Self-hosted runners can be placed in private VPCs with restricted egress (SOX/HIPAA).
+3. **Secret scoping**: Secrets are scoped to repository, environment, or organization level. Encrypted at rest, injected at runtime, masked in logs.
+4. **Runner groups**: Organizations create runner groups with access control — restricting which repositories can use which runner pools.
+5. **Resource limits**: K8s enforces CPU, memory, and disk limits per pod. One tenant's build can't starve another.
+
+> **Staff+ Signal:** The most dangerous failure mode is the "silent success." Worker A deploys to production, then crashes before recording success. Worker B re-deploys. If the deployment isn't idempotent (e.g., it runs database migrations), you get data corruption. The fix isn't in the CI/CD system — it's in requiring deployment targets to support idempotent operations. This is a cross-system design constraint that most candidates miss.
+
+---
+
+## 13. Observability & Operations
+
+### Key Metrics
+
+- `cicd_jobs_queued_total{tenant, runner_label}` — inbound job rate; primary scaling signal
+- `cicd_jobs_running_gauge{runner_label}` — current concurrent jobs; capacity indicator
+- `cicd_job_wait_time_seconds{tenant, quantile}` — time from QUEUED to RUNNING; the metric developers care about most
+- `cicd_job_duration_seconds{tenant, quantile}` — execution time; helps identify slow builds
+- `cicd_step_failures_total{tenant, step_name}` — step failure rate; catch flaky tests
+- `cicd_lease_expirations_total` — dead worker detection; spikes mean infrastructure issues
+- `cicd_queue_depth{runner_label}` — pending jobs per label; the primary autoscaling signal
+- `cicd_estimated_drain_time_seconds{runner_label}` — (queue_depth × avg_duration) / workers; best single metric for system health
+- `cicd_scheduler_cdc_lag_seconds` — CDC consumer lag; if growing, scheduler is falling behind
+
+### Distributed Tracing
+
+A full trace for a single workflow run:
+
+```
+[Event Bus] receive push event (1ms)
+  └── [Workflow Engine] parse YAML + create jobs (15ms)
+       └── [Scheduler] queue first job (2ms)
+            └── [Runner] acquire + execute (180,000ms = 3 min)
+                 ├── [Step 1] checkout (5,000ms) ✓
+                 ├── [Step 2] install deps (45,000ms) ✓
+                 ├── [Step 3] build (60,000ms) ✓
+                 ├── [Step 4] test (65,000ms) ✓
+                 └── [Step 5] deploy (5,000ms) ✓
+            └── [Log Service] stream 500 lines (180,000ms, concurrent)
+       └── [Scheduler] CDC → queue next job (2ms)
+```
+
+### Alerting Strategy
+
+| Alert | Condition | Severity | Action |
+|---|---|---|---|
+| Queue drain time > 5 min | Sustained for 10 min | P2 | Scale runners; investigate slow builds |
+| Lease expirations > 10/min | Spike detection | P1 | Worker fleet issue; check node health, OOM kills |
+| Job wait time p99 > 60s | Sustained for 5 min | P2 | Scale runners for affected label |
+| CDC lag > 30s | Growing trend | P1 | Scheduler is falling behind; scale scheduler instances |
+| Step failure rate > 20% | Platform-wide for 15 min | P1 | Possible infrastructure issue (Docker registry down, network) |
+| Database replication lag > 5s | Any replica | P2 | Investigate replica health; may affect read-after-write consistency |
+
+> **Staff+ Signal:** The most actionable dashboard isn't per-metric — it's a tenant-level heatmap showing job wait time × failure rate. A single red cell means one tenant has a broken pipeline (their problem). A full red column means a platform-wide outage (your problem). This distinction determines whether you page the customer or yourself.
+
+---
+
+## 14. Design Trade-offs
+
+| Decision | Option A | Option B | Recommended | Why |
+|---|---|---|---|---|
+| Runner model | Pull-based (runners poll for work) | Push-based (server dispatches to runners) | Pull-based | Runners self-register; no server-side runner registry needed. Firewall-friendly (outbound connections only). Horizontal scaling is trivial. Trade-off: 0-50s polling latency. |
+| Execution environment | Ephemeral (fresh VM/container per job) | Persistent (long-running runners) | Ephemeral for hosted; persistent for self-hosted | Ephemeral gives perfect isolation and security. Persistent gives cache locality and instant startup. Use ephemeral by default, allow persistent for specialized hardware. |
+| Job dependencies | Linear (sequential) | DAG (`needs:` keyword) | Linear first, DAG as extension | Linear is simpler to implement and debug. Most workflows are effectively linear. DAG adds topological sort, cycle detection, and complex failure propagation. Ship linear, iterate to DAG. |
+| Step progression | Polling scheduler | CDC-based scheduler | CDC | CDC is event-driven (zero wasted reads) and makes the scheduler stateless. Polling works at small scale but wastes DB read capacity at 58K transitions/sec. |
+| Scheduling | Centralized scheduler | Distributed scheduling | Centralized with HA | CI scheduling doesn't need stock-exchange throughput. A well-replicated centralized scheduler handles the load and is simpler to reason about. |
+| Workflow definition | Declarative YAML | Imperative code (Go/Python) | YAML | Easy to learn, lint, validate, and visualize. Limited expressiveness is offset by composable actions (the "standard library"). Code-based (like Dagger) offers more power but harder governance. |
+| Log storage | PostgreSQL | S3 + streaming layer | S3 + streaming | 100 TB/day of logs rules out PostgreSQL. S3 for persistence, SSE for live streaming. Buffer recent logs in Redis for fast retrieval. |
+
+> **Staff+ Signal:** The pull vs. push decision is the most consequential architectural choice. Pull-based wins for cloud-native, auto-scaled environments because it decouples the control plane from the worker fleet. The server doesn't need to know which workers are online — it just puts jobs in queues. Workers that poll get work; workers that don't, don't. This makes horizontal scaling, failure recovery, and multi-tenancy almost free. The only cost is latency (0-50s poll interval), which is acceptable for CI/CD.
+
+---
+
+## 15. Common Interview Mistakes
+
+1. **Starting with DAG when the interviewer wants linear**: "First, I'll build a topological sort for the job dependency graph..." → The interviewer explicitly said jobs run sequentially. You just spent 5 minutes on something they told you to skip. Staff+ answer: "I'll design for linear execution first. Each job runs after the previous one completes. The state machine extends naturally to DAG by adding a `needs:` field — I can show that if we have time."
+
+2. **Ignoring exactly-once execution**: "The worker picks up a job and runs it." → What happens when the worker crashes? What if two workers pick up the same job? This is THE core question. Staff+ answer: lease-based acquisition with heartbeat, optimistic locking on state transitions, idempotency keys on steps.
+
+3. **No multi-tenancy from the start**: "All jobs go in one queue." → One tenant's 10,000-job matrix expansion blocks everyone else's single-job PR check. Staff+ answer: queues partitioned by runner label, with per-tenant fair scheduling or priority tiers.
+
+4. **Not mentioning Kubernetes/Docker**: "Jobs run on the machine." → How are they isolated? How do you limit CPU/memory? How do you prevent a malicious workflow from reading another tenant's secrets? Staff+ answer: ephemeral K8s pods with resource limits, network policies, and destroyed after completion.
+
+5. **No real-time status UI**: "Results are available after the workflow completes." → Developers stare at CI for minutes. They need live log streaming. Staff+ answer: SSE for log streaming, WebSocket for status updates, with backpressure handling.
+
+6. **Waiting to be asked about crash recovery**: "If the worker crashes... hmm, I hadn't thought about that." → Bring this up proactively. It's the whole point of the question. Staff+ answer: "The lease mechanism handles worker crashes. Let me walk through the timeline: worker acquires job, starts heartbeat, crashes at step 3, lease expires after 10 minutes, scheduler re-queues, another worker picks it up, idempotency keys prevent double-execution of completed steps."
+
+7. **Designing a monolithic scheduler with in-memory state**: "The scheduler keeps track of all running jobs in a HashMap." → When this process crashes, all state is lost. Staff+ answer: stateless scheduler that reads from CDC stream. All state lives in the database. Scheduler can crash and restart without losing anything.
+
+---
+
+## 16. Interview Cheat Sheet
+
+### Time Allocation (45-minute interview)
+
+| Phase | Time | What to Cover |
+|---|---|---|
+| Clarify requirements | 3 min | Linear vs DAG, scale (1B jobs/day), isolation model, real-time requirements |
+| REST API design | 5 min | Trigger endpoint (202 Accepted), job status, log streaming (SSE), webhook payload |
+| High-level design | 10 min | Event bus → workflow engine → stateless scheduler (CDC) → job queues → K8s runner pods |
+| Deep dive: exactly-once | 7 min | Lease-based acquisition, heartbeat + TTL, optimistic locking, idempotency keys, state machine |
+| Deep dive: database + scaling | 10 min | Schema (workflows/jobs/steps), CDC for step progression, sharding by tenant_id, partial indexes |
+| Failure modes + trade-offs | 7 min | Worker crash → lease expiry → re-queue, scheduler crash → stateless restart, pull vs push |
+| Wrap-up | 3 min | Scaling journey summary, what I'd build next (DAG, caching, multi-region) |
+
+### Step-by-Step Answer Guide
+
+1. **Clarify**: "Are jobs linear or DAG-based? I'll start with linear. How many jobs/day? 1 billion = ~12K/sec average, ~40K peak. Do we need real-time log streaming?"
+2. **REST API**: Show trigger endpoint (`POST /workflows/{id}/dispatches` → `202 Accepted` with `run_id`), job status (`GET /runs/{run_id}/jobs`), and log streaming (`GET /jobs/{job_id}/logs/stream` via SSE).
+3. **Key insight**: "The hard part isn't running shell commands — it's guaranteeing every job executes exactly once even when workers crash."
+4. **Single machine**: One runner, sequential execution, SQLite. Works under 1K jobs/day.
+5. **Prove it fails**: "58K step transitions/sec overwhelms a single database. One tenant's matrix expansion blocks everyone. A crashed worker leaves a job in limbo — did it complete? Do we re-run?"
+6. **Distributed architecture**: Event bus (Kafka) → stateless workflow engine → CDC-based scheduler → job queues (partitioned by label) → K8s runner pods. Show the mermaid diagram.
+7. **Exactly-once deep dive**: "Worker acquires job via conditional UPDATE with optimistic locking. Heartbeat every 60s extends 10-min lease. If worker crashes, lease expires, reaper re-queues. Steps have idempotency keys — re-execution of completed steps is a no-op."
+8. **Database design**: Show the schema with partial indexes. Explain CDC from PostgreSQL WAL via Debezium. Sharding by tenant_id for write distribution.
+9. **Failure handling**: Walk through worker crash timeline. Scheduler crash is a non-event (stateless, restarts from CDC offset). DB failover via synchronous replication.
+10. **Scaling journey**: Single runner → runner pool + Redis queue → K8s + Kafka + CDC → sharded multi-region.
+11. **Trade-offs**: Pull vs push (pull wins for scale), linear vs DAG (linear first), CDC vs polling (CDC at scale), ephemeral vs persistent runners.
+
+### What the Interviewer Wants to Hear
+
+- At **L5/Senior**: Pull-based runners, job queue, basic heartbeat, container isolation. Mentions exactly-once as a concern.
+- At **L6/Staff**: Stateless scheduler with CDC, lease-based acquisition with optimistic locking, idempotency keys for steps, partial indexes, sharding by tenant_id. References how GitHub Actions actually works (Broker API, 10-min TTL, runner binary architecture).
+- At **L7/Principal**: Organizational boundaries (who owns the workflow engine vs. scheduler vs. runner fleet), multi-region job routing, tenant-level SLA design with blast radius guarantees, migration path from linear to DAG scheduling, cost modeling (spot instances, pre-baked images, cache hit rates).
 
 ![Job dependency DAG execution diagram](./resources/ci-cd-job-dag-execution.png)
 
-One of the most powerful features of any CI/CD orchestrator is managing dependencies between jobs. GitHub Actions uses the `needs:` keyword to construct a DAG (Directed Acyclic Graph) that determines execution order.
+### Advanced Extension: DAG Scheduling
 
-### How the DAG is Built
-
-When the Workflow Engine parses a workflow YAML, it creates a node for each job and an edge for each `needs:` entry. Consider this example:
+Once you've covered linear execution, extend to DAG with the `needs:` keyword:
 
 ```yaml
 jobs:
@@ -173,349 +1061,24 @@ jobs:
     steps: [...]
 
   build:
+    needs: [lint, unit-test]    # waits for both
     runs-on: ubuntu-latest
-    needs: [lint, unit-test]
     steps: [...]
 
   deploy:
+    needs: [build]              # waits for build
     runs-on: ubuntu-latest
-    needs: [build]
     steps: [...]
 ```
 
-This produces a DAG with four nodes and three edges. The engine performs cycle detection (since circular dependencies would cause deadlock) and topological sorting to identify execution phases:
+The DAG scheduler extends the linear model:
+1. **Root jobs** (no `needs:`) are queued immediately
+2. **Completion callback**: When a job completes, iterate all jobs listing it in `needs:`. If all parents completed, queue the downstream job.
+3. **Failure propagation**: If a parent fails, downstream jobs are **skipped** (not failed). `if: always()` overrides this.
+4. **Matrix expansion**: A matrix job like `{os: [ubuntu, macos]}` expands into 2 jobs. `needs: [build]` waits for **all** matrix instances.
 
-- **Phase 0**: `lint` and `unit-test` start in parallel (no dependencies)
-- **Phase 1**: `build` starts only after both `lint` and `unit-test` complete successfully
-- **Phase 2**: `deploy` starts only after `build` completes successfully
-
-### Scheduling Algorithm
-
-The DAG scheduler operates as follows:
-
-1. **Initialization**: All root nodes (no `needs:`) are marked "ready" and dispatched to the job queue.
-2. **Completion Callback**: When a job completes, the scheduler iterates over all jobs that list the completed job in their `needs:`. For each downstream job, it checks whether **all** parents have completed.
-3. **Unblocking**: If all parents of a downstream job have completed successfully, that job transitions to "ready" and is dispatched.
-4. **Failure Propagation**: If a parent job fails, all downstream jobs are **skipped** by default. This prevents wasted compute. However, the `if: always()` conditional on a downstream job overrides this behavior, allowing cleanup jobs to run regardless.
-5. **Status Aggregation**: The workflow status is "success" only if all jobs succeed. If any job fails (and is not marked `continue-on-error: true`), the workflow fails.
-
-### Matrix Expansion and the DAG
-
-Matrix strategies interact with the DAG in an important way. A matrix job like:
-
-```yaml
-build:
-  strategy:
-    matrix:
-      os: [ubuntu-latest, macos-latest]
-      arch: [amd64, arm64]
-```
-
-expands into 4 concrete jobs. If another job has `needs: [build]`, it waits for **all 4 matrix instances** to complete. This is because `build` is a single logical job; the matrix just creates parallel instances of it.
-
-### Data Passing Between Dependent Jobs
-
-Jobs that depend on each other often need to pass data. GitHub Actions provides two mechanisms:
-
-1. **Artifacts**: `actions/upload-artifact` in the upstream job and `actions/download-artifact` in the downstream job. Artifacts are stored in GitHub's cloud and have size limits (configurable, up to 10 GB per repository on paid plans).
-
-2. **Output Variables**: A job can set outputs that are available to downstream jobs via the `needs` context: `${{ needs.build.outputs.image_tag }}`. These are limited to 1 MB of string data per output.
+The state machine is identical — only the "when to queue next" logic changes. This is why designing for linear first is correct: DAG is a natural extension, not a rewrite.
 
 ---
 
-## 6. Scaling to Enterprise: Distributed Architecture {#6-enterprise-scale}
-
-![Enterprise autoscaling architecture diagram](./resources/ci-cd-enterprise-autoscale.png)
-
-Scaling a CI/CD system from a handful of repos to thousands of concurrent workflows introduces several architectural challenges. Let's examine how this is done.
-
-### The Pull-Based Runner Model
-
-The single most important design decision in GitHub Actions' scalability story is the **pull-based model**. Runners poll for work; the central system never pushes jobs to runners. This has profound implications:
-
-- **No runner registry needed on the server side**: The server doesn't need to track which runners are online, healthy, or available. It simply places jobs in queues. Runners that poll get work; runners that don't poll get nothing.
-- **Horizontal scaling is trivial**: Adding capacity means launching more runners. No configuration change on the server. Each new runner independently connects and starts polling.
-- **Fault tolerance for free**: If a runner dies, it simply stops polling. The server notices (via the heartbeat/lock mechanism) and re-queues the job. No complex health-check infrastructure needed.
-- **Multi-tenancy through queue partitioning**: Jobs are queued by runner labels (`ubuntu-latest`, `self-hosted-gpu`, etc.), not by repository or user. Any runner with matching labels can pick up any job.
-
-### Autoscaling Runners
-
-For GitHub-hosted runners, GitHub manages the VM fleet internally. For self-hosted setups, organizations need to build their own autoscaling:
-
-**Webhook-Driven Autoscaling**: GitHub emits `workflow_job` webhook events with actions `queued`, `in_progress`, and `completed`. An autoscaler controller subscribes to these webhooks and maintains a mapping of pending jobs per runner label.
-
-The scaling algorithm is typically:
-
-```
-desired_runners = pending_jobs + active_jobs - available_idle_runners
-if desired_runners > current_runners:
-    scale_up(desired_runners - current_runners)
-if idle_runners > min_idle && cooldown_elapsed:
-    scale_down(idle_runners - min_idle)
-```
-
-**Ephemeral Runners**: Each VM is configured as a Just-In-Time (JIT) runner. On boot, it registers with GitHub, executes exactly one job, and self-terminates. This provides perfect isolation (no cross-job contamination) and simplifies lifecycle management.
-
-**Pre-Baked VM Images**: To minimize startup time, organizations bake custom AMIs/images with the runner binary, common tools (Docker, Node.js, Python), and pre-warmed caches. Boot-to-first-step time is critical — the difference between a 15-second VM boot and a 90-second one directly impacts developer experience.
-
-**Spot/Preemptible Instances**: Since CI jobs are typically short-lived and fault-tolerant (they can be retried), spot instances offer 60-90% cost savings. The autoscaler falls back to on-demand instances when spot capacity is unavailable.
-
-### Runner Pool Architecture
-
-Enterprise deployments typically segment runners into pools by capability:
-
-| Pool | Label | Instance Type | Use Case |
-|------|-------|--------------|----------|
-| General Linux | `ubuntu-latest` | c5.2xlarge spot | Most CI jobs |
-| ARM Builds | `self-hosted-arm64` | m6g.2xlarge | ARM container images |
-| GPU Testing | `gpu-runner` | p3.2xlarge | ML model training/testing |
-| Secure Builds | `sox-compliant` | Isolated VPC | Compliance-sensitive builds |
-| Large Monorepo | `xlarge` | c5.4xlarge, 500GB SSD | Builds requiring > 14GB RAM |
-
-Each pool has its own autoscaling group with independent min/max counts, cooldown periods, and instance types.
-
-### Multi-Tenancy and Isolation
-
-At enterprise scale, isolation becomes critical. GitHub Actions provides several levels:
-
-1. **VM-Level Isolation**: Each GitHub-hosted job runs in a fresh VM that is destroyed after use. No state leaks between jobs.
-2. **Network Isolation**: Self-hosted runners can be placed in private VPCs with restricted egress, important for SOX/HIPAA compliance.
-3. **Secret Scoping**: Secrets are scoped to repository, environment, or organization level. They are encrypted at rest and injected into the runner only at job execution time, masked in logs.
-4. **Runner Groups**: Organizations can create runner groups with access control — restricting which repositories can use which runner pools.
-
----
-
-## 7. Speed Optimizations: Caching, Parallelism, and Image Building {#7-speed}
-
-Speed is the single most impactful metric in CI/CD. A 10-minute build that drops to 3 minutes means developers stay in flow instead of context-switching.
-
-### Dependency Caching
-
-GitHub Actions provides `actions/cache` which stores and restores directories (like `node_modules/`, `.m2/`, `~/.cache/pip`) between workflow runs. The cache is keyed by a hash of the lockfile:
-
-```yaml
-- uses: actions/cache@v4
-  with:
-    path: node_modules
-    key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-    restore-keys: |
-      ${{ runner.os }}-node-
-```
-
-**How it works under the hood**: The cache API stores compressed tarballs in Azure Blob Storage, keyed per repository and per branch (with fallback to the default branch). The 10 GB repository limit and LRU eviction policy mean you must be strategic about what you cache.
-
-**Architectural insight**: The `restore-keys` fallback mechanism is essentially a **prefix-match search** over cache keys. It allows partial cache hits — restoring a slightly stale cache that still saves significant rebuild time. This is a key pattern: in distributed caching, a stale cache is almost always better than no cache.
-
-### Docker Layer Caching
-
-Docker image builds are one of the slowest steps in CI. Three caching strategies exist, each with trade-offs:
-
-**1. GitHub Actions Cache Backend (`type=gha`)**:
-```yaml
-- uses: docker/build-push-action@v6
-  with:
-    cache-from: type=gha
-    cache-to: type=gha,mode=max
-```
-Uses the same GitHub Cache API as `actions/cache`. Limited to 10 GB, and saving/loading layers over the network often negates the caching benefit for simple images.
-
-**2. Registry-Based Cache (`type=registry`)**:
-```yaml
-cache-from: type=registry,ref=myregistry/myimage:cache
-cache-to: type=registry,ref=myregistry/myimage:cache,mode=max
-```
-Stores layers in a Docker registry alongside the image. No GitHub-specific size limits. Can be shared across CI providers and local development. The `mode=max` option caches all intermediate layers (critical for multi-stage builds), not just the final image layers.
-
-**3. Local NVMe Cache (third-party runners)**:
-Services like Depot persist layer cache on fast NVMe SSDs co-located with the runner. Eliminates network overhead entirely. This is the fastest approach but requires dedicated infrastructure.
-
-**Design lesson**: The optimal caching topology depends on the read/write ratio and data locality. Caches that require network transfers (GHA, registry) are beneficial when the cached data is large and the rebuild is slow. For small images with fast builds, the transfer overhead can exceed the rebuild time — making caching counterproductive.
-
-### Matrix Strategy for Parallelism
-
-The matrix strategy is the primary mechanism for parallel execution:
-
-```yaml
-strategy:
-  matrix:
-    os: [ubuntu-latest, windows-latest, macos-latest]
-    node: [18, 20, 22]
-  fail-fast: false
-  max-parallel: 6
-```
-
-This creates 9 jobs (3 × 3) running in parallel (up to `max-parallel`). The `fail-fast: false` setting prevents a single failure from cancelling all other matrix jobs — important for understanding which combinations actually fail.
-
-### Incremental Builds
-
-For large monorepos, the biggest speedup comes from **not building unchanged code**. Techniques include:
-
-- **Path filters in workflow triggers**: `on: push: paths: ['services/payment/**']` — only trigger the payment service build when payment code changes.
-- **Build tools with built-in incrementality**: Bazel, Gradle, and Nx can detect unchanged modules and skip them.
-- **Shallow clones**: `actions/checkout` with `fetch-depth: 1` avoids downloading full Git history (which can be gigabytes for large repos).
-
----
-
-## 8. Failure Handling and Reliability {#8-failures}
-
-![Failure handling and recovery flow diagram](./resources/ci-cd-failure-handle.png)
-
-Failures in CI/CD are inevitable. The system's reliability is defined not by whether failures occur, but by how gracefully it recovers.
-
-### Runner Failure (Crash, OOM, Network Loss)
-
-When a runner crashes mid-job, the **heartbeat mechanism** is the safety net. The Listener sends `POST /renewjob` every 60 seconds, extending the lock by 10 minutes. If the Broker doesn't receive a renewal for 10 minutes, it assumes the runner is dead and transitions the job to a "failed" state.
-
-**Why 10 minutes?** This is a trade-off. A shorter TTL (say, 2 minutes) would detect dead runners faster but would cause false positives during network blips or GC pauses. A longer TTL (say, 30 minutes) wastes time when runners genuinely crash. Ten minutes balances detection speed with reliability.
-
-**What about the "stuck job" problem?** If a runner acquires a job but fails before starting the heartbeat loop, the job may be stuck in "in_progress" for up to 10 minutes with no work being done. Some CI systems solve this with a secondary "acquire confirmation" mechanism — requiring the runner to confirm it has started executing within 30 seconds.
-
-### Step-Level Failure
-
-When a step fails (exit code != 0), the default behavior is to skip all subsequent steps in the job and report the job as failed. Two mechanisms modify this:
-
-1. **`continue-on-error: true`**: Marks the step's failure as "allowed." The job continues, and the overall job status can still be "success." Useful for optional quality checks (like linting warnings).
-
-2. **`if: failure()`**: Conditional steps that only run when a previous step has failed. Useful for cleanup, notifications, or diagnostic data collection.
-
-### Job-Level Failure and DAG Propagation
-
-When a job fails, the DAG scheduler propagates the failure to all downstream jobs. By default, downstream jobs are **skipped**, not failed. This distinction matters: "skipped" means "not attempted because a dependency failed," while "failed" means "attempted and produced an error."
-
-The `if: always()` conditional on a downstream job overrides this, allowing it to run regardless of parent status. A common pattern:
-
-```yaml
-cleanup:
-  needs: [build, test, deploy]
-  if: always()
-  runs-on: ubuntu-latest
-  steps:
-    - run: echo "Running cleanup regardless of prior results"
-```
-
-### Workflow-Level Recovery
-
-GitHub Actions provides three recovery mechanisms:
-
-1. **Re-run all jobs**: Re-executes the entire workflow from scratch. Simple but wasteful if only one job failed.
-2. **Re-run failed jobs**: Only re-executes jobs that failed, plus their dependents. Efficient, but requires that the previously-successful jobs' outputs (artifacts, caches) are still available.
-3. **Concurrency groups with `cancel-in-progress`**: Automatically cancels stale runs when new commits are pushed. Prevents resource waste on outdated code.
-
-### Idempotency Considerations
-
-A well-designed CI/CD pipeline must be **idempotent** — running it twice on the same commit should produce the same result. Common pitfalls:
-
-- **Non-deterministic tests**: Tests that depend on wall-clock time, random seeds, or external services.
-- **Mutable deployment targets**: Deploying to an environment that was modified by a concurrent pipeline.
-- **Cache poisoning**: A corrupted cache entry that causes all subsequent builds to fail until the cache expires.
-
----
-
-## 9. Design Choices and Trade-offs {#9-design-choices}
-
-Every architectural decision in a CI/CD system involves trade-offs. Let's examine the critical ones:
-
-### Pull-Based vs. Push-Based Runner Model
-
-| Aspect | Pull-Based (GitHub Actions) | Push-Based (Jenkins) |
-|--------|-----------------------------|----------------------|
-| **Scaling** | Runners self-register; no server config change | Server must know about and manage agents |
-| **Failure Detection** | Passive (heartbeat timeout) | Active (server pings agents) |
-| **Latency** | Long-poll delay (0-50s) | Near-instant dispatch |
-| **Server Complexity** | Lower (just a queue) | Higher (agent registry, health checks) |
-| **Network** | Runner initiates connections (firewall-friendly) | Server must reach agents (NAT/firewall issues) |
-
-**Verdict**: Pull-based wins for cloud-native, auto-scaled environments. Push-based wins for low-latency, fixed-fleet setups where agents are on a trusted network.
-
-### Ephemeral vs. Persistent Runners
-
-| Aspect | Ephemeral (one job per VM) | Persistent (long-running) |
-|--------|---------------------------|---------------------------|
-| **Isolation** | Perfect (fresh VM per job) | Weak (state leaks between jobs) |
-| **Startup Time** | Slower (boot + setup) | Instant (already running) |
-| **Cache Locality** | No local cache persistence | Excellent local cache |
-| **Cost** | Pay only when executing | Pay for idle time |
-| **Security** | Strong (no credential persistence) | Risky (secrets may linger) |
-
-**Verdict**: Ephemeral is the industry standard for hosted CI. Persistent runners still make sense for specialized hardware (GPUs, custom silicon) or when cache locality is critical.
-
-### Centralized vs. Distributed Scheduling
-
-| Aspect | Centralized Scheduler | Distributed Scheduling |
-|--------|-----------------------|------------------------|
-| **Consistency** | Single source of truth for job state | Requires consensus protocol |
-| **Throughput** | Single bottleneck | Higher aggregate throughput |
-| **Failure** | Single point of failure (needs HA) | More resilient |
-| **Complexity** | Simpler to reason about | Harder to debug |
-
-**GitHub's approach**: Centralized scheduling with high-availability via the Broker API (replicated across regions). This is pragmatic — CI scheduling doesn't require the throughput of, say, a stock exchange, so a well-replicated centralized scheduler handles the load.
-
-### Workflow Definition: Declarative YAML vs. Imperative Code
-
-GitHub Actions uses declarative YAML. Alternatives like Dagger use imperative code (Go, Python, TypeScript) for pipeline definitions. The trade-off:
-
-- **YAML**: Easy to learn, easy to lint and validate statically, easy to visualize. But limited expressiveness for complex logic (hence the proliferation of `if:` conditionals and expression syntax).
-- **Code**: Full programming language power. Type safety, unit-testable pipelines, reusable abstractions. But harder to audit, visualize, and enforce governance.
-
-**GitHub's bet**: YAML with a powerful expression language and composable actions (reusable units of work). The action marketplace provides the "standard library" that YAML lacks.
-
----
-
-## 10. Comparison with Alternative Systems {#10-comparison}
-
-| Feature | GitHub Actions | GitLab CI | Jenkins | CircleCI | Buildkite |
-|---------|---------------|-----------|---------|----------|-----------|
-| **Runner Model** | Pull (Broker API) | Pull (GitLab API) | Push (JNLP/SSH) | Pull (API) | Pull (API) |
-| **Default Runners** | Hosted ephemeral VMs | Shared or self-hosted | Self-hosted only | Hosted Docker/VM | Self-hosted only |
-| **DAG Support** | `needs:` keyword | `needs:` + `stages:` | Plugins (Pipeline) | `requires:` | `depends_on:` |
-| **Config Format** | YAML | YAML | Groovy (Jenkinsfile) | YAML | YAML |
-| **Marketplace** | 20K+ actions | CI templates | 1800+ plugins | Orbs | Plugins |
-| **Caching** | actions/cache (10GB) | Built-in (S3-backed) | Plugin-based | Built-in | Plugin-based |
-| **Container Support** | Docker-in-Docker | Docker/K8s executor | Docker agent | Docker executor | Docker/K8s |
-| **Autoscaling** | Managed (hosted) or webhook-based (self-hosted) | Docker Machine / K8s executor | Cloud plugins | Built-in | Elastic CI Stack |
-
-**Key differentiators**:
-
-- **GitHub Actions** excels at developer experience: zero-config for GitHub-hosted repos, massive action marketplace, tight integration with PR checks. Its weakness is limited customization of hosted runners and the 10 GB cache limit.
-- **GitLab CI** offers a more integrated DevOps platform with built-in container registry, security scanning, and Kubernetes deployment. Its `stages:` concept (in addition to `needs:`) provides an alternative DAG model.
-- **Jenkins** remains the most flexible but operationally heaviest. Its plugin ecosystem is unmatched but quality varies wildly. The Groovy-based Jenkinsfile is powerful but has a steep learning curve.
-- **Buildkite** is the "bring your own compute" option — it provides the orchestration layer while you host all runners. Best for organizations with specific infrastructure requirements.
-
----
-
-## 11. Conclusion: Key Takeaways for System Designers {#11-conclusion}
-
-If you're designing a CI/CD system — or any large-scale task orchestration platform — here are the architectural principles that emerge from studying GitHub Actions:
-
-1. **Pull-based work distribution scales better than push-based.** It decouples the scheduler from the worker fleet, making horizontal scaling trivial and failure recovery implicit.
-
-2. **DAG-based scheduling is essential for complex pipelines.** Simple linear stages aren't enough. Supporting arbitrary dependency graphs with parallel execution, matrix expansion, and conditional logic unlocks significant developer productivity.
-
-3. **Ephemeral execution environments are the gold standard for isolation.** The slight startup cost is far outweighed by the security and reliability benefits of a clean environment per job.
-
-4. **Heartbeat-based failure detection is the pragmatic choice.** Active health checking adds complexity and network overhead. A heartbeat with a reasonable TTL (10 minutes for GitHub Actions) catches dead workers without generating false positives.
-
-5. **Caching is the #1 speed lever, but it's hard to get right.** Dependency caching, Docker layer caching, and build result caching each have different optimal topologies (local NVMe > registry > network cache). The cache key design (exact match vs. prefix fallback) determines hit rates.
-
-6. **Autoscaling needs to be event-driven, not metric-driven.** Webhook-based autoscaling (scaling on `workflow_job.queued` events) reacts in seconds, while metric-based autoscaling (watching CPU usage) reacts in minutes. For bursty CI workloads, the difference is critical.
-
-7. **Design for failure at every level.** Steps fail, jobs fail, runners crash, networks partition. Each layer needs its own failure handling: `continue-on-error` for steps, `if: always()` for cleanup jobs, heartbeat-based re-queuing for runner failures, and workflow re-runs for transient issues.
-
-8. **YAML is good enough for workflow definition.** Despite its limitations, declarative YAML with a composable action marketplace provides the right balance of simplicity, auditability, and power for most CI/CD use cases.
-
----
-
-## Diagrams Reference
-
-This post is accompanied by six detailed Mermaid diagrams:
-
-1. **High-Level Architecture** — All major components and data flow from push to deploy
-2. **End-to-End Request Flow** — Sequence diagram of the complete lifecycle  
-3. **Job Dependency DAG Execution** — How `needs:` creates phased parallel execution
-4. **Runner Internal Architecture** — Listener and Worker process internals
-5. **Failure Handling and Recovery** — Decision tree for every failure mode
-6. **Enterprise Autoscaling Architecture** — Webhook-driven autoscaling with runner pools
-
----
-
-*Written for senior engineers who build, evaluate, or operate CI/CD infrastructure at scale. The architectural patterns described here apply beyond CI/CD to any distributed task orchestration system.*
+*Written as a reference for staff-level system design interviews. The architectural patterns described here apply beyond CI/CD to any distributed task orchestration system — job schedulers, data pipelines, deployment platforms, and batch processing systems.*
