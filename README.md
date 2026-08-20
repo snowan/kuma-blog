@@ -5,6 +5,8 @@ evals and reliability, and inference systems.
 
 [Read the GitHub Pages site](https://snowan.github.io/kuma-blog/) ·
 [Editorial policy](docs/editorial/editorial-policy.md) ·
+[Publishing runbook](docs/runbooks/publishing.md) ·
+[Research roadmap](docs/editorial/research-and-writing-roadmap.md) ·
 [Target architecture](docs/architecture/information-architecture.md) ·
 [Reorganization proposal](docs/migration/reorganization-batches.yml)
 
@@ -45,6 +47,9 @@ Requirements: Node.js 22.12 or newer and pnpm 10.8.1 or newer.
 pnpm install --frozen-lockfile
 pnpm dev
 ```
+
+Use `pnpm dev:drafts` for a development-only review of draft article routes.
+It does not change metadata and cannot enable drafts in a production build.
 
 The production site is a static Astro build configured for the GitHub Pages
 project path `/kuma-blog/`.

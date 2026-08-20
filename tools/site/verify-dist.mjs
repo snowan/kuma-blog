@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
-import { join, relative, resolve } from "node:path";
+import { basename, join, relative, resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "../..");
 const dist = join(root, "dist");
@@ -54,10 +54,36 @@ const relativeFiles = files.map((path) => relative(dist, path));
 const forbiddenPrefixes = [
   ".git/",
   ".github/",
+  ".agents/",
+  ".claude/",
   "AI/",
   "AI-blogs/",
+  "AI-manga-learnings/",
+  "AI-slide-learnings/",
+  "Books/",
+  "Entertainment/",
+  "Google/",
+  "Languages/",
+  "Leetcode/",
+  "Readings/",
+  "Setup/",
+  "assets/",
+  "archive/ai-news-digests/",
+  "archive/books/",
+  "archive/legacy-ai/",
   "archive/leetcode/",
+  "archive/personal/",
+  "archive/setup/",
+  "archive/system-design/",
+  "designs/",
+  "docs/",
+  "kubernetes/",
+  "labs/",
   "studio/",
+  "src/",
+  "tests/",
+  "tools/",
+  "travels/",
   "node_modules/",
 ];
 
@@ -159,25 +185,31 @@ if (
   fail("draft fixtures leaked into dist");
 }
 
-const unpublishedDrafts = [
-  "demystifying-agent-harness",
-  "how-to-build-agent-harness",
-  "agent-harness-control-loop",
-  "context-engineering",
-  "filesystem-context-engineering",
-  "agent-memory-survey",
-  "agent-memory-deep-dive",
-  "agent-memory-learning-series",
-  "agent-evals-that-diagnose-failure",
-  "llm-serving-control-plane",
-  "llm-admission-control",
+const publicCollections = [
+  { directory: join(root, "src/content/writing"), route: "writing" },
+  { directory: join(root, "src/content/lab-notes"), route: "lab-notes" },
+  { directory: join(root, "src/content/visuals"), route: "visuals" },
 ];
-for (const slug of unpublishedDrafts) {
-  if (relativeFiles.some((path) => path.includes(slug))) {
-    fail(`unpublished draft leaked into dist: ${slug}`);
-  }
-  if (rss.includes(slug) || sitemap.includes(slug)) {
-    fail(`unpublished draft leaked into a discovery feed: ${slug}`);
+
+for (const { directory, route } of publicCollections) {
+  for (const source of walk(directory).filter((path) => /\.mdx?$/.test(path))) {
+    const text = readFileSync(source, "utf8");
+    const frontmatter = text.match(/^---\s*\n([\s\S]*?)\n---/)?.[1] ?? "";
+    const status = frontmatter.match(/^status:\s*["']?([a-z-]+)["']?\s*$/m)?.[1];
+    if (!status) {
+      fail(`content entry is missing a readable status: ${relative(root, source)}`);
+      continue;
+    }
+    if (status === "published") continue;
+
+    const slug = basename(source).replace(/\.mdx?$/, "");
+    const generatedRoute = `${route}/${slug}/index.html`;
+    if (relativeFiles.includes(generatedRoute)) {
+      fail(`${status} entry leaked into dist: ${generatedRoute}`);
+    }
+    if (rss.includes(`/${route}/${slug}/`) || sitemap.includes(`/${route}/${slug}/`)) {
+      fail(`${status} entry leaked into a discovery feed: ${route}/${slug}`);
+    }
   }
 }
 

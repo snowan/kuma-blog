@@ -2,8 +2,9 @@
 import { getCollection } from "astro:content";
 import ContentIndex from "../../components/ContentIndex.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
+import { isContentVisible } from "../../lib/site";
 
-const entries = await getCollection("writing", ({ data }) => data.status === "published");
+const entries = await getCollection("writing", ({ data }) => isContentVisible(data.status));
 entries.sort((left, right) =>
   (right.data.publishedAt?.getTime() ?? 0) - (left.data.publishedAt?.getTime() ?? 0),
 );

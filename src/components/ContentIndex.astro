@@ -26,7 +26,13 @@ const { entries, route, emptyMessage } = Astro.props;
             href={withBase(`${route}/${slugFromId(entry.id)}/`)}
             title={entry.data.title}
             description={entry.data.description}
-            meta={entry.data.publishedAt ? formatDate(entry.data.publishedAt) : undefined}
+            meta={
+              entry.data.status === "draft"
+                ? "Draft preview"
+                : entry.data.publishedAt
+                  ? formatDate(entry.data.publishedAt)
+                  : undefined
+            }
           />
         </li>
       ))}

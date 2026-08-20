@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import ContentIndex from "../../components/ContentIndex.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
-import { SERIES } from "../../lib/site";
+import { isContentVisible, SERIES } from "../../lib/site";
 
 export function getStaticPaths() {
   return SERIES.map((series) => ({ params: { series: series.id }, props: { series } }));
@@ -11,15 +11,15 @@ export function getStaticPaths() {
 const { series } = Astro.props;
 const writing = await getCollection(
   "writing",
-  ({ data }) => data.status === "published" && data.series === series.id,
+  ({ data }) => isContentVisible(data.status) && data.series === series.id,
 );
 const labNotes = await getCollection(
   "labNotes",
-  ({ data }) => data.status === "published" && data.series === series.id,
+  ({ data }) => isContentVisible(data.status) && data.series === series.id,
 );
 const visuals = await getCollection(
   "visuals",
-  ({ data }) => data.status === "published" && data.series === series.id,
+  ({ data }) => isContentVisible(data.status) && data.series === series.id,
 );
 ---
 

@@ -21,16 +21,26 @@ const { data } = entry;
 const body = "body" in entry && typeof entry.body === "string" ? entry.body : "";
 const words = body.trim() ? body.trim().split(/\s+/).length : 0;
 const readingMinutes = Math.max(1, Math.ceil(words / 220));
+const isDraftPreview = data.status === "draft";
 ---
 
 <SiteLayout
   title={data.title}
   description={data.description}
   canonicalUrl={data.canonicalUrl}
+  noindex={isDraftPreview}
   presentation={data.presentation}
 >
   <main id="main-content" data-pagefind-body>
     <article>
+      {
+        isDraftPreview && (
+          <aside class="draft-preview" aria-label="Local draft preview">
+            <strong>Local draft preview</strong>
+            <span>Not published and excluded from production builds, search, RSS, and sitemap.</span>
+          </aside>
+        )
+      }
       <ArticleHeader
         section={section}
         topic={data.topic}
