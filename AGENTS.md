@@ -13,6 +13,17 @@ analysis, and durable learning rather than content volume.
 
 - Follow the approved visual and article system in
   [`docs/design/kuma-blog-design-system.md`](docs/design/kuma-blog-design-system.md).
+- Follow the evidence, lifecycle, overlap, and publication requirements in
+  [`docs/editorial/editorial-policy.md`](docs/editorial/editorial-policy.md).
+- Treat
+  [`docs/architecture/information-architecture.md`](docs/architecture/information-architecture.md)
+  as the target structure for incremental migration, not permission for a
+  one-shot move.
+- Check
+  [`docs/migration/content-map.yml`](docs/migration/content-map.yml) and
+  [`docs/migration/url-map.yml`](docs/migration/url-map.yml) before changing an
+  existing content path. Entries marked pending still require the stated
+  approval.
 - Use the approved interactive reference in
   [`designs/kuma-blog-top-three/Kuma Blog Top Three.html`](designs/kuma-blog-top-three/Kuma%20Blog%20Top%20Three.html)
   when visual behavior or tokens are ambiguous.
