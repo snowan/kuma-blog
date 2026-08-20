@@ -260,7 +260,8 @@ canonical_clusters:
       - source: "AI/AI-manga-learnings/memory-in-the-age-of-ai-agent/learning-series.md"
         proposed_role: "visual-learning-path"
         proposed_route: "/visuals/agent-memory-learning-series/"
-    implementation_status: "pending-series-review"
+    implementation_status: "canonical-drafts-prepared-publication-and-retirement-pending"
+    review_record: "docs/migration/2026-08-20-agent-memory-consolidation.md"
     requirements:
       - "Keep the three distinct reader outcomes."
       - "Create one comparison table and series index instead of repeating the taxonomy."

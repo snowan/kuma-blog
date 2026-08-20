@@ -1,0 +1,152 @@
+---
+title: "Agent Memory After the Taxonomy: What to Measure Next"
+description: "A critical reading of the Forms–Functions–Dynamics survey, with boundaries, design implications, and a 2026 evaluation update."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: essay
+presentation: journal
+topic: memory-context
+series: memory-lab
+tags: [agents, memory, research, taxonomy, evaluation]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "Agent memory is a governed state system, not merely a vector database or a longer transcript.",
+  "Forms, Functions, and Dynamics are useful review axes, but they overlap and should not be treated as interchangeable implementation layers.",
+  "Evaluation must test change, conflict, workflow continuity, and deceptive premises—not recall alone.",
+]} />
+
+The survey *Memory in the Age of AI Agents* offers a useful answer to a deceptively simple question: **what do we mean when we say an agent has memory?** Its Forms–Functions–Dynamics framework organizes a field that otherwise mixes model weights, hidden states, conversation history, external stores, retrieval systems, and application policy under one label.
+
+That map is valuable. It is not a blueprint. This article reads the taxonomy as a set of design questions, then asks what a working agent system must specify beyond it.
+
+## The boundary: memory, context, and retrieval
+
+Three terms are often collapsed:
+
+- **Memory** is state retained across steps or episodes, together with rules for writing, changing, reading, and removing it.
+- **Retrieval** selects candidate information from a store or source.
+- **Context** is the exact information assembled for the current model call.
+
+A retrieved record becomes context only when the assembler includes it. A context item is not necessarily memory: it may be a current tool result, policy, or source passage that should never persist. A memory system therefore needs both a write path and a read path. Retrieval-augmented generation usually emphasizes the read path over a corpus that already exists.
+
+The survey makes a related distinction between agent memory, LLM memory, RAG, and context engineering. The operational consequence is important: adding a vector store does not define what may be remembered, when a record expires, or how a later correction supersedes it.
+
+## One shared map for this series
+
+The table below is the canonical taxonomy reference for the Memory Lab series. The companion implementation and visual guides link here rather than recreating it.
+
+| Axis | Categories in the survey | Design question | Example artifact |
+| --- | --- | --- | --- |
+| **Forms** | Token-level, parametric, latent | Where and in what representation does retained state live? | Event text, updated weights, hidden-state representation |
+| **Functions** | Factual, experiential, working | What job does the retained state perform? | User preference, prior run outcome, current task ledger |
+| **Dynamics** | Formation, evolution, retrieval | How is memory created, changed, and brought back into use? | Validation rule, supersession event, scoped query |
+
+These axes are not three independent database columns. A token-level event can serve a factual or experiential function; retrieval can produce working state; consolidation can change both form and function. Use the categories to expose missing decisions, not to force every record into one permanent box.
+
+## What the taxonomy clarifies
+
+### Form is wider than storage vendor
+
+Token-level memory can include raw events, summaries, structured records, or files. Parametric memory changes model parameters. Latent memory retains information in non-token representations. This framing helps prevent a product name—“vector memory,” for example—from becoming the architecture.
+
+For most application teams, token-level memory is the easiest place to begin because it is inspectable, attributable, and removable. That is an engineering recommendation, not a claim that it is always the most capable form.
+
+### Function should follow the task
+
+Factual memory preserves knowledge about the world or user. Experiential memory preserves traces or abstractions of prior interaction. Working memory supports the current reasoning process. The labels become useful only after a task specifies what continuity it needs.
+
+An assistant remembering a communication preference and a coding agent resuming a failed deployment both need persistence. Their correctness, privacy, retention, and evaluation contracts are different.
+
+### Dynamics reveal the difficult part
+
+Formation, evolution, and retrieval move attention from “where is the memory?” to “what happens over time?” This is where application failures accumulate: an unverified inference is stored as fact, a correction creates two conflicting records, or a relevant memory exists but never reaches the model.
+
+The write path is often harder than the read path. Every durable write is a policy decision about evidence, identity, scope, and future influence.
+
+## Where the framework needs caution
+
+<Callout title="A taxonomy is not an assurance case" kind="warning">
+  <p>Classifying a component as experiential or token-level does not show that it is accurate, authorized, fresh, useful, or safe to retrieve. Those properties need explicit system contracts and tests.</p>
+</Callout>
+
+I see four limits when applying the survey to production design:
+
+1. **The categories overlap.** They are perspectives on memory, not a normalized component model.
+2. **Latent and parametric memory are hard to govern.** Inspection, provenance, targeted correction, and deletion may be substantially harder than with explicit records.
+3. **Long context changes the tradeoff, not the need for selection.** A larger window can delay compression, but it does not resolve stale evidence, access control, or conflicting history.
+4. **Some tasks do not need durable memory.** A one-shot transformation may be safer and cheaper when it leaves no user model behind.
+
+The best memory feature can be a deliberate decision not to retain something.
+
+## The 2026 evaluation update
+
+Earlier memory evaluations often rewarded answering questions about a long conversation. That remains useful, but it is too narrow for agents that operate tools and workflows.
+
+LongMemEval-V2 proposes a broader stress test: 451 questions derived from trajectories containing up to 500 interactions and roughly 115 million tokens. Its five ability groups are a better design checklist than a single recall score:
+
+| Ability | What a system must handle | Failure to look for |
+| --- | --- | --- |
+| Static | Retrieve a stable fact from prior work | Relevant event is never found |
+| Dynamic | Track a value that changes over time | Old state wins over a correction |
+| Workflow | Recover a multi-step operating procedure | Answer recalls facts but cannot resume work |
+| Gotchas | Respect exceptions and edge conditions | Common pattern overrides the recorded exception |
+| Premise | Reject a false assumption in the query | System accepts a question that contradicts history |
+
+The paper also separates an insertion phase from a query phase. That mirrors a production truth: a memory system can fail while observing and recording an event, while later gathering context, or while the model uses correctly retrieved evidence. An aggregate answer score cannot identify which boundary broke.
+
+<EvidenceNote title="Evidence boundary" source="Primary research preprints" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>The survey and LongMemEval-V2 are arXiv preprints. Their taxonomies and benchmark results are research contributions, not universal production guarantees. Reported system rankings depend on the papers' data, judges, configurations, and cost constraints.</p>
+</EvidenceNote>
+
+## Questions to carry into a design review
+
+- What event justifies a durable write?
+- Which actor or source does the record describe?
+- Is the content observed, user-asserted, inferred, or generated?
+- How can a correction supersede it without erasing history?
+- Which identities and tasks may retrieve it?
+- When should it expire or be deleted?
+- Can the system explain why it entered the current context?
+- Which held-out task proves that remembering improves the outcome?
+
+The companion <a href={withBase("writing/agent-memory-deep-dive/")}>implementation guide</a> turns those questions into a minimal schema, lifecycle, and evaluation plan. The <a href={withBase("visuals/agent-memory-learning-series/")}>visual learning path</a> provides a compact way to teach the lifecycle without repeating this taxonomy.
+
+## Sources and further reading
+
+- [Hu et al.: Memory in the Age of AI Agents](https://arxiv.org/abs/2512.13564)
+- [Packer et al.: MemGPT—Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560)
+- [Park et al.: Generative Agents](https://arxiv.org/abs/2304.03442)
+- [Chhikara et al.: Mem0—Building Production-Ready AI Agents with Scalable Long-Term Memory](https://arxiv.org/abs/2504.19413)
+- [Wu et al.: LongMemEval-V2](https://arxiv.org/abs/2605.12493)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Prepared a critical survey draft, established one shared taxonomy for the series, and added the LongMemEval-V2 evaluation update." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/agent-memory-deep-dive/"),
+    title: "Build an Agent Memory System You Can Correct",
+    description: "A practical contract for scoped writes, retrieval, supersession, forgetting, and evaluation.",
+  },
+  {
+    href: withBase("visuals/agent-memory-learning-series/"),
+    title: "The Five Gates of Agent Memory",
+    description: "An illustrated path from observation to governed forgetting.",
+  },
+  {
+    href: withBase("writing/context-engineering/"),
+    title: "Context Engineering for Agents: A Working Map",
+    description: "How durable state becomes a bounded view for one model call.",
+  },
+]} />

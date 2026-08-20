@@ -62,17 +62,17 @@ entries:
   - source: "AI/AI-article-analysis/memory-in-the-age-of-agent-survey.md"
     target: "/writing/agent-memory-survey/"
     action: "migrate-to-memory-series"
-    status: "pending"
+    status: "canonical-draft-prepared-publication-pending"
 
   - source: "AI/AI-article-analysis/ai-agent-memory/ai-agent-memory-deep-dive.md"
     target: "/writing/agent-memory-deep-dive/"
     action: "migrate-to-memory-series"
-    status: "pending"
+    status: "canonical-draft-prepared-publication-pending"
 
   - source: "AI/AI-manga-learnings/memory-in-the-age-of-ai-agent/learning-series.md"
     target: "/visuals/agent-memory-learning-series/"
     action: "migrate-final-visual-only"
-    status: "pending"
+    status: "canonical-draft-prepared-publication-pending"
 
 family_rules:
   - sources:
