@@ -1,15 +1,29 @@
 ---
 import { SITE_TITLE, withBase } from "../lib/site";
+
+const pathname = Astro.url.pathname;
+const navItems = [
+  ["Writing", "writing/"],
+  ["Topics", "topics/"],
+  ["Lab Notes", "lab-notes/"],
+  ["Visuals", "visuals/"],
+  ["About", "about/"],
+  ["Search", "search/"],
+] as const;
 ---
 
 <header class="site-header" data-pagefind-ignore>
-  <a class="brand" href={withBase()}>{SITE_TITLE}</a>
+  <a class="brand" href={withBase()} aria-label={`${SITE_TITLE} home`}>
+    <span class="brand-mark" aria-hidden="true">K</span>
+    <span>{SITE_TITLE}</span>
+  </a>
   <nav class="site-nav" aria-label="Primary navigation">
-    <a href={withBase("writing/")}>Writing</a>
-    <a href={withBase("topics/")}>Topics</a>
-    <a href={withBase("lab-notes/")}>Lab Notes</a>
-    <a href={withBase("visuals/")}>Visuals</a>
-    <a href={withBase("about/")}>About</a>
-    <a href={withBase("search/")}>Search</a>
+    {
+      navItems.map(([label, path]) => (
+        <a href={withBase(path)} aria-current={pathname.startsWith(withBase(path)) ? "page" : undefined}>
+          {label}
+        </a>
+      ))
+    }
   </nav>
 </header>

@@ -1,0 +1,36 @@
+---
+import ArticleMeta from "./ArticleMeta.astro";
+import { withBase } from "../lib/site";
+
+interface Props {
+  section: string;
+  topic: string;
+  title: string;
+  description: string;
+  publishedAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  lastVerified?: Date | undefined;
+  readingMinutes?: number | undefined;
+}
+
+const props = Astro.props;
+---
+
+<header class="article-header reading-column">
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href={withBase()}>Kuma Blog</a>
+    <span aria-hidden="true">/</span>
+    <span>{props.section}</span>
+    <span aria-hidden="true">/</span>
+    <span>{props.topic}</span>
+  </nav>
+  <p class="eyebrow">{props.section} · {props.topic}</p>
+  <h1 data-pagefind-meta="title">{props.title}</h1>
+  <p class="lede">{props.description}</p>
+  <ArticleMeta
+    publishedAt={props.publishedAt}
+    updatedAt={props.updatedAt}
+    lastVerified={props.lastVerified}
+    readingMinutes={props.readingMinutes}
+  />
+</header>

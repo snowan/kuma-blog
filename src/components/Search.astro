@@ -1,0 +1,16 @@
+---
+import { withBase } from "../lib/site";
+
+interface Props {
+  placeholder?: string | undefined;
+}
+
+const { placeholder = "Search Kuma Blog" } = Astro.props;
+const pagefindBundle = withBase("pagefind/");
+const baseUrl = withBase();
+---
+
+<div class="search-shell">
+  <pagefind-config bundle-path={pagefindBundle} base-url={baseUrl}></pagefind-config>
+  <pagefind-searchbox placeholder={placeholder} show-sub-results></pagefind-searchbox>
+</div>

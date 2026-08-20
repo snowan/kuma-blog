@@ -1,0 +1,22 @@
+---
+import { formatDate } from "../lib/site";
+
+interface Props {
+  title?: string | undefined;
+  source?: string | undefined;
+  verifiedAt?: Date | undefined;
+}
+
+const { title = "Evidence note", source, verifiedAt } = Astro.props;
+---
+
+<aside class="evidence-note" aria-label={title}>
+  <strong>{title}</strong>
+  <slot />
+  {(source || verifiedAt) && (
+    <p class="evidence-meta">
+      {source && <span>Source: {source}</span>}
+      {verifiedAt && <span>Verified {formatDate(verifiedAt)}</span>}
+    </p>
+  )}
+</aside>

@@ -1,0 +1,13 @@
+---
+interface Props {
+  points: string[];
+  title?: string | undefined;
+}
+
+const { points, title = "Key points" } = Astro.props;
+---
+
+<aside class="key-points" aria-labelledby="key-points-title">
+  <h2 id="key-points-title">{title}</h2>
+  <ul>{points.map((point) => <li>{point}</li>)}</ul>
+</aside>

@@ -1,0 +1,22 @@
+---
+import { formatDate } from "../lib/site";
+
+interface Props {
+  publishedAt?: Date | undefined;
+  updatedAt?: Date | undefined;
+  lastVerified?: Date | undefined;
+  readingMinutes?: number | undefined;
+}
+
+const { publishedAt, updatedAt, lastVerified, readingMinutes } = Astro.props;
+const items = [
+  publishedAt && `Published ${formatDate(publishedAt)}`,
+  updatedAt && `Updated ${formatDate(updatedAt)}`,
+  readingMinutes && `${readingMinutes} min read`,
+  lastVerified && `Verified ${formatDate(lastVerified)}`,
+].filter(Boolean);
+---
+
+<dl class="article-meta" aria-label="Article details">
+  {items.map((item) => <div><dt class="sr-only">Detail</dt><dd>{item}</dd></div>)}
+</dl>

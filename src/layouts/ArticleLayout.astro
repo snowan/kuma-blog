@@ -1,7 +1,9 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import SiteLayout from "./SiteLayout.astro";
-import { formatDate } from "../lib/site";
+import ArticleHeader from "../components/ArticleHeader.astro";
+import SeriesNav from "../components/SeriesNav.astro";
+import TableOfContents from "../components/TableOfContents.astro";
 
 type ArticleEntry =
   | CollectionEntry<"writing">
@@ -11,27 +13,40 @@ type ArticleEntry =
 interface Props {
   entry: ArticleEntry;
   section: "Writing" | "Lab Notes" | "Visuals";
+  headings?: { depth: number; slug: string; text: string }[] | undefined;
 }
 
-const { entry, section } = Astro.props;
+const { entry, section, headings = [] } = Astro.props;
 const { data } = entry;
+const body = "body" in entry && typeof entry.body === "string" ? entry.body : "";
+const words = body.trim() ? body.trim().split(/\s+/).length : 0;
+const readingMinutes = Math.max(1, Math.ceil(words / 220));
 ---
 
-<SiteLayout title={data.title} description={data.description} canonicalUrl={data.canonicalUrl}>
+<SiteLayout
+  title={data.title}
+  description={data.description}
+  canonicalUrl={data.canonicalUrl}
+  presentation={data.presentation}
+>
   <main id="main-content" data-pagefind-body>
-    <article class={`presentation-${data.presentation}`}>
-      <header class="article-header reading-column">
-        <p class="eyebrow">{section} · {data.topic}</p>
-        <h1 data-pagefind-meta="title">{data.title}</h1>
-        <p class="lede">{data.description}</p>
-        <p class="article-meta">
-          {data.publishedAt && <span>Published {formatDate(data.publishedAt)}</span>}
-          {data.updatedAt && <span> · Updated {formatDate(data.updatedAt)}</span>}
-          {data.lastVerified && <span> · Verified {formatDate(data.lastVerified)}</span>}
-        </p>
-      </header>
-      <div class="article-body">
-        <slot />
+    <article>
+      <ArticleHeader
+        section={section}
+        topic={data.topic}
+        title={data.title}
+        description={data.description}
+        publishedAt={data.publishedAt}
+        updatedAt={data.updatedAt}
+        lastVerified={data.lastVerified}
+        readingMinutes={readingMinutes}
+      />
+      {data.series && <SeriesNav series={data.series} />}
+      <div class="article-grid">
+        <TableOfContents headings={headings} />
+        <div class="article-body">
+          <slot />
+        </div>
       </div>
     </article>
   </main>

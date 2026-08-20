@@ -1,0 +1,14 @@
+---
+interface Props {
+  code: string;
+  language?: string | undefined;
+  title?: string | undefined;
+}
+
+const { code, language = "text", title } = Astro.props;
+---
+
+<figure class="code-block">
+  {title && <figcaption>{title}</figcaption>}
+  <pre tabindex="0" aria-label={`${language} code`}><code>{code}</code></pre>
+</figure>

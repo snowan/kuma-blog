@@ -14,7 +14,8 @@
     "build": "ASTRO_TELEMETRY_DISABLED=1 astro build && pagefind --site dist",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
     "test:dist": "node tools/site/verify-dist.mjs",
-    "verify": "pnpm run check && pnpm run build && pnpm run test:dist",
+    "test:contrast": "node tools/site/verify-contrast.mjs",
+    "verify": "pnpm run check && pnpm run test:contrast && pnpm run build && pnpm run test:dist",
     "test": "pnpm run verify"
   },
   "dependencies": {

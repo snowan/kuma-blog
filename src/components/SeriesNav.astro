@@ -1,0 +1,16 @@
+---
+import { SERIES, withBase } from "../lib/site";
+
+interface Props {
+  series: string;
+  position?: string | undefined;
+}
+
+const { series, position } = Astro.props;
+const label = SERIES.find((item) => item.id === series)?.label ?? series;
+---
+
+<nav class="series-nav" aria-label="Article series">
+  <span class="eyebrow">Series{position ? ` · ${position}` : ""}</span>
+  <a href={withBase(`series/${series}/`)}>{label}</a>
+</nav>

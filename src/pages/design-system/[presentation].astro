@@ -1,0 +1,124 @@
+---
+import ArticleHeader from "../../components/ArticleHeader.astro";
+import Callout from "../../components/Callout.astro";
+import CodeBlock from "../../components/CodeBlock.astro";
+import EvidenceNote from "../../components/EvidenceNote.astro";
+import KeyPoints from "../../components/KeyPoints.astro";
+import RelatedArticles from "../../components/RelatedArticles.astro";
+import RevisionHistory from "../../components/RevisionHistory.astro";
+import SeriesNav from "../../components/SeriesNav.astro";
+import SystemDiagram from "../../components/SystemDiagram.astro";
+import TableOfContents from "../../components/TableOfContents.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { withBase } from "../../lib/site";
+
+const presentations = [
+  { id: "journal", label: "Paper Journal", use: "Research essay" },
+  { id: "control", label: "Control Room", use: "Implementation guide" },
+  { id: "mori", label: "Mori Notebook", use: "Field note" },
+] as const;
+
+export function getStaticPaths() {
+  const previewPresentations = [
+    { id: "journal", label: "Paper Journal", use: "Research essay" },
+    { id: "control", label: "Control Room", use: "Implementation guide" },
+    { id: "mori", label: "Mori Notebook", use: "Field note" },
+  ] as const;
+  return previewPresentations.map((presentation) => ({
+    params: { presentation: presentation.id },
+    props: { presentation },
+  }));
+}
+
+type Presentation = (typeof presentations)[number];
+interface Props { presentation: Presentation }
+const { presentation } = Astro.props;
+const publishedAt = new Date("2026-08-20T00:00:00Z");
+const headings = [
+  { depth: 2, slug: "control-loop", text: "The control loop" },
+  { depth: 2, slug: "evidence-boundary", text: "The evidence boundary" },
+  { depth: 2, slug: "recovery", text: "Designing for recovery" },
+];
+---
+
+<SiteLayout
+  title={`${presentation.label} preview`}
+  description={`Review the ${presentation.label} presentation using the shared article system.`}
+  presentation={presentation.id}
+  noindex
+>
+  <main id="main-content" data-pagefind-ignore>
+    <nav class="presentation-switcher" aria-label="Design presentation preview">
+      <span>Preview:</span>
+      {presentations.map((item) => (
+        <a
+          href={withBase(`design-system/${item.id}/`)}
+          aria-current={item.id === presentation.id ? "page" : undefined}
+        >{item.label}</a>
+      ))}
+    </nav>
+    <article>
+      <ArticleHeader
+        section={presentation.use}
+        topic="Agents and Harnesses"
+        title="From model call to reliable agent"
+        description="The model proposes. The harness constrains, observes, and decides whether the work is actually complete."
+        publishedAt={publishedAt}
+        updatedAt={publishedAt}
+        lastVerified={publishedAt}
+        readingMinutes={7}
+      />
+      <SeriesNav series="harness-lab" position="Design preview" />
+      <KeyPoints points={[
+        "A harness owns the loop around a model call.",
+        "Tool results become evidence only when their provenance is preserved.",
+        "Recovery paths are part of the system design, not an exception handler added later.",
+      ]} />
+      <div class="article-grid">
+        <TableOfContents headings={headings} />
+        <div class="article-body">
+          <p class="drop-cap">An agent becomes dependable when its surrounding system can turn an ambiguous request into bounded actions, inspect what happened, and stop with evidence. That surrounding system is the harness.</p>
+
+          <h2 id="control-loop">The control loop</h2>
+          <p>The same five responsibilities appear across coding agents, research assistants, and operational workflows. Their implementations differ, but the control boundary remains legible.</p>
+          <SystemDiagram
+            title="A bounded agent run"
+            steps={[
+              { label: "Interpret", detail: "Resolve intent and constraints" },
+              { label: "Plan", detail: "Choose one bounded next action" },
+              { label: "Authorize", detail: "Apply tool and data permissions" },
+              { label: "Observe", detail: "Record result and provenance" },
+              { label: "Evaluate", detail: "Continue, recover, or stop" },
+            ]}
+            caption="Conceptual architecture—not live operational telemetry."
+          />
+
+          <h2 id="evidence-boundary">The evidence boundary</h2>
+          <p>A successful tool call is not the same as a successful task. The harness needs a completion contract that can be checked independently of the model's confidence.</p>
+          <EvidenceNote title="Evidence contract" source="Kuma Blog design preview" verifiedAt={publishedAt}>
+            <p>For a file change, completion can require an exact diff, a test result, and the final repository state—not a prose claim that the edit worked.</p>
+          </EvidenceNote>
+          <CodeBlock
+            title="Minimal completion record"
+            language="json"
+            code={'{\n  "state": "verified",\n  "evidence": ["diff", "tests", "exact_head"]\n}'}
+          />
+
+          <h2 id="recovery">Designing for recovery</h2>
+          <p>Retries should be bounded and informed by the failure mode. A permission denial, an invalid assumption, and a transient network error need different recovery paths.</p>
+          <Callout title="Design decision" kind="decision">
+            <p>Represent recovery as an explicit transition with its own evidence, budget, and stop condition.</p>
+          </Callout>
+
+          <RevisionHistory revisions={[
+            { date: publishedAt, note: "Added the shared three-presentation review surface." },
+          ]} />
+          <RelatedArticles articles={[
+            { href: withBase("series/harness-lab/"), title: "Harness Lab", description: "The working series for agent control loops and recovery." },
+            { href: withBase("methodology/"), title: "Research methodology", description: "How claims, freshness, and revisions are handled." },
+          ]} />
+        </div>
+      </div>
+    </article>
+  </main>
+</SiteLayout>

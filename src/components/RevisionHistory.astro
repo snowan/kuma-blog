@@ -1,0 +1,21 @@
+---
+import { formatDate } from "../lib/site";
+
+interface Revision {
+  date: Date;
+  note: string;
+}
+
+interface Props {
+  revisions: Revision[];
+}
+
+const { revisions } = Astro.props;
+---
+
+<section class="revision-history" aria-labelledby="revision-heading">
+  <h2 id="revision-heading">Revision history</h2>
+  <ol>
+    {revisions.map((revision) => <li><time datetime={revision.date.toISOString()}>{formatDate(revision.date)}</time><span>{revision.note}</span></li>)}
+  </ol>
+</section>
