@@ -1,0 +1,216 @@
+---
+title: "Build an Agent Memory System You Can Correct"
+description: "A practical architecture for scoped writes, evidence-aware retrieval, supersession, forgetting, privacy, and task-level evaluation."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: guide
+presentation: control
+topic: memory-context
+series: memory-lab
+tags: [agents, memory, architecture, retrieval, evaluation, privacy]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "Design the memory contract before choosing an index or database.",
+  "Preserve evidence and supersession history; do not silently overwrite conflicting records.",
+  "Test insertion, gathering, use, and deletion as separate boundaries.",
+]} />
+
+An agent memory system should improve a defined future decision. If the team cannot name that decision, it is too early to select an embedding model or storage product.
+
+This guide starts with a small, inspectable system. It uses explicit records because they are easier to trace, correct, and delete. Other representations may be valuable, but they should earn their complexity against the same task contract.
+
+For the research taxonomy and its limits, begin with <a href={withBase("writing/agent-memory-survey/")}>Agent Memory After the Taxonomy</a>. This guide does not repeat that table; it focuses on implementation.
+
+## Step 1: write the memory contract
+
+Complete this sentence:
+
+> When **this actor** performs **this future task**, the system may use **these prior events** within **this scope** until **this retention condition**, and success is measured by **this outcome**.
+
+Examples:
+
+- A coding agent may reuse repository conventions approved in the same project until the convention changes; success means fewer invalid patches without more policy violations.
+- A personal assistant may retain an explicitly stated formatting preference across conversations until the user changes or deletes it; success means correct formatting and successful correction.
+
+The contract must also name non-goals. Do not retain a personal profile merely because it might be helpful someday.
+
+## Step 2: define scopes before records
+
+At minimum, distinguish:
+
+| Scope | Suitable content | Do not assume |
+| --- | --- | --- |
+| Run | current plan, recent tool result, retry state | it should survive task completion |
+| Project | repository convention, durable decision, artifact reference | it applies to another project |
+| User | explicit cross-session preference | every observed behavior is a preference |
+| Organization | approved policy, shared procedure | all members have identical access |
+
+Scope is both a retrieval filter and an authorization boundary. A globally similar record should not cross a project or identity boundary unless policy permits it.
+
+## Step 3: store evidence-aware entries
+
+A useful minimum is an append-oriented event plus a current materialized view:
+
+~~~ts
+type MemoryEntry = {
+  id: string;
+  subject: string;
+  scope: "run" | "project" | "user" | "organization";
+  kind: "fact" | "preference" | "procedure" | "episode";
+  content: string;
+  basis: "observed" | "asserted" | "inferred" | "generated";
+  sourceRefs: string[];
+  recordedAt: string;
+  validFrom?: string;
+  validUntil?: string;
+  supersedes?: string[];
+  confidence?: number;
+  accessPolicy: string;
+  retentionPolicy: string;
+};
+~~~
+
+`basis` prevents an agent inference from masquerading as a user statement. `sourceRefs` preserve the route back to evidence. `supersedes` records change without deleting the earlier state. Confidence is meaningful only when its calculation and use are defined; otherwise omit it.
+
+<Callout title="Prefer correction over silent mutation" kind="warning">
+  <p>When a value changes, append a superseding record and update the current view. Silent overwrite destroys the evidence needed to explain a prior decision or diagnose stale retrieval.</p>
+</Callout>
+
+## Step 4: govern the lifecycle
+
+<SystemDiagram
+  title="A memory entry crosses five control boundaries"
+  steps={[
+    { label: "Observe", detail: "Capture an event with source and scope" },
+    { label: "Qualify", detail: "Validate value, authority, and retention" },
+    { label: "Store", detail: "Append entry and update searchable views" },
+    { label: "Use", detail: "Retrieve, rerank, and assemble with provenance" },
+    { label: "Revise", detail: "Confirm, supersede, expire, or delete" },
+  ]}
+  caption="The write path and the use path are separate. A record can fail before it reaches storage or after correct retrieval."
+/>
+
+### Observe
+
+Capture exact events or source references before compressing them. Separate user assertions, environment observations, and model inferences.
+
+### Qualify
+
+Apply a write policy. Ask whether the information is useful for the declared task, authorized for this scope, sufficiently supported, and safe to retain. High-impact inferences may require confirmation.
+
+### Store
+
+Append the record, then update disposable search indexes or summaries. Indexes are derived views; they should be rebuildable from governed entries.
+
+### Use
+
+Retrieve candidates, apply policy and validity filters, score relevance, resolve conflicts, then pass a bounded set—with source IDs—into context.
+
+### Revise
+
+Record feedback and change. Confirm useful entries, supersede stale ones, expire temporary state, and honor deletion rules across both sources and derived indexes.
+
+## Step 5: build retrieval as a pipeline
+
+Do not compress retrieval into one magic score. A practical sequence is:
+
+1. **Authorize:** filter by identity, scope, task, and access policy.
+2. **Validate:** exclude expired or superseded entries unless history is requested.
+3. **Generate candidates:** combine exact identifiers, metadata, lexical search, semantic search, and recent events as appropriate.
+4. **Rerank:** consider task relevance, source quality, recency, and conflict.
+5. **Diversify and limit:** avoid returning five paraphrases of one event.
+6. **Assemble:** attach provenance and state why each entry was selected.
+
+Recency, relevance, and importance are useful signals, not universal constants. Their weights depend on the task. A current deployment state can make recency decisive; a durable mathematical definition should not decay merely because it is old.
+
+When two live records conflict, the retriever should not quietly choose the one with the highest embedding similarity. Apply an explicit precedence rule or expose the conflict to the next decision.
+
+## Step 6: separate consolidation from deletion
+
+Consolidation reduces repeated episodes into a useful abstraction. It should create a derived record with links to its inputs. The source episodes remain governed by their own retention policy.
+
+Forgetting has several meanings:
+
+- remove an item from normal retrieval;
+- mark it superseded but retain audit history;
+- expire it after a defined period;
+- delete source and derived copies under a user or policy request;
+- retrain or otherwise address information encoded in parameters.
+
+These actions have different assurance burdens. “We stopped retrieving it” is not proof of deletion.
+
+## Step 7: test the boundaries
+
+Use held-out scenarios with controlled state, not only questions over a transcript.
+
+| Boundary | Test | Evidence |
+| --- | --- | --- |
+| Insert | Explicit preference and unsupported inference arrive together | Only authorized item becomes durable |
+| Update | A later event corrects an earlier value | Current view changes; history shows supersession |
+| Gather | Relevant and similar-but-wrong records coexist | Correct scoped entry enters context |
+| Use | Correct entry is supplied beside a distractor | Agent applies it to the task outcome |
+| Workflow | A fresh session resumes a multi-step task | Completed and pending steps are recovered |
+| Premise | Query assumes an event that never occurred | Agent rejects the false premise |
+| Delete | User removes a retained preference | Source, index, cache, and future context no longer expose it |
+
+Measure task success, incorrect-memory use, missing-memory failures, policy violations, latency, and cost. Inspect representative traces. A high recall score can hide an agent that uses stale evidence or retrieves across the wrong scope.
+
+<EvidenceNote title="Benchmark interpretation" source="Mem0 and LongMemEval-V2 research preprints" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>Published memory papers report substantial quality, token, or latency gains on their evaluated configurations. Those figures are useful comparison points, not a forecast for a different workload. Re-run representative tasks with the same evidence and cost accounting before selecting an architecture.</p>
+</EvidenceNote>
+
+## Minimum production checklist
+
+- [ ] One declared future task justifies retention.
+- [ ] Run, project, user, and organization scopes are not interchangeable.
+- [ ] Assertions, observations, inferences, and generated summaries are distinguishable.
+- [ ] Every durable entry has provenance, validity, access, and retention metadata.
+- [ ] Corrections create explicit supersession.
+- [ ] Search indexes and summaries are rebuildable derived views.
+- [ ] Retrieval filters policy and validity before relevance scoring.
+- [ ] Conflicts have a deterministic resolution or escalation path.
+- [ ] Deletion tests cover indexes, caches, and assembled context.
+- [ ] Held-out scenarios test insertion, gathering, use, change, and false premises.
+
+Start with one contract, one append-only store, one materialized current view, and a small evaluation set. Add consolidation, semantic search, or alternative memory forms only when the baseline fails for a measured reason.
+
+## Sources and further reading
+
+- [Hu et al.: Memory in the Age of AI Agents](https://arxiv.org/abs/2512.13564)
+- [Packer et al.: MemGPT—Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560)
+- [Park et al.: Generative Agents](https://arxiv.org/abs/2304.03442)
+- [Chhikara et al.: Mem0](https://arxiv.org/abs/2504.19413)
+- [Wu et al.: LongMemEval-V2](https://arxiv.org/abs/2605.12493)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Rebuilt the legacy deep dive around a scoped, correctable lifecycle and separated implementation guidance from the shared research taxonomy." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/agent-memory-survey/"),
+    title: "Agent Memory After the Taxonomy",
+    description: "The Forms–Functions–Dynamics map, its boundaries, and a 2026 evaluation update.",
+  },
+  {
+    href: withBase("visuals/agent-memory-learning-series/"),
+    title: "The Five Gates of Agent Memory",
+    description: "A visual review of the same lifecycle for teaching and design discussions.",
+  },
+  {
+    href: withBase("writing/filesystem-context-engineering/"),
+    title: "Filesystem Context Engineering for Long-Running Agents",
+    description: "An artifact model for durable, inspectable context and safe handoffs.",
+  },
+]} />

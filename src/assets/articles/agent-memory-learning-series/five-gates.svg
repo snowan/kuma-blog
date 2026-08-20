@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-labelledby="title description">
+  <title id="title">The five gates of agent memory</title>
+  <desc id="description">A winding path through five paper lanterns labeled Observe, Qualify, Store, Use, and Revise. Notes beneath each lantern explain the control boundary.</desc>
+  <rect width="1440" height="900" fill="#f6f0df"/>
+  <circle cx="1240" cy="118" r="62" fill="#e8b35d" opacity="0.72"/>
+  <path d="M0 690 C220 570 330 760 535 635 S860 520 1045 635 S1260 725 1440 560 V900 H0 Z" fill="#cdd9c7"/>
+  <path d="M0 760 C250 650 390 835 650 690 S1040 590 1440 735 V900 H0 Z" fill="#9eb9aa" opacity="0.9"/>
+  <path d="M105 655 C260 545 390 725 545 610 S825 515 985 620 S1190 690 1335 575" fill="none" stroke="#b85b45" stroke-width="12" stroke-linecap="round" stroke-dasharray="2 24"/>
+  <g fill="#263a43" font-family="Georgia, serif">
+    <text x="92" y="112" font-size="64" font-weight="700">The five gates of agent memory</text>
+    <text x="96" y="160" font-family="Arial, sans-serif" font-size="25" fill="#58676b">Follow one observation from evidence to governed revision.</text>
+  </g>
+  <g font-family="Arial, sans-serif">
+    <g transform="translate(95 292)">
+      <path d="M42 0h148l24 34-24 146H42L18 34Z" fill="#efc066" stroke="#7a4838" stroke-width="4"/>
+      <path d="M42 48h148M55 0v180M177 0v180" stroke="#fff1c7" stroke-width="4" opacity="0.75"/>
+      <text x="116" y="82" text-anchor="middle" fill="#513126" font-size="19" font-weight="700">01</text>
+      <text x="116" y="116" text-anchor="middle" fill="#263a43" font-size="27" font-weight="700">OBSERVE</text>
+      <text x="116" y="214" text-anchor="middle" fill="#40545a" font-size="18">Source · actor · time</text>
+    </g>
+    <g transform="translate(350 382)">
+      <path d="M42 0h148l24 34-24 146H42L18 34Z" fill="#e99a72" stroke="#7a4838" stroke-width="4"/>
+      <path d="M42 48h148M55 0v180M177 0v180" stroke="#ffe2cd" stroke-width="4" opacity="0.75"/>
+      <text x="116" y="82" text-anchor="middle" fill="#513126" font-size="19" font-weight="700">02</text>
+      <text x="116" y="116" text-anchor="middle" fill="#263a43" font-size="27" font-weight="700">QUALIFY</text>
+      <text x="116" y="214" text-anchor="middle" fill="#40545a" font-size="18">Value · authority · scope</text>
+    </g>
+    <g transform="translate(610 300)">
+      <path d="M42 0h148l24 34-24 146H42L18 34Z" fill="#e6cf83" stroke="#7a4838" stroke-width="4"/>
+      <path d="M42 48h148M55 0v180M177 0v180" stroke="#fff6d7" stroke-width="4" opacity="0.75"/>
+      <text x="116" y="82" text-anchor="middle" fill="#513126" font-size="19" font-weight="700">03</text>
+      <text x="116" y="116" text-anchor="middle" fill="#263a43" font-size="27" font-weight="700">STORE</text>
+      <text x="116" y="214" text-anchor="middle" fill="#40545a" font-size="18">Append · index · retain</text>
+    </g>
+    <g transform="translate(870 390)">
+      <path d="M42 0h148l24 34-24 146H42L18 34Z" fill="#91b7aa" stroke="#49665d" stroke-width="4"/>
+      <path d="M42 48h148M55 0v180M177 0v180" stroke="#dff2ea" stroke-width="4" opacity="0.78"/>
+      <text x="116" y="82" text-anchor="middle" fill="#29483f" font-size="19" font-weight="700">04</text>
+      <text x="116" y="116" text-anchor="middle" fill="#263a43" font-size="27" font-weight="700">USE</text>
+      <text x="116" y="214" text-anchor="middle" fill="#40545a" font-size="18">Filter · retrieve · apply</text>
+    </g>
+    <g transform="translate(1125 285)">
+      <path d="M42 0h148l24 34-24 146H42L18 34Z" fill="#a3adc7" stroke="#526078" stroke-width="4"/>
+      <path d="M42 48h148M55 0v180M177 0v180" stroke="#e6eaf5" stroke-width="4" opacity="0.78"/>
+      <text x="116" y="82" text-anchor="middle" fill="#34435f" font-size="19" font-weight="700">05</text>
+      <text x="116" y="116" text-anchor="middle" fill="#263a43" font-size="27" font-weight="700">REVISE</text>
+      <text x="116" y="214" text-anchor="middle" fill="#40545a" font-size="18">Confirm · supersede · forget</text>
+    </g>
+  </g>
+  <g fill="#263a43" font-family="Georgia, serif">
+    <text x="94" y="815" font-size="31" font-weight="700">The path is selective.</text>
+    <text x="390" y="815" font-family="Arial, sans-serif" font-size="22" fill="#40545a">A candidate may stop at any gate. A useful memory can later change or leave.</text>
+  </g>
+</svg>

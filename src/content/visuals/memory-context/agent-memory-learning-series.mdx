@@ -1,0 +1,155 @@
+---
+title: "The Five Gates of Agent Memory"
+description: "An illustrated learning path for following one memory from observation through qualification, storage, use, and revision."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: visual-explainer
+presentation: mori
+topic: memory-context
+series: memory-lab
+tags: [agents, memory, visual-explainer, lifecycle, learning]
+featured: false
+cover:
+  src: ../../../assets/articles/agent-memory-learning-series/five-gates.svg
+  alt: "Five paper lanterns mark the agent-memory path: observe, qualify, store, use, and revise."
+---
+
+import diagram from "../../../assets/articles/agent-memory-learning-series/five-gates.svg";
+import Callout from "../../../components/Callout.astro";
+import Figure from "../../../components/Figure.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "A useful memory crosses five gates; storage is only the middle one.",
+  "Each gate can reject, redirect, or annotate the record.",
+  "The path closes with correction or forgetting, not permanent accumulation.",
+]} />
+
+<Figure
+  src={diagram.src}
+  alt="A winding path through five labeled lantern gates. Observe captures a sourced event. Qualify checks value, authority, and retention. Store appends the record and builds derived views. Use applies policy, retrieval, conflict handling, and context assembly. Revise confirms, supersedes, expires, or deletes the memory."
+  caption="An original conceptual map. The lanterns are control boundaries, not product components or benchmark stages."
+  wide
+/>
+
+Imagine one small observation entering an agent system:
+
+> “For this repository, examples should use pnpm.”
+
+It sounds easy to remember. Following it through the five gates exposes the decisions that make memory trustworthy.
+
+## Gate 1 · Observe
+
+The agent records the event, not merely its interpretation.
+
+- **Actor:** the repository owner
+- **Content:** examples should use pnpm
+- **Source:** an approved project instruction
+- **Time:** when the instruction was read
+- **Candidate scope:** this repository
+
+If the agent merely notices that pnpm appeared twice, it has an inference—not an instruction. The distinction travels with the record.
+
+## Gate 2 · Qualify
+
+Before persistence, ask three questions:
+
+1. Will this help a declared future task?
+2. Is this source allowed to set the rule?
+3. How long and how widely should it apply?
+
+Our example passes because the source is authoritative for the project, the convention will affect future patches, and the scope is narrow. A guess about the owner's preferences outside this repository should fail the gate.
+
+<Callout title="The write gate protects the future" kind="warning">
+  <p>Once stored, a record can influence many later model calls. Rejecting an unsupported or over-broad candidate is often safer than trying to compensate during retrieval.</p>
+</Callout>
+
+## Gate 3 · Store
+
+Append an entry with provenance, access, validity, and retention. Then update search indexes or summaries as derived views.
+
+The durable entry might say:
+
+~~~text
+subject: kuma-blog
+scope: project
+kind: procedure
+basis: asserted
+content: Use pnpm in repository examples.
+source: AGENTS.md@revision
+status: current
+~~~
+
+The index may be replaced. The source link and supersession history should remain recoverable.
+
+## Gate 4 · Use
+
+When a later task asks for installation instructions, the system:
+
+1. filters memories to the current identity and project;
+2. excludes expired or superseded entries;
+3. retrieves candidates using metadata and text or semantic search;
+4. resolves conflicts and limits repetition;
+5. places the selected rule and its provenance in active context.
+
+Retrieval is not the end. The agent still has to apply the convention correctly in the generated files and tests.
+
+## Gate 5 · Revise
+
+Suppose the project later adopts Bun. The new approved instruction supersedes the pnpm record. The current view changes, while the event history can explain why an older article used pnpm.
+
+Revision may also:
+
+- confirm a useful entry;
+- narrow its scope;
+- expire temporary working state;
+- consolidate repeated episodes into a sourced procedure;
+- delete the entry and its derived copies under policy.
+
+The path is a loop because using memory produces new evidence. It is not an excuse to retain every trace forever.
+
+## Three ways to review the path
+
+### For a product review
+
+Ask whether the user can see, correct, and delete the retained state that affects them.
+
+### For an architecture review
+
+Trace the source entry, current view, indexes, assembled context, feedback event, and deletion propagation separately.
+
+### For an evaluation review
+
+Create a case that fails at each gate. An unsupported write tests qualification; a corrected convention tests revision; a similar convention from another repository tests scope during use.
+
+The full Forms–Functions–Dynamics comparison appears once in <a href={withBase("writing/agent-memory-survey/")}>Agent Memory After the Taxonomy</a>. For schemas, retrieval stages, and test cases, continue with <a href={withBase("writing/agent-memory-deep-dive/")}>Build an Agent Memory System You Can Correct</a>.
+
+## Sources and method
+
+This diagram is an original synthesis informed by:
+
+- [Hu et al.: Memory in the Age of AI Agents](https://arxiv.org/abs/2512.13564)
+- [Packer et al.: MemGPT—Towards LLMs as Operating Systems](https://arxiv.org/abs/2310.08560)
+- [Park et al.: Generative Agents](https://arxiv.org/abs/2304.03442)
+- [Wu et al.: LongMemEval-V2](https://arxiv.org/abs/2605.12493)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Reframed the legacy learning series as one original lifecycle path that complements, rather than repeats, the survey and implementation guide." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/agent-memory-survey/"),
+    title: "Agent Memory After the Taxonomy",
+    description: "The shared research map and the limits of taxonomy as architecture.",
+  },
+  {
+    href: withBase("writing/agent-memory-deep-dive/"),
+    title: "Build an Agent Memory System You Can Correct",
+    description: "The complete implementation and evaluation guide behind the five gates.",
+  },
+]} />
