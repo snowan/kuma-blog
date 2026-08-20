@@ -74,6 +74,26 @@ entries:
     action: "migrate-final-visual-only"
     status: "canonical-draft-prepared-publication-pending"
 
+  - source: "AI/ai-resources/evals/anthropic-demisfy-ai-evals.md"
+    target: "/writing/agent-evals-that-diagnose-failure/"
+    action: "migrate-canonical"
+    status: "canonical-draft-prepared-publication-pending"
+
+  - source: "AI-blogs/ai-inference-batching-explained.md"
+    target: "/writing/llm-serving-control-plane/"
+    action: "merge-into-canonical"
+    status: "canonical-draft-prepared-publication-pending"
+
+  - source: "AI-blogs/design-chatgpt-ai-inference-platform.md"
+    target: "/writing/llm-serving-control-plane/"
+    action: "merge-source-then-static-redirect"
+    status: "unique-material-reviewed-redirect-and-retirement-pending"
+
+  - source: "AI-blogs/dynamic-rate-limiting-ai-inference.md"
+    target: "/writing/llm-admission-control/"
+    action: "migrate-canonical"
+    status: "canonical-draft-prepared-publication-pending"
+
 family_rules:
   - sources:
       - "AI-blogs/design-*.md"

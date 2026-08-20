@@ -168,6 +168,9 @@ const unpublishedDrafts = [
   "agent-memory-survey",
   "agent-memory-deep-dive",
   "agent-memory-learning-series",
+  "agent-evals-that-diagnose-failure",
+  "llm-serving-control-plane",
+  "llm-admission-control",
 ];
 for (const slug of unpublishedDrafts) {
   if (relativeFiles.some((path) => path.includes(slug))) {

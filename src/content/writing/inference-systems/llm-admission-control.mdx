@@ -1,0 +1,183 @@
+---
+title: "Admission Control for LLM Serving"
+description: "A practical design for combining quotas, work reservations, scheduler pressure, priority, overload actions, and transparent client recovery."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: guide
+presentation: control
+topic: inference-systems
+tags: [llm, inference, admission-control, rate-limits, overload, reliability]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "Quotas allocate customer access; admission control protects the serving system now.",
+  "Reserve uncertain output and KV-cache work, then settle against observed usage.",
+  "Use queue time, cache pressure, preemption, and SLO attainment to choose admit, queue, degrade, or reject."
+]} />
+
+Requests per minute is a poor description of LLM serving work. A short cached prompt and a long uncached prompt can each count as one request while consuming very different prefill time, decode time, and KV-cache capacity.
+
+Tokens improve the proxy, but they do not finish the design. The same token counts can have different costs across models, hardware, quantization, prefix-cache hits, batch compatibility, and latency classes.
+
+## Quota and admission answer different questions
+
+| Control | Question | Typical scope |
+| --- | --- | --- |
+| Quota | Is this tenant entitled to submit this volume over time? | account, project, model, minute or day |
+| Admission | Can this request enter now without violating safety or service objectives? | worker, model pool, queue, current instant |
+
+Public APIs commonly expose request and token quotas. Anthropic documents RPM, input-tokens-per-minute, and output-tokens-per-minute limits, returning 429 and `retry-after` when a limit is exceeded. Those are client-facing fairness and capacity contracts.
+
+An internal serving system also needs live overload protection. Envoy's overload manager illustrates the general pattern: measure resource pressure, map it through thresholds or scaled triggers, and activate actions before saturation causes a cascade.
+
+## Represent the work as a reservation
+
+At arrival, some costs are known and others are bounded or predicted:
+
+~~~ts
+type WorkReservation = {
+  tenant: string;
+  model: string;
+  inputTokens: number;
+  cachedInputTokensEstimate: number;
+  outputTokensReserved: number;
+  kvBlocksReserved: number;
+  latencyClass: "interactive" | "batch";
+  priority: number;
+  deadlineAt?: string;
+};
+~~~
+
+Input tokens can be counted before execution. Output length is uncertain. Reserving the full configured maximum is safe but can underutilize the fleet; using only a prediction risks over-admission. A practical policy can reserve a conservative bound, limit pathological maxima, and adjust the reservation as generation progresses.
+
+Settlement records actual input, cached input, output, queue time, prefill time, decode time, and released KV blocks. It updates quota counters and the estimator independently. Do not train the estimator on requests that were truncated or aborted without labeling them.
+
+<Callout title="Tokens are not interchangeable" kind="warning">
+  <p>Input, cached input, and generated output affect different phases. A single undifferentiated TPM bucket can be useful for a simple external contract, but it should not be mistaken for a precise internal capacity model.</p>
+</Callout>
+
+## Make one explicit decision
+
+<SystemDiagram
+  title="Admission combines entitlement and live capacity"
+  steps={[
+    { label: "Count", detail: "Resolve tenant, model, tokens, and request shape" },
+    { label: "Authorize", detail: "Apply quota, policy, and model access" },
+    { label: "Reserve", detail: "Estimate output, KV blocks, and deadline risk" },
+    { label: "Inspect", detail: "Read queue, cache, preemption, and SLO pressure" },
+    { label: "Decide", detail: "Admit, queue, degrade, or reject with evidence" },
+  ]}
+  caption="The decision should be attributable to the quota or pressure signal that caused it."
+/>
+
+### Admit
+
+Capacity and quota are available. Attach the reservation to the request so the scheduler and settlement path share one identifier.
+
+### Queue
+
+The request can still meet its deadline after bounded waiting. Queue by latency class and fair-share policy; an unbounded queue converts overload into timeouts and memory pressure.
+
+### Degrade
+
+Only apply a behavior declared in the product contract: route an asynchronous job, cap optional output, disable a best-effort feature, or offer a smaller approved model. Silent model substitution changes semantics and makes quality incidents difficult to diagnose.
+
+### Reject
+
+Reject before expensive work when entitlement is exhausted or the system cannot meet the contract. Return a stable error type, request identifier, retry guidance, and the limiting dimension when disclosure is safe.
+
+## Use live pressure, not magic colors
+
+The legacy article proposed fixed green, yellow, and red utilization percentages. Those numbers have no universal basis. Calibrate pressure against observed SLO failure and recovery for each model pool.
+
+Useful signals include:
+
+- scheduler queue time and oldest-request age;
+- running and waiting requests by latency class;
+- free and used KV-cache blocks;
+- preemption and recomputation rate;
+- TTFT and TPOT SLO attainment;
+- recent admission-estimation error;
+- worker health and model-loading transitions;
+- client abort rate after admission.
+
+GPU utilization alone is ambiguous. A high number may represent productive batched work or a system spending time on the wrong phase while the queue violates its objective.
+
+Use hysteresis so small fluctuations do not alternate between admit and reject on every sample. Reserve a safety margin for measurement delay and work already in flight. Record which pressure signal changed the decision.
+
+## Fairness without a permanent VIP lane
+
+Priority is a policy, not a substitute for capacity planning. Define:
+
+- tenant share and burst allowance;
+- per-model limits;
+- interactive and batch lanes;
+- maximum queue time for each lane;
+- aging so low-priority work eventually advances;
+- protected capacity for control-plane or safety operations;
+- behavior when a tenant splits one job into many requests.
+
+Weighted fair queuing or deficit accounting is usually easier to reason about than absolute priority. A strict top tier can starve every other customer during a sustained incident.
+
+## Client recovery is part of the contract
+
+For quota exhaustion, 429 with a usable retry interval lets a client back off. For temporary capacity protection, the error should distinguish a retryable overload from a permanent validation failure. Add jitter to client retries and cap attempts so recovery does not create a synchronized second wave.
+
+Expose remaining quota and reset metadata when appropriate. Do not expose unstable internal thresholds as a promise. A client needs to know when and how to retry, not the exact KV-block watermark of a worker.
+
+## Test with workload traces
+
+Replay representative arrival patterns and request shapes. Include:
+
+| Scenario | Expected property |
+| --- | --- |
+| Short interactive burst | bounded queueing without starving steady traffic |
+| Long uncached prompts | reservation prevents KV thrash and prefill collapse |
+| Large output cap, early stop | unused reservation returns promptly |
+| Client abort | work and KV blocks are released and settled once |
+| Hot shared prefix | cache savings affect capacity without crossing tenant policy |
+| Worker loss | admission tightens before the healthy pool cascades |
+| Retry storm | jitter and overload response reduce, not amplify, pressure |
+| Batch backlog | interactive lane remains within its declared objective |
+
+Measure admitted goodput, rejection reason, queue age, fairness by tenant, estimator error, preemption, and recovery time. A limiter that protects the GPU by rejecting nearly everything is safe but not useful.
+
+<EvidenceNote title="Design status" source="Current API, proxy, and serving documentation" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>RPM, input-token, output-token, and retry behavior are documented API patterns. The reservation schema, pressure signals, and four-way decision are Kuma Blog's architecture proposal. They require calibration with the model pool's own traces and SLOs.</p>
+</EvidenceNote>
+
+For the downstream scheduler, batching, and KV-cache mechanics, read <a href={withBase("writing/llm-serving-control-plane/")}>The LLM Serving Control Plane</a>.
+
+## Sources and further reading
+
+- [Anthropic: Our approach to rate limits for the Claude API](https://support.claude.com/en/articles/8243635-our-approach-to-rate-limits-for-the-claude-api)
+- [Envoy: Overload manager](https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/operations/overload_manager)
+- [vLLM: Production metrics](https://docs.vllm.ai/en/latest/design/metrics/)
+- [NVIDIA Triton: Batchers and queue policy](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/batcher.html)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Replaced the legacy RPM-is-dead argument with a quota, reservation, pressure, fairness, and recovery design." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/llm-serving-control-plane/"),
+    title: "The LLM Serving Control Plane",
+    description: "The scheduling and memory system that receives admitted work.",
+  },
+  {
+    href: withBase("writing/agent-evals-that-diagnose-failure/"),
+    title: "Agent Evals That Diagnose Failure",
+    description: "How to test outcome, consistency, infrastructure noise, and recovery boundaries.",
+  },
+]} />

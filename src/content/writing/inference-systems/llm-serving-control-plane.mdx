@@ -1,0 +1,164 @@
+---
+title: "The LLM Serving Control Plane"
+description: "A source-grounded map of request scheduling, continuous batching, KV-cache management, latency objectives, and the point where disaggregation earns its cost."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: essay
+presentation: journal
+topic: inference-systems
+tags: [llm, inference, serving, batching, scheduling, kv-cache]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "The scheduler allocates latency and KV-cache capacity, not just GPU time.",
+  "Iteration-level batching and paged KV memory solve different constraints and should be measured separately.",
+  "Prefill–decode disaggregation is an optimization to justify with workload traces, network costs, and SLO attainment."
+]} />
+
+An interactive LLM service does not execute one fixed-size request and return one fixed-size response. A prompt creates a prefill phase; generation then advances a variable number of decode iterations while a growing KV cache remains live. Other requests arrive, finish, abort, or compete for memory during that interval.
+
+The serving control plane decides which work enters the system, where it runs, which requests share an iteration, when work is preempted, and whether the result still meets the product's latency objective.
+
+## Begin with four user-visible measurements
+
+| Measurement | Boundary | What it reveals |
+| --- | --- | --- |
+| Queue time | arrival → scheduled | admission and capacity pressure |
+| Time to first token (TTFT) | arrival → first generated token | queueing plus prompt processing |
+| Inter-token latency / TPOT | gaps during generation | decode cadence and interference |
+| End-to-end latency | arrival → completion | total experience, including output length |
+
+Throughput belongs beside these metrics, not above them. **Goodput** counts requests or tokens that meet the declared latency objectives. A change that raises raw throughput while pushing more sessions outside TTFT or TPOT targets is not automatically an improvement.
+
+Current vLLM production metrics expose queue, prefill, decode, TTFT, inter-token, prompt-token, generation-token, running, waiting, and KV-cache signals. That set is a useful minimum because it separates demand, scheduling, execution, and memory pressure.
+
+## Prefill and decode are different work
+
+Prefill processes the input tokens and creates KV state. Decode generates new tokens iteratively while reading model weights and the accumulated KV cache. Their bottlenecks depend on model, hardware, batch, sequence length, kernels, and parallelism; “prefill is compute-bound and decode is memory-bound” is a common regime, not a universal law.
+
+That nuance changes design. Profile both phases under the real prompt and output distributions before assigning fleets or buying hardware around a slogan.
+
+<SystemDiagram
+  title="The request lifecycle seen by the scheduler"
+  steps={[
+    { label: "Admit", detail: "Check quota, capacity, deadline, and memory risk" },
+    { label: "Prefill", detail: "Process prompt and allocate KV blocks" },
+    { label: "Batch", detail: "Select compatible work for the next iteration" },
+    { label: "Decode", detail: "Generate tokens while KV state grows" },
+    { label: "Release", detail: "Stream result, settle usage, and free state" },
+  ]}
+  caption="A client abort or preemption must also release KV state; completion is not the only exit."
+/>
+
+## Three batching boundaries
+
+### Request batching
+
+Offline jobs can group a known set, pad or bucket compatible inputs, and optimize aggregate completion time. Waiting for the group is acceptable when per-request responsiveness is not the product.
+
+### Windowed dynamic batching
+
+NVIDIA Triton can wait for a bounded interval to form a preferred or maximum batch, then send the available work when the delay expires. This is useful for stateless models and workloads where a small queueing delay buys better device utilization.
+
+### Iteration-level scheduling
+
+Autoregressive generation creates a new scheduling opportunity at each model iteration. Orca introduced iteration-level scheduling and selective batching so completed sequences can leave and newly admitted work can join without waiting for an entire request batch to finish.
+
+The Orca paper reports a 36.9× throughput improvement over FasterTransformer at matched latency in its GPT-3 175B evaluation. That number belongs to that configuration. It is evidence for the mechanism, not a multiplier to use in a capacity plan.
+
+<Callout title="Continuous does not mean latency-free" kind="warning">
+  <p>A continuously changing batch still has queueing, prefill interference, kernel overhead, memory limits, and fairness decisions. Larger batches can improve throughput while making token cadence or admission delay worse.</p>
+</Callout>
+
+## KV cache is scheduler capacity
+
+The KV cache grows with the active sequence. Reserving every request's maximum possible length wastes memory; allocating without headroom can cause repeated preemption and recomputation.
+
+PagedAttention maps logical KV blocks to non-contiguous physical blocks, borrowing the paging idea from operating systems. The vLLM paper shows how dynamic allocation bounds waste to the final partially filled block and supports sharing where decoding semantics permit it.
+
+Paging is not free. The paper reports attention-kernel overhead from block-table access and variable sequence handling. The end-to-end benefit depends on fitting more useful work into memory and batching it effectively.
+
+The control plane therefore needs:
+
+- admission estimates for prompt and reserved output state;
+- current free blocks and a deliberate watermark;
+- a preemption policy and a recomputation or swap strategy;
+- prompt-prefix cache accounting;
+- immediate cleanup on completion, error, timeout, or client abort.
+
+## Shared or disaggregated phases?
+
+A shared worker is the simplest useful system. It avoids KV transfer and operates one fleet. Chunked prefill can limit long-prompt interference by breaking prompt work into smaller pieces that interleave with decode.
+
+DistServe explores another point: place prefill and decode on separate workers, transfer KV state, and scale the phases against separate TTFT and TPOT objectives. Its paper reports up to 7.4× higher request capacity or 12.6× tighter SLOs than evaluated baselines while keeping more than 90% of requests within the configured constraints.
+
+Those results do not make disaggregation the default. It adds:
+
+- a KV transfer protocol and network dependency;
+- placement and replica-balancing decisions;
+- two capacity models and operational runbooks;
+- failure recovery when either phase or the transfer fails.
+
+Choose it after a profiled shared system shows material prefill–decode interference and the network can carry KV state inside the target latency budget. Sarathi-Serve's chunked-prefill approach is evidence that the design space includes improving coexistence, not only splitting fleets.
+
+## A staged architecture
+
+1. **Single worker:** establish correctness, streaming, request cancellation, and all four latency measurements.
+2. **Iteration scheduler:** add continuous batching and measure batch composition, queue time, and TPOT.
+3. **Paged KV manager:** add block accounting, prefix reuse, watermarks, and deterministic cleanup.
+4. **Replica router:** route by model, load, and reusable prefix while preserving tenant isolation.
+5. **Phase separation:** disaggregate only after workload replay demonstrates better goodput after transfer and operational costs.
+
+At every stage, replay the same trace distribution: prompt length, requested output cap, actual output length, arrival bursts, priority, cancellation, cacheability, and model. Synthetic fixed-length requests can make almost any scheduler look stable.
+
+## Failure tests worth keeping
+
+- a long prompt arrives while short generations are decoding;
+- KV usage crosses the admission watermark;
+- one client requests a large output but aborts after the first token;
+- a popular prefix becomes invalid after a model or template change;
+- a worker fails after prefill but before the first streamed token;
+- one tenant floods a batch-compatible request shape;
+- serving throughput remains high while TPOT SLO attainment collapses.
+
+<EvidenceNote title="Evidence boundary" source="Systems papers and current serving documentation" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>Paper results are attributed to their evaluated models, hardware, traces, baselines, and SLOs. The staged architecture and failure set are Kuma Blog's synthesis. Benchmark your own workload before treating any scheduling or placement choice as capacity evidence.</p>
+</EvidenceNote>
+
+The companion <a href={withBase("writing/llm-admission-control/")}>admission-control guide</a> focuses on the decision made before this scheduler accepts more work.
+
+## Sources and further reading
+
+- [Yu et al.: Orca (OSDI 2022)](https://www.usenix.org/conference/osdi22/presentation/yu)
+- [Kwon et al.: Efficient Memory Management for LLM Serving with PagedAttention](https://arxiv.org/abs/2309.06180)
+- [Zhong et al.: DistServe](https://arxiv.org/abs/2401.09670)
+- [Agrawal et al.: Sarathi-Serve](https://arxiv.org/abs/2403.02310)
+- [vLLM: Production metrics](https://docs.vllm.ai/en/latest/design/metrics/)
+- [NVIDIA Triton: Batchers](https://docs.nvidia.com/deeplearning/triton-inference-server/user-guide/docs/user_guide/batcher.html)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Consolidated the legacy batching and platform-design notes into a source-bounded serving control-plane map." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/llm-admission-control/"),
+    title: "Admission Control for LLM Serving",
+    description: "How quotas, reservations, live pressure, and overload actions protect the scheduler.",
+  },
+  {
+    href: withBase("writing/agent-evals-that-diagnose-failure/"),
+    title: "Agent Evals That Diagnose Failure",
+    description: "An outcome-first approach to measuring the agent systems served on top of inference infrastructure.",
+  },
+]} />
