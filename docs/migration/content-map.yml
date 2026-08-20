@@ -1,0 +1,289 @@
+schema_version: 1
+updated_at: "2026-08-20"
+status: "governance-only"
+
+guardrails:
+  moves_approved: false
+  merges_approved: false
+  archives_approved: false
+  deletions_approved: false
+  publishing_approved: false
+  note: >-
+    This manifest records proposed destinations and review requirements. It does
+    not authorize a filesystem or publication change.
+
+audit_baseline:
+  date: "2026-08-20"
+  tracked_base_revision: "800496a837c552c4a393a773d4c122ff525d5132"
+  scope: "local working tree, including untracked Markdown"
+  includes_this_governance_change: false
+  refresh_required_before_migration: true
+  documents: 273
+  post_candidates: 176
+  support_documents: 97
+  words: 268199
+  exact_duplicate_groups: 1
+  similar_pairs_at_0_72: 11
+  hard_phrase_findings: 15
+  documents_with_hard_findings: 11
+  broken_relative_links: 1
+  interpretation: >-
+    Scanner findings are editorial triage cues, not authorship probabilities or
+    automatic deletion decisions.
+
+classification_rules:
+  - "An exact path in canonical_clusters overrides a family glob."
+  - "Protected similarity groups cannot be merged by an automated migration."
+  - >-
+    Family globs are discovery scopes, not executable move rules. A file that
+    matches more than one family remains unclassified until a reviewed entry
+    selects one destination.
+  - >-
+    No disposition authorizes a move, merge, archive, deletion, or publication
+    while the corresponding top-level guardrail is false.
+
+target_topics:
+  - "agents-harnesses"
+  - "memory-context"
+  - "evals-reliability"
+  - "inference-systems"
+
+target_series:
+  - "harness-lab"
+  - "memory-lab"
+  - "agent-reliability-notes"
+  - "agent-standards-map"
+
+families:
+  - id: "canonical-ai-writing"
+    sources:
+      - "AI-blogs/*.md"
+      - "AI/AI-article-analysis/**/*.md"
+      - "AI/ai-resources/**/*.md"
+    proposed_destination: "src/content/writing/<topic>/"
+    disposition: "review-and-select"
+    implementation_status: "pending"
+    requirements:
+      - "Assign a specific reader outcome and topic."
+      - "Search for overlapping claims before migration."
+      - "Review metadata, sources, links, and factual freshness."
+      - "Do not publish support files as articles."
+
+  - id: "lab-notes-and-evals"
+    sources:
+      - "AI/ai-resources/evals/**/*.md"
+      - "AI/ai-resources/AI-common/**/*.md"
+      - "AI/claude-code/runbooks/**/*.md"
+    proposed_destination: "src/content/lab-notes/<topic>/"
+    disposition: "review-and-select"
+    implementation_status: "pending"
+    requirements:
+      - "State environment, evidence, limitations, and failure modes."
+      - "Link privacy-safe reproducibility artifacts when available."
+
+  - id: "ai-news-digests"
+    sources:
+      - "AI/reports/**/*.md"
+    proposed_destination: "archive/ai-news-digests/"
+    disposition: "archive-candidate"
+    implementation_status: "pending-explicit-approval"
+    requirements:
+      - "Keep selected durable syntheses only after factual refresh."
+      - "Do not include routine digests in the main publication feed."
+
+  - id: "visual-explainers"
+    sources:
+      - "AI-manga-learnings/**"
+      - "AI-slide-learnings/**"
+      - "AI/AI-manga-learnings/**"
+      - "AI-blogs/infographic/**"
+    proposed_destination: "src/content/visuals/<topic>/"
+    support_destination: "studio/"
+    disposition: "split-final-from-support"
+    implementation_status: "pending"
+    requirements:
+      - "Publish only the reviewed final explainer and method or source note."
+      - "Move prompts, storyboards, character sheets, and intermediates to the studio layer."
+      - "Keep Japanese-inspired work original and avoid protected trade dress."
+
+  - id: "embedded-agent-applications"
+    sources:
+      - "AI/kuma-ai-agents/**"
+    proposed_destination: "labs/ or a dedicated repository"
+    disposition: "keep-in-place"
+    implementation_status: "deferred"
+    requirements:
+      - "Preserve current CI paths until a separate application decision is approved."
+      - "Do not publish application source as blog content."
+
+  - id: "system-design-archive"
+    sources:
+      - "AI-blogs/design-*.md"
+      - "AI-blogs/chess-system-design.md"
+    proposed_destination: "archive/system-design/"
+    disposition: "archive-candidate"
+    implementation_status: "pending-explicit-approval"
+    requirements:
+      - "Preserve filenames or record redirects before a move."
+      - "Promote an article later only after source and tradeoff review."
+
+  - id: "leetcode-archive"
+    sources:
+      - "Leetcode/**"
+      - "Google/*palindrome*.md"
+    proposed_destination: "archive/leetcode/"
+    disposition: "archive-candidate"
+    implementation_status: "pending-explicit-approval"
+    requirements:
+      - "Preserve translations and related problem variants as distinct documents."
+      - "Remove the collection from the main AI feed, not from repository history."
+
+  - id: "books-and-readings"
+    sources:
+      - "Books/**"
+      - "Readings/**"
+    proposed_destination: "archive/books/"
+    disposition: "archive-candidate"
+    implementation_status: "pending-explicit-approval"
+    requirements:
+      - "Review empty placeholders separately before deletion."
+
+  - id: "setup-and-general-engineering"
+    sources:
+      - "Setup/**"
+      - "Languages/**"
+      - "kubernetes/**"
+      - "Google/**"
+    proposed_destination: "archive/setup/ or archive/legacy-ai/"
+    disposition: "classify-before-archive"
+    implementation_status: "pending-explicit-approval"
+    requirements:
+      - "Do not absorb protected algorithm documents into unrelated articles."
+
+  - id: "personal-archive"
+    sources:
+      - "Entertainment/**"
+      - "travels/**"
+    proposed_destination: "archive/personal/"
+    disposition: "archive-candidate"
+    implementation_status: "pending-explicit-approval"
+
+  - id: "shared-assets"
+    sources:
+      - "assets/**"
+      - "AI-blogs/resources/**"
+      - "AI/**/resources/**"
+    proposed_destination: "src/assets/articles/<slug>/, studio/, or archive/"
+    disposition: "classify-by-owner"
+    implementation_status: "pending"
+    requirements:
+      - "Move an asset only with its owning content migration."
+      - "Optimize only reviewed publication assets."
+      - "Do not commit temporary packages or generated archives."
+
+  - id: "repository-governance"
+    sources:
+      - "AGENTS.md"
+      - ".agents/**"
+      - ".claude/**"
+      - ".github/**"
+      - "docs/**"
+      - "designs/**"
+    proposed_destination: "keep-in-place"
+    disposition: "operational"
+    implementation_status: "active"
+    requirements:
+      - "Exclude operational material from public content collections."
+
+canonical_clusters:
+  - id: "agent-harness"
+    topic: "agents-harnesses"
+    series: "harness-lab"
+    entries:
+      - source: "AI-blogs/demystifying-agent-harness.md"
+        proposed_role: "canonical-concept"
+        proposed_route: "/writing/demystifying-agent-harness/"
+        presentation: "journal"
+      - source: "AI-blogs/how-to-build-agent-harness.md"
+        proposed_role: "canonical-guide"
+        proposed_route: "/writing/how-to-build-agent-harness/"
+        presentation: "control"
+      - source: "AI-blogs/agent-harness-deep-dive.md"
+        proposed_role: "merge-source-then-redirect"
+        proposed_route: "/series/harness-lab/"
+        presentation: "journal"
+    implementation_status: "pending-explicit-consolidation-approval"
+    preserve:
+      - "Unique evidence, examples, diagrams, and citations."
+      - "A clear conceptual versus practical reader boundary."
+
+  - id: "claude-code-customization"
+    topic: "agents-harnesses"
+    entries:
+      - source: "AI-blogs/boris-cherny-customize-claude-code.md"
+        proposed_role: "canonical-candidate"
+        proposed_route: "/writing/customizing-claude-code/"
+      - source: "AI-blogs/claude-code-customization-guide.md"
+        proposed_role: "untracked-duplicate-candidate"
+        proposed_route: null
+    implementation_status: "pending-unique-material-review"
+    notes:
+      - "The untracked candidate contains the remaining audited broken image link."
+      - "Deletion requires separate approval after unique-content review."
+
+  - id: "context-engineering"
+    topic: "memory-context"
+    entries:
+      - source: "AI/ai-resources/context-engineering/context-engineering.md"
+        proposed_role: "resource-map"
+        proposed_route: "/writing/context-engineering/"
+      - source: "AI/ai-resources/context-engineering/context-engineering-with-file-system.md"
+        proposed_role: "filesystem-thesis"
+        proposed_route: "/writing/filesystem-context-engineering/"
+    implementation_status: "pending-differentiation-review"
+    requirements:
+      - "Keep both articles."
+      - "Remove duplicated setup, state scope, and cross-link them."
+
+  - id: "agent-memory"
+    topic: "memory-context"
+    series: "memory-lab"
+    entries:
+      - source: "AI/AI-article-analysis/memory-in-the-age-of-agent-survey.md"
+        proposed_role: "research-survey"
+        proposed_route: "/writing/agent-memory-survey/"
+      - source: "AI/AI-article-analysis/ai-agent-memory/ai-agent-memory-deep-dive.md"
+        proposed_role: "practical-deep-dive"
+        proposed_route: "/writing/agent-memory-deep-dive/"
+      - source: "AI/AI-manga-learnings/memory-in-the-age-of-ai-agent/learning-series.md"
+        proposed_role: "visual-learning-path"
+        proposed_route: "/visuals/agent-memory-learning-series/"
+    implementation_status: "pending-series-review"
+    requirements:
+      - "Keep the three distinct reader outcomes."
+      - "Create one comparison table and series index instead of repeating the taxonomy."
+
+protected_similarity_groups:
+  - pattern: "Leetcode/English Solution/*-en.md and Leetcode/中文版解题/*-cn.md"
+    decision: "keep-distinct"
+    reason: "Language translations serve different readers."
+  - pattern: "Related algorithm variants, including rotated-array problem I and II"
+    decision: "keep-distinct"
+    reason: "Similar statements do not imply duplicate solutions."
+
+deletion_candidates:
+  - path: "Books/System-Performance/Chapter1.md"
+    reason: "Empty placeholder in the exact-duplicate audit group."
+    approval: "pending-explicit-approval"
+  - path: "Readings/2020/Design-Data-Intensive-Application.md"
+    reason: "Empty placeholder in the exact-duplicate audit group."
+    approval: "pending-explicit-approval"
+  - path: "AI-blogs/claude-code-customization-guide.md"
+    reason: "Untracked high-overlap candidate with a broken image reference."
+    approval: "pending-unique-material-review-and-explicit-approval"
+  - path: "AI-blogs/agent-harness-deep-dive.md"
+    reason: "Overlap source for the canonical harness pair."
+    approval: "pending-merge-redirect-review-and-explicit-approval"
+  - path: "anthropic-ai-claude-code-2.1.41.tgz"
+    reason: "Untracked dependency archive; expected to be reproducible."
+    approval: "pending-reproducibility-check-and-explicit-approval"
