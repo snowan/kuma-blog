@@ -1,0 +1,1836 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src 'unsafe-inline' blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Kuma Blog Top Three Redesign</title>
+<style>:root{color-scheme:light dark;background:light-dark(rgb(255 255 255), rgb(24 24 24))}html,body{margin:0}body{box-sizing:border-box;padding:1rem;background:inherit}iframe{display:block;width:100%;height:calc(100vh - 2rem);margin:0 auto;border:0}</style>
+</head>
+<body>
+<iframe sandbox="allow-scripts" referrerpolicy="no-referrer" title="Kuma Blog Top Three Redesign" srcdoc="&lt;!doctype html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1&quot;&gt;
+&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;
+&lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#x27;none&#x27;; script-src &#x27;unsafe-inline&#x27; &#x27;unsafe-eval&#x27; &#x27;wasm-unsafe-eval&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; style-src &#x27;unsafe-inline&#x27; blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; img-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; font-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; media-src blob: data: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://esm.sh https://fonts.bunny.net https://fonts.googleapis.com https://fonts.gstatic.com https://unpkg.com; worker-src blob:; connect-src blob: data:; frame-src &#x27;none&#x27;; object-src &#x27;none&#x27;; base-uri &#x27;none&#x27;; form-action &#x27;none&#x27;&quot;&gt;
+&lt;title&gt;Kuma Blog Top Three Redesign&lt;/title&gt;
+&lt;style&gt;:root {
+  color-scheme: light dark;
+  background-color: var(
+    --background,
+    var(--color-background-primary, light-dark(rgb(255 255 255), rgb(24 24 24)))
+  ) !important;
+
+  /* Agent-facing contract; keep in sync with SKILL.md. */
+  --background: var(
+    --color-background-primary,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --card: color-mix(in oklab, var(--foreground) 5%, var(--background));
+  --card-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --popover: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255), rgb(45 45 45))
+  );
+  --popover-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --primary: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --primary-foreground: var(
+    --color-text-inverse,
+    light-dark(rgb(255 255 255), rgb(13 13 13))
+  );
+  --secondary: var(
+    --color-background-secondary,
+    light-dark(rgb(255 255 255 / 96%), rgb(54 54 54 / 96%))
+  );
+  --secondary-foreground: var(
+    --color-text-primary,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --muted: color-mix(in srgb, var(--foreground) 10%, transparent);
+  --muted-foreground: var(
+    --color-text-secondary,
+    light-dark(rgb(26 28 31 / 49.4%), rgb(255 255 255 / 49.8%))
+  );
+  --accent: var(
+    --color-background-info,
+    light-dark(rgb(229 242 255), rgb(13 39 63))
+  );
+  --accent-foreground: var(
+    --color-text-info,
+    light-dark(rgb(51 156 255), rgb(131 195 255))
+  );
+  --destructive: var(
+    --color-text-warning,
+    light-dark(rgb(226 85 7), rgb(255 133 73))
+  );
+  --border: var(
+    --color-border-secondary,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+  --input: var(
+    --color-border-primary,
+    light-dark(
+      rgb(26 28 31 / 11.8%),
+      color-mix(in oklab, rgb(0 0 0) 10%, transparent)
+    )
+  );
+  --ring: var(
+    --color-ring-primary,
+    light-dark(rgb(51 156 255), rgb(131 195 255 / 76%))
+  );
+  --font-size-base: var(--font-text-md-size, 14px);
+  --blue: light-dark(rgb(51 156 255), rgb(51 156 255));
+  --orange: light-dark(rgb(226 85 7), rgb(251 106 34));
+  --green: light-dark(rgb(0 162 64), rgb(64 201 119));
+  --red: light-dark(rgb(224 46 42), rgb(255 103 100));
+  --purple: light-dark(rgb(146 79 247), rgb(173 123 249));
+  --yellow: light-dark(rgb(255 195 0), rgb(255 210 64));
+  --viz-series-1: var(--primary);
+  --viz-series-2: light-dark(rgb(243 136 59), rgb(245 154 86));
+  --viz-series-3: light-dark(rgb(93 201 119), rgb(116 213 139));
+  --viz-series-4: light-dark(rgb(235 119 177), rgb(240 143 192));
+  --viz-series-5: light-dark(rgb(155 121 236), rgb(170 145 239));
+  --viz-series-6: light-dark(rgb(58 185 177), rgb(90 203 194));
+
+  /* Internal implementation variables; not part of the agent contract. */
+  --font-sans: -apple-system, system-ui, &quot;Segoe UI&quot;, sans-serif;
+  --font-mono:
+    ui-monospace, SFMono-Regular, &quot;SF Mono&quot;, Menlo, Consolas, &quot;Liberation Mono&quot;,
+    monospace;
+  --font-size-normal: max(11px, var(--font-size-base));
+  --font-size-tooltip: calc(var(--font-size-base) - 1px);
+  --font-size-small: max(11px, calc(var(--font-size-base) - 2px));
+  --font-size-h1: calc(var(--font-size-normal) * 1.7142857143);
+  --font-size-h2: calc(var(--font-size-normal) * 1.4285714286);
+  --font-size-h3: calc(var(--font-size-normal) * 1.2857142857);
+  --font-weight-normal: 430;
+  --font-weight-medium: 500;
+  --line-height-normal: calc(var(--font-size-normal) * 1.5);
+  --line-height-tooltip: calc(var(--font-size-tooltip) * 1.4285714286);
+  --line-height-small: calc(var(--font-size-small) + 4px);
+  --radius: var(--border-radius-lg, 12.5px);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-2xl: calc(var(--radius) * 1.6);
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px -1px rgb(0 0 0 / 8%);
+  --checkmark-image: url(&quot;data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27; viewBox=&#x27;0 0 17 17&#x27;%3E%3Cpath d=&#x27;M12.8961 3.64101C13.1297 3.41418 13.4984 3.37523 13.7779 3.56581C14.0571 3.75635 14.1554 4.11331 14.0299 4.41347L13.9615 4.53847L7.71151 13.7045C7.59411 13.8767 7.4063 13.9877 7.19881 14.0072C6.99136 14.0267 6.78564 13.9533 6.63826 13.806L2.88826 10.056L2.79842 9.9457C2.6192 9.67407 2.64927 9.30496 2.88826 9.06581C3.12738 8.82669 3.49647 8.79676 3.76815 8.97597L3.8785 9.06581L7.03084 12.2182L12.8053 3.74941L12.8961 3.64101Z&#x27;/%3E%3C/svg%3E&quot;);
+
+  /* Legacy aliases; not part of the current agent contract. */
+  --viz-bg: transparent;
+  --viz-panel: var(--card);
+  --viz-border: var(--border);
+  --viz-text: var(--foreground);
+  --viz-muted: var(--muted-foreground);
+  --viz-accent: var(--primary);
+  --viz-accent-text: var(--primary-foreground);
+  --viz-accent-bg: var(--accent);
+  --viz-font-size: var(--font-size-base);
+  --viz-warning: var(--destructive);
+}
+
+:root[data-theme=&quot;light&quot;] {
+  color-scheme: light;
+}
+
+:root[data-theme=&quot;dark&quot;] {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html &gt; body {
+  /* Preserve MCP aliases for older inline renderers without creating :root cycles. */
+  --color-background-primary: var(
+    --background,
+    light-dark(rgb(255 255 255), rgb(24 24 24))
+  );
+  --color-text-primary: var(
+    --foreground,
+    light-dark(rgb(26 28 31), rgb(255 255 255))
+  );
+  --color-border-secondary: var(
+    --border,
+    light-dark(rgb(26 28 31 / 8%), rgb(255 255 255 / 8.2%))
+  );
+
+  margin: 0;
+  padding: 5px;
+  color: var(--foreground);
+  background: transparent !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--font-size-normal);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--line-height-normal);
+}
+
+a {
+  color: color-mix(in srgb, var(--viz-accent) 80%, var(--viz-text) 20%);
+  cursor: pointer;
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+  text-underline-offset: 2px;
+}
+
+a:is(:hover, :focus-visible) {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 0.5px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin-block: 0;
+}
+
+h1 {
+  font-size: var(--font-size-h1);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h2 {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.3;
+}
+
+b,
+strong,
+th {
+  font-weight: var(--font-weight-medium);
+}
+
+code:not(pre code) {
+  display: inline;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 0.92em;
+  overflow-wrap: anywhere;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  word-break: break-word;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--foreground);
+  font: inherit;
+  text-align: start;
+}
+
+.table :is(th, td) {
+  padding-block: 10px;
+  padding-inline: 0 24px;
+  overflow-wrap: anywhere;
+  border-bottom: 1px solid var(--border);
+  text-align: start;
+  vertical-align: top;
+}
+
+.table-responsive &gt; .table :is(th, td) {
+  overflow-wrap: break-word;
+}
+
+.table :is(th, td):last-child {
+  padding-inline-end: 0;
+}
+
+.table :is(caption, thead th) {
+  font-weight: 600;
+}
+
+.table thead th {
+  padding-block: 8px;
+  border-bottom-color: color-mix(in srgb, var(--foreground) 16%, transparent);
+}
+
+.table tbody tr:last-child :is(th, td) {
+  border-bottom: 0;
+}
+
+.table.table-sm :is(th, td) {
+  padding-block: 6px;
+}
+
+.table.table-sm :is(th, td):not(:last-child) {
+  padding-inline-end: 16px;
+}
+
+.table :is(.text-end, [align=&quot;right&quot;]) {
+  text-align: end;
+  font-variant-numeric: tabular-nums;
+}
+
+.table :is(.text-center, [align=&quot;center&quot;]) {
+  text-align: center;
+}
+
+.table .text-nowrap {
+  white-space: nowrap;
+}
+
+#widget {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  background: transparent !important;
+}
+
+.card {
+  min-width: 0;
+  padding: 12px;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  border-radius: var(--radius-2xl);
+  corner-shape: superellipse(1.5);
+  color: var(--card-foreground);
+  background: var(--card);
+}
+
+#widget &gt; :not(.card, .progress) {
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.tooltip {
+  position: fixed;
+  z-index: 50;
+  top: 0;
+  left: 0;
+  width: max-content;
+  max-width: min(
+    20rem,
+    var(--tooltip-available-width, calc(100vw - 10px)),
+    calc(100vw - 10px)
+  );
+  max-height: min(
+    var(--tooltip-available-height, calc(100vh - 10px)),
+    calc(100vh - 10px)
+  );
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--popover-foreground);
+  background: var(--popover);
+  box-shadow: none;
+  font-size: var(--font-size-tooltip);
+  line-height: var(--line-height-tooltip);
+  overflow-wrap: break-word;
+  white-space: normal;
+  pointer-events: none;
+  user-select: none;
+}
+
+.viz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(max(180px, 24%), 1fr));
+  gap: 10px;
+}
+
+.viz-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.viz-stat-value {
+  font-size: var(--font-size-h2);
+  font-weight: var(--font-weight-medium);
+  line-height: 1.25;
+}
+
+.viz-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.progress {
+  display: flex;
+  height: 6px;
+  margin-block: calc((var(--line-height-normal, 1.5em) - 6px) / 2);
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+}
+
+.progress-bar {
+  height: 100%;
+  flex-shrink: 0;
+  border: 0;
+  background: var(--viz-series-1);
+}
+
+.viz-badge {
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+  color: var(--accent-foreground);
+  background: var(--accent);
+  font-weight: var(--font-weight-medium);
+}
+
+small,
+.text-small,
+.viz-badge {
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+}
+
+.text-muted {
+  color: var(--muted-foreground);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.viz-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.viz-controls &gt; .form-label {
+  display: grid;
+  min-width: min(100%, 260px);
+  flex: 1 1 280px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  margin-bottom: 0;
+}
+
+.viz-controls &gt; .form-label &gt; :is(.form-control, .form-range, .form-select) {
+  grid-column: 1 / -1;
+}
+
+.btn,
+.form-check-input,
+.form-control,
+.form-range,
+.form-select {
+  font: inherit;
+}
+
+.btn {
+  appearance: button;
+  display: inline-flex;
+  inline-size: fit-content;
+  max-inline-size: 100%;
+  min-height: 28px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0;
+  padding: 0 8px;
+  -webkit-app-region: no-drag;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: var(--cursor-interaction, pointer);
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+.btn:is(.btn-block, .viz-tile) {
+  inline-size: 100%;
+}
+
+.btn.viz-tile {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+a.btn {
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn-primary {
+  border-color: transparent;
+  color: var(--primary-foreground);
+  background: var(--foreground);
+  background-clip: padding-box;
+}
+
+.btn-primary .text-muted {
+  color: color-mix(in srgb, var(--primary-foreground) 50%, transparent);
+}
+
+.btn-primary:not(:disabled):hover {
+  background: color-mix(in srgb, var(--foreground) 80%, transparent);
+  background-clip: padding-box;
+}
+
+.btn-ghost {
+  border-color: transparent;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+
+.btn-ghost:not(:disabled):hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+[data-lucide] {
+  stroke-width: 1.6;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--foreground);
+}
+
+.form-control {
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  padding: 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background: var(--secondary);
+}
+
+.form-control::placeholder {
+  color: var(--muted-foreground);
+}
+
+.form-control[type=&quot;file&quot;] {
+  padding: 0;
+  overflow: hidden;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control[type=&quot;file&quot;]::file-selector-button {
+  min-height: 26px;
+  margin-right: 8px;
+  padding: 0 8px;
+  border: 0;
+  border-right: 1px solid var(--input);
+  color: var(--secondary-foreground);
+  background: var(--secondary);
+  cursor: inherit;
+  font: inherit;
+}
+
+.form-control[type=&quot;file&quot;]:not(:disabled):hover::file-selector-button {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-control-color[type=&quot;color&quot;] {
+  width: 40px;
+  height: 28px;
+  padding: 3px;
+  cursor: var(--cursor-interaction, pointer);
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.form-control-color[type=&quot;color&quot;]::-webkit-color-swatch {
+  border: 0;
+  border-radius: calc(var(--radius-lg) - 4px);
+  corner-shape: superellipse(1.5);
+}
+
+textarea.form-control {
+  height: auto;
+  min-height: 72px;
+  padding: 8px 10px;
+  resize: vertical;
+}
+
+.form-control:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-control:disabled,
+.form-select:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.form-select {
+  appearance: none;
+  display: block;
+  width: 100%;
+  min-height: 28px;
+  margin: 0;
+  padding: 0 32px 0 8px;
+  outline: none;
+  border: 1px solid var(--input);
+  border-radius: var(--radius-lg);
+  corner-shape: superellipse(1.5);
+  color: var(--foreground);
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--muted-foreground) 50%),
+    linear-gradient(135deg, var(--muted-foreground) 50%, transparent 50%);
+  background-position:
+    calc(100% - 14px) 50%,
+    calc(100% - 10px) 50%;
+  background-repeat: no-repeat;
+  background-size: 4px 4px;
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-select:not(:disabled):hover {
+  background-color: color-mix(in srgb, var(--foreground) 6%, var(--secondary));
+}
+
+.form-select:focus-visible {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-check {
+  display: flex;
+  min-height: 20px;
+  align-items: center;
+  gap: 6px;
+}
+
+.form-check-input {
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 auto;
+  margin: 0;
+  border: 1px solid var(--input);
+  color: var(--primary-foreground);
+  background-color: transparent;
+  cursor: var(--cursor-interaction, default);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    box-shadow 150ms;
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;] {
+  border-color: var(--input);
+  border-radius: var(--radius-sm);
+  corner-shape: superellipse(1.5);
+  background-color: var(--secondary);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input:not(:disabled):not(:checked):hover {
+  background-color: var(--card);
+}
+
+.form-check:not(.form-switch) .form-check-input[type=&quot;checkbox&quot;]:checked {
+  border-color: var(--primary);
+  background-color: var(--primary);
+}
+
+.form-check:not(.form-switch)
+  .form-check-input[type=&quot;checkbox&quot;]:checked::before {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-foreground);
+  content: &quot;&quot;;
+  mask: var(--checkmark-image) center / 12px 12px no-repeat;
+}
+
+.form-check-input[type=&quot;radio&quot;] {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+}
+
+.form-check-input[type=&quot;radio&quot;]:checked {
+  border: 2px solid var(--primary);
+  background:
+    radial-gradient(circle, var(--primary-foreground) 0 2.5px, transparent 3px),
+    var(--primary);
+}
+
+.form-check:not(.form-switch) .form-check-input:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.form-check:not(.form-switch) .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+}
+
+.form-switch .form-check-input:disabled,
+.form-switch .form-check-input:disabled + .form-check-label {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.form-check-label {
+  color: var(--foreground);
+  cursor: var(--cursor-interaction, default);
+}
+
+.form-switch .form-check-input {
+  position: relative;
+  width: 32px;
+  height: 20px;
+  border: 0;
+  border-radius: var(--radius-full);
+  background: var(--muted);
+  box-shadow: none;
+  transition: background-color 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  box-sizing: border-box;
+  border: 1px solid light-dark(var(--primary-foreground), var(--foreground));
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+  box-shadow: var(--shadow-sm);
+  content: &quot;&quot;;
+  transform: translate(2px, -50%);
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.form-switch .form-check-input:checked {
+  background: var(--primary);
+}
+
+.form-switch .form-check-input:checked::before {
+  transform: translate(14px, -50%);
+}
+
+.form-switch .form-check-input:focus-visible {
+  box-shadow: 0 0 0 2px var(--ring);
+}
+
+.form-range {
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 28px;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  outline: none;
+  border: 0;
+  accent-color: var(--primary);
+  background: linear-gradient(
+      color-mix(in srgb, var(--foreground) 7%, transparent),
+      color-mix(in srgb, var(--foreground) 7%, transparent)
+    )
+    center / 100% 2px no-repeat;
+}
+
+.form-range::-webkit-slider-runnable-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-webkit-slider-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range::-moz-range-track {
+  height: 28px;
+  background: transparent;
+}
+
+.form-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: light-dark(var(--primary-foreground), var(--foreground));
+}
+
+.form-range:focus-visible::-moz-range-thumb {
+  border-color: var(--ring);
+  box-shadow: inset 0 0 0 1px var(--ring);
+}
+
+.form-range:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.btn:not(.btn-primary, .viz-tile):is(
+  [aria-pressed=&quot;true&quot;],
+  [aria-selected=&quot;true&quot;],
+  .is-selected
+) {
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.btn.viz-tile:is([aria-pressed=&quot;true&quot;], [aria-selected=&quot;true&quot;], .is-selected) {
+  border-color: var(--primary);
+  box-shadow: inset 0 0 0 1px var(--primary);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+#widget &gt; svg {
+  width: 100%;
+}
+
+/* Model-authored chart rules can otherwise stretch icons after these styles load. */
+svg.lucide {
+  display: block;
+  width: 16px !important;
+  height: 16px !important;
+  flex: none;
+  margin: 0 !important;
+  stroke-width: 1.6;
+}
+
+.text-warning,
+.text-destructive {
+  color: var(--destructive);
+}
+
+html&gt;body{padding:0}&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;style&gt;
+  @import url(&#x27;https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&amp;family=IBM+Plex+Mono:wght@400;500&amp;family=Manrope:wght@400;500&amp;family=Newsreader:opsz,wght@6..72,400;6..72,500&amp;family=Shippori+Mincho:wght@400;500&amp;display=swap&#x27;);
+
+  #kuma-top-three-redesign {
+    width: 100%;
+    container-type: inline-size;
+  }
+
+  #kuma-top-three-redesign * { box-sizing: border-box; }
+
+  #kuma-top-three-redesign .k3-review-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  #kuma-top-three-redesign .k3-review-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #kuma-top-three-redesign .k3-review-status {
+    color: var(--muted-foreground);
+    margin: 0 0 12px;
+  }
+
+  #kuma-top-three-redesign .k3-site {
+    --k3-ink: #172335;
+    --k3-muted: #657084;
+    --k3-bg: #f3f0e8;
+    --k3-sheet: #fffdf7;
+    --k3-soft: #e8e3d8;
+    --k3-line: #d2cab9;
+    --k3-primary: #194fb7;
+    --k3-secondary: #d75a33;
+    --k3-display: &quot;Newsreader&quot;, Georgia, serif;
+    --k3-body: &quot;DM Sans&quot;, system-ui, sans-serif;
+    --k3-mono: &quot;IBM Plex Mono&quot;, monospace;
+    --k3-corner: 2px;
+    --k3-elevation: 0 25px 75px rgba(55, 47, 32, .16);
+    background: var(--k3-bg);
+    border: 1px solid var(--k3-line);
+    border-radius: 16px;
+    box-shadow: var(--k3-elevation);
+    color: var(--k3-ink);
+    font-family: var(--k3-body);
+    min-height: 1120px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  #kuma-top-three-redesign .k3-page {
+    margin: 0 auto;
+    max-width: 1120px;
+    padding: 0 42px 58px;
+    position: relative;
+    z-index: 2;
+  }
+
+  #kuma-top-three-redesign .k3-header {
+    align-items: center;
+    border-bottom: 1px solid var(--k3-line);
+    display: flex;
+    justify-content: space-between;
+    min-height: 78px;
+  }
+
+  #kuma-top-three-redesign .k3-brand {
+    align-items: center;
+    color: var(--k3-ink);
+    display: flex;
+    gap: 11px;
+    text-decoration: none;
+  }
+
+  #kuma-top-three-redesign .k3-brand-mark {
+    align-items: center;
+    background: var(--k3-ink);
+    color: var(--k3-bg);
+    display: inline-flex;
+    font-family: var(--k3-mono);
+    font-size: 12px;
+    height: 34px;
+    justify-content: center;
+    width: 34px;
+  }
+
+  #kuma-top-three-redesign .k3-brand-name {
+    font-family: var(--k3-display);
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: -.02em;
+  }
+
+  #kuma-top-three-redesign .k3-nav {
+    align-items: center;
+    display: flex;
+    gap: 24px;
+  }
+
+  #kuma-top-three-redesign .k3-nav a {
+    color: var(--k3-muted);
+    font-size: 12px;
+    text-decoration: none;
+  }
+
+  #kuma-top-three-redesign .k3-nav a:first-child { color: var(--k3-ink); }
+
+  #kuma-top-three-redesign .k3-home-view,
+  #kuma-top-three-redesign .k3-post-view { display: none; }
+
+  #kuma-top-three-redesign .k3-site[data-view=&quot;home&quot;] .k3-home-view,
+  #kuma-top-three-redesign .k3-site[data-view=&quot;post&quot;] .k3-post-view { display: block; }
+
+  #kuma-top-three-redesign .k3-home-hero {
+    display: grid;
+    gap: 40px;
+    grid-template-columns: minmax(0, 1.3fr) minmax(255px, .7fr);
+    padding: 72px 0 54px;
+  }
+
+  #kuma-top-three-redesign .k3-overline {
+    align-items: center;
+    color: var(--k3-primary);
+    display: flex;
+    font-family: var(--k3-mono);
+    font-size: 10px;
+    gap: 9px;
+    letter-spacing: .12em;
+    margin: 0 0 21px;
+    text-transform: uppercase;
+  }
+
+  #kuma-top-three-redesign .k3-overline::before {
+    background: var(--k3-primary);
+    content: &quot;&quot;;
+    height: 1px;
+    width: 29px;
+  }
+
+  #kuma-top-three-redesign .k3-home-title {
+    font-family: var(--k3-display);
+    font-size: clamp(47px, 7.7cqi, 79px);
+    font-weight: 400;
+    letter-spacing: -.045em;
+    line-height: .98;
+    margin: 0;
+    max-width: 760px;
+  }
+
+  #kuma-top-three-redesign .k3-home-title em {
+    color: var(--k3-primary);
+    font-style: italic;
+    font-weight: 400;
+  }
+
+  #kuma-top-three-redesign .k3-home-dek {
+    color: var(--k3-muted);
+    font-size: 15px;
+    line-height: 1.7;
+    margin: 25px 0 0;
+    max-width: 650px;
+  }
+
+  #kuma-top-three-redesign .k3-research-rail {
+    align-self: end;
+    background: var(--k3-sheet);
+    border: 1px solid var(--k3-line);
+    border-radius: var(--k3-corner);
+    padding: 22px;
+  }
+
+  #kuma-top-three-redesign .k3-rail-title {
+    color: var(--k3-muted);
+    font-family: var(--k3-mono);
+    font-size: 9px;
+    letter-spacing: .12em;
+    margin: 0 0 15px;
+    text-transform: uppercase;
+  }
+
+  #kuma-top-three-redesign .k3-rail-item {
+    border-top: 1px solid var(--k3-line);
+    display: grid;
+    gap: 8px;
+    grid-template-columns: 22px 1fr;
+    padding: 12px 0;
+  }
+
+  #kuma-top-three-redesign .k3-rail-item:first-of-type { border-top: 0; }
+  #kuma-top-three-redesign .k3-rail-number { color: var(--k3-primary); font-family: var(--k3-mono); font-size: 9px; }
+  #kuma-top-three-redesign .k3-rail-copy { font-size: 12px; line-height: 1.45; }
+
+  #kuma-top-three-redesign .k3-lead-story {
+    background: var(--k3-sheet);
+    border: 1px solid var(--k3-line);
+    border-radius: var(--k3-corner);
+    display: grid;
+    grid-template-columns: 1.06fr .94fr;
+    overflow: hidden;
+  }
+
+  #kuma-top-three-redesign .k3-lead-copy { padding: 38px; }
+
+  #kuma-top-three-redesign .k3-story-label {
+    color: var(--k3-secondary);
+    font-family: var(--k3-mono);
+    font-size: 9px;
+    letter-spacing: .11em;
+    margin: 0 0 18px;
+    text-transform: uppercase;
+  }
+
+  #kuma-top-three-redesign .k3-lead-title {
+    font-family: var(--k3-display);
+    font-size: clamp(31px, 4.6cqi, 49px);
+    font-weight: 400;
+    letter-spacing: -.035em;
+    line-height: 1;
+    margin: 0;
+  }
+
+  #kuma-top-three-redesign .k3-lead-summary {
+    color: var(--k3-muted);
+    font-size: 13px;
+    line-height: 1.65;
+    margin: 18px 0 24px;
+  }
+
+  #kuma-top-three-redesign .k3-meta {
+    color: var(--k3-muted);
+    display: flex;
+    flex-wrap: wrap;
+    font-family: var(--k3-mono);
+    font-size: 9px;
+    gap: 10px;
+  }
+
+  #kuma-top-three-redesign .k3-meta span + span::before { content: &quot;·&quot;; margin-right: 10px; }
+
+  #kuma-top-three-redesign .k3-system-figure {
+    align-items: center;
+    background:
+      linear-gradient(var(--k3-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--k3-line) 1px, transparent 1px),
+      var(--k3-soft);
+    background-size: 24px 24px;
+    border-left: 1px solid var(--k3-line);
+    display: flex;
+    justify-content: center;
+    min-height: 340px;
+    padding: 28px;
+  }
+
+  #kuma-top-three-redesign .k3-flow {
+    display: grid;
+    gap: 13px;
+    max-width: 290px;
+    width: 100%;
+  }
+
+  #kuma-top-three-redesign .k3-flow-node {
+    background: var(--k3-sheet);
+    border: 1px solid var(--k3-ink);
+    border-radius: var(--k3-corner);
+    font-family: var(--k3-mono);
+    font-size: 10px;
+    padding: 13px 14px;
+    text-align: center;
+  }
+
+  #kuma-top-three-redesign .k3-flow-node + .k3-flow-node::before {
+    color: var(--k3-primary);
+    content: &quot;↓&quot;;
+    display: block;
+    height: 9px;
+    margin-top: -25px;
+    transform: translateY(-6px);
+  }
+
+  #kuma-top-three-redesign .k3-section-head {
+    align-items: end;
+    border-bottom: 1px solid var(--k3-line);
+    display: flex;
+    justify-content: space-between;
+    margin-top: 56px;
+    padding-bottom: 13px;
+  }
+
+  #kuma-top-three-redesign .k3-section-head h3 {
+    font-family: var(--k3-display);
+    font-size: 30px;
+    font-weight: 400;
+    letter-spacing: -.025em;
+    margin: 0;
+  }
+
+  #kuma-top-three-redesign .k3-section-head span { color: var(--k3-muted); font-family: var(--k3-mono); font-size: 9px; }
+
+  #kuma-top-three-redesign .k3-shelves {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-top: 15px;
+  }
+
+  #kuma-top-three-redesign .k3-shelf {
+    background: var(--k3-sheet);
+    border: 1px solid var(--k3-line);
+    border-radius: var(--k3-corner);
+    min-height: 116px;
+    padding: 17px;
+  }
+
+  #kuma-top-three-redesign .k3-shelf span { color: var(--k3-primary); font-family: var(--k3-mono); font-size: 9px; }
+  #kuma-top-three-redesign .k3-shelf h4 { font-family: var(--k3-display); font-size: 18px; font-weight: 400; line-height: 1.15; margin: 22px 0 0; }
+
+  #kuma-top-three-redesign .k3-latest-row {
+    align-items: start;
+    border-bottom: 1px solid var(--k3-line);
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 84px 1fr auto;
+    padding: 19px 0;
+  }
+
+  #kuma-top-three-redesign .k3-latest-row time { color: var(--k3-muted); font-family: var(--k3-mono); font-size: 9px; padding-top: 5px; }
+  #kuma-top-three-redesign .k3-latest-row h4 { font-family: var(--k3-display); font-size: 20px; font-weight: 400; line-height: 1.25; margin: 0; }
+  #kuma-top-three-redesign .k3-tag { border: 1px solid var(--k3-line); border-radius: 99px; color: var(--k3-muted); font-family: var(--k3-mono); font-size: 8px; padding: 6px 8px; text-transform: uppercase; }
+
+  /* Article view */
+  #kuma-top-three-redesign .k3-post-view { padding-top: 46px; }
+  #kuma-top-three-redesign .k3-breadcrumb { color: var(--k3-primary); font-family: var(--k3-mono); font-size: 9px; letter-spacing: .1em; margin: 0 0 30px; text-transform: uppercase; }
+
+  #kuma-top-three-redesign .k3-article-head {
+    border-bottom: 1px solid var(--k3-line);
+    max-width: 890px;
+    padding-bottom: 42px;
+  }
+
+  #kuma-top-three-redesign .k3-article-title {
+    font-family: var(--k3-display);
+    font-size: clamp(45px, 7.5cqi, 77px);
+    font-weight: 400;
+    letter-spacing: -.045em;
+    line-height: .98;
+    margin: 0;
+  }
+
+  #kuma-top-three-redesign .k3-article-dek { color: var(--k3-muted); font-size: 16px; line-height: 1.65; margin: 23px 0 25px; max-width: 760px; }
+
+  #kuma-top-three-redesign .k3-article-layout {
+    display: grid;
+    gap: 48px;
+    grid-template-columns: 165px minmax(0, 680px);
+    justify-content: center;
+    padding-top: 44px;
+  }
+
+  #kuma-top-three-redesign .k3-toc { align-self: start; border-top: 1px solid var(--k3-line); padding-top: 14px; }
+  #kuma-top-three-redesign .k3-toc-title { color: var(--k3-muted); font-family: var(--k3-mono); font-size: 9px; letter-spacing: .1em; margin: 0 0 13px; text-transform: uppercase; }
+  #kuma-top-three-redesign .k3-toc a { color: var(--k3-muted); display: block; font-size: 11px; line-height: 1.4; margin: 0 0 11px; text-decoration: none; }
+  #kuma-top-three-redesign .k3-toc a:first-of-type { color: var(--k3-primary); }
+
+  #kuma-top-three-redesign .k3-article-body { max-width: 72ch; }
+  #kuma-top-three-redesign .k3-key-points { background: var(--k3-sheet); border: 1px solid var(--k3-line); border-radius: var(--k3-corner); margin-bottom: 36px; padding: 24px 26px; }
+  #kuma-top-three-redesign .k3-key-points h3 { color: var(--k3-secondary); font-family: var(--k3-mono); font-size: 9px; letter-spacing: .1em; margin: 0 0 13px; text-transform: uppercase; }
+  #kuma-top-three-redesign .k3-key-points ul { margin: 0; padding-left: 20px; }
+  #kuma-top-three-redesign .k3-key-points li { font-size: 13px; line-height: 1.55; margin: 7px 0; }
+  #kuma-top-three-redesign .k3-article-body h2 { font-family: var(--k3-display); font-size: 31px; font-weight: 400; letter-spacing: -.025em; margin: 40px 0 15px; }
+  #kuma-top-three-redesign .k3-article-body p { color: var(--k3-ink); font-family: var(--k3-display); font-size: 18px; line-height: 1.68; margin: 0 0 23px; }
+
+  #kuma-top-three-redesign .k3-inline-diagram {
+    background: var(--k3-soft);
+    border: 1px solid var(--k3-line);
+    border-radius: var(--k3-corner);
+    margin: 28px 0 9px;
+    padding: 27px;
+  }
+
+  #kuma-top-three-redesign .k3-inline-flow { align-items: center; display: grid; gap: 9px; grid-template-columns: 1fr auto 1fr auto 1fr; }
+  #kuma-top-three-redesign .k3-inline-node { background: var(--k3-sheet); border: 1px solid var(--k3-ink); font-family: var(--k3-mono); font-size: 9px; padding: 13px 8px; text-align: center; }
+  #kuma-top-three-redesign .k3-inline-arrow { color: var(--k3-primary); font-family: var(--k3-mono); }
+  #kuma-top-three-redesign .k3-caption { color: var(--k3-muted); font-family: var(--k3-mono); font-size: 9px; margin: 0 0 28px; }
+
+  #kuma-top-three-redesign .k3-evidence {
+    border-left: 3px solid var(--k3-primary);
+    margin: 28px 0;
+    padding: 3px 0 3px 20px;
+  }
+
+  #kuma-top-three-redesign .k3-evidence strong { display: block; font-family: var(--k3-mono); font-size: 9px; letter-spacing: .1em; margin-bottom: 8px; text-transform: uppercase; }
+  #kuma-top-three-redesign .k3-evidence span { color: var(--k3-muted); font-size: 13px; line-height: 1.55; }
+
+  #kuma-top-three-redesign .k3-footer { align-items: center; color: var(--k3-muted); display: flex; font-family: var(--k3-mono); font-size: 9px; justify-content: space-between; padding-top: 50px; }
+
+  #kuma-top-three-redesign .k3-mori-scenery { display: none; }
+
+  /* Direction 02: Control Room */
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] {
+    --k3-ink: #e9fff4;
+    --k3-muted: #91aa9e;
+    --k3-bg: #06100e;
+    --k3-sheet: #0a1714;
+    --k3-soft: #0b1d19;
+    --k3-line: #1b4238;
+    --k3-primary: #68ffb5;
+    --k3-secondary: #57cfff;
+    --k3-display: &quot;Manrope&quot;, sans-serif;
+    --k3-body: &quot;IBM Plex Mono&quot;, monospace;
+    --k3-mono: &quot;IBM Plex Mono&quot;, monospace;
+    --k3-corner: 0;
+    --k3-elevation: 0 28px 85px rgba(0, 0, 0, .4);
+    background-color: #06100e;
+    background-image: linear-gradient(rgba(104,255,181,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(104,255,181,.035) 1px, transparent 1px);
+    background-size: 32px 32px;
+    border-color: #245044;
+    border-radius: 3px;
+  }
+
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-brand-mark { background: var(--k3-primary); color: #06100e; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-brand-name::after { color: var(--k3-primary); content: &quot;_&quot;; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-nav a::before { content: &quot;[&quot;; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-nav a::after { content: &quot;]&quot;; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-home-hero { grid-template-columns: minmax(0, 1.45fr) minmax(260px, .55fr); padding-top: 62px; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-home-title,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-article-title { font-weight: 500; letter-spacing: -.055em; text-transform: uppercase; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-home-title em { font-style: normal; text-shadow: 0 0 25px rgba(104,255,181,.33); }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-home-dek { font-size: 12px; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-research-rail,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-lead-story,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-key-points { box-shadow: inset 3px 0 0 rgba(104,255,181,.65); }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-system-figure { background: radial-gradient(circle at center, rgba(104,255,181,.1), transparent 58%), linear-gradient(rgba(104,255,181,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(104,255,181,.06) 1px, transparent 1px), #071512; background-size: auto, 18px 18px, 18px 18px, auto; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-flow-node,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-inline-node { box-shadow: inset 3px 0 0 var(--k3-primary); text-align: left; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-shelf h4,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-latest-row h4 { font-family: var(--k3-mono); }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-article-body p { font-family: &quot;Manrope&quot;, sans-serif; font-size: 16px; }
+
+  /* Direction 03: Mori Systems Notebook */
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] {
+    --k3-ink: #29423c;
+    --k3-muted: #62776c;
+    --k3-bg: #f7f3df;
+    --k3-sheet: #fffdf0;
+    --k3-soft: #dcebd7;
+    --k3-line: #b6c9ad;
+    --k3-primary: #2e7a64;
+    --k3-secondary: #d76c49;
+    --k3-display: &quot;Shippori Mincho&quot;, serif;
+    --k3-body: &quot;DM Sans&quot;, sans-serif;
+    --k3-mono: &quot;IBM Plex Mono&quot;, monospace;
+    --k3-corner: 22px 9px 24px 12px;
+    --k3-elevation: 0 28px 80px rgba(51, 86, 66, .18);
+    background: radial-gradient(circle at 82% 7%, rgba(247,199,100,.34), transparent 20%), linear-gradient(180deg, #dcefed 0 21%, #f7f3df 41%);
+  }
+
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-header { border-bottom-style: dashed; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-brand-mark { background: var(--k3-secondary); border-radius: 50%; box-shadow: 4px 4px 0 #f0c568; transform: rotate(-5deg); }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-home-hero { padding-top: 90px; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-home-title { letter-spacing: -.02em; line-height: 1.06; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-home-title em { color: var(--k3-secondary); font-style: normal; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-research-rail,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-lead-story,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-shelf,
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-key-points { box-shadow: 0 9px 0 rgba(55, 95, 70, .06); }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-system-figure { background: radial-gradient(circle at 70% 21%, #f3c764 0 13px, transparent 14px), linear-gradient(165deg, transparent 0 54%, rgba(66,130,94,.27) 55% 69%, transparent 70%), linear-gradient(194deg, transparent 0 45%, rgba(103,153,105,.25) 46% 67%, transparent 68%), #dcebe4; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-flow-node { border-color: #6f9074; box-shadow: 3px 3px 0 rgba(46,122,100,.14); }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-mori-scenery { display: block; height: 92px; left: 0; overflow: hidden; pointer-events: none; position: absolute; right: 0; top: 68px; }
+  #kuma-top-three-redesign .k3-mori-sun { background: #f1c45e; border-radius: 50%; height: 36px; position: absolute; right: 13%; top: 2px; width: 36px; }
+  #kuma-top-three-redesign .k3-mori-cloud { background: rgba(255,255,255,.72); border-radius: 50px; height: 14px; left: 12%; position: absolute; top: 24px; width: 74px; }
+  #kuma-top-three-redesign .k3-mori-cloud::before,
+  #kuma-top-three-redesign .k3-mori-cloud::after { background: inherit; border-radius: 50%; content: &quot;&quot;; position: absolute; }
+  #kuma-top-three-redesign .k3-mori-cloud::before { height: 25px; left: 14px; top: -12px; width: 27px; }
+  #kuma-top-three-redesign .k3-mori-cloud::after { height: 20px; right: 10px; top: -8px; width: 22px; }
+  #kuma-top-three-redesign .k3-mori-hill-one,
+  #kuma-top-three-redesign .k3-mori-hill-two { border-radius: 50% 50% 0 0; bottom: -65px; height: 94px; position: absolute; }
+  #kuma-top-three-redesign .k3-mori-hill-one { background: #95b88f; left: -5%; width: 62%; }
+  #kuma-top-three-redesign .k3-mori-hill-two { background: #73a07b; right: -7%; width: 66%; }
+  #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-post-view { padding-top: 64px; }
+
+  @container (max-width: 760px) {
+    #kuma-top-three-redesign .k3-page { padding: 0 24px 44px; }
+    #kuma-top-three-redesign .k3-nav { gap: 14px; }
+    #kuma-top-three-redesign .k3-nav a:nth-child(2),
+    #kuma-top-three-redesign .k3-nav a:nth-child(3) { display: none; }
+    #kuma-top-three-redesign .k3-home-hero,
+    #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-home-hero { grid-template-columns: 1fr; }
+    #kuma-top-three-redesign .k3-home-hero { gap: 26px; padding: 54px 0 40px; }
+    #kuma-top-three-redesign .k3-lead-story { grid-template-columns: 1fr; }
+    #kuma-top-three-redesign .k3-system-figure { border-left: 0; border-top: 1px solid var(--k3-line); min-height: 270px; }
+    #kuma-top-three-redesign .k3-shelves { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #kuma-top-three-redesign .k3-article-layout { gap: 30px; grid-template-columns: 130px minmax(0, 1fr); }
+  }
+
+  @container (max-width: 500px) {
+    #kuma-top-three-redesign .k3-review-controls { align-items: stretch; flex-direction: column; }
+    #kuma-top-three-redesign .k3-review-group { display: grid; grid-template-columns: 1fr; }
+    #kuma-top-three-redesign .k3-review-group:last-child { grid-template-columns: 1fr 1fr; }
+    #kuma-top-three-redesign .k3-site { border-radius: 9px; min-height: 900px; }
+    #kuma-top-three-redesign .k3-page { padding: 0 17px 34px; }
+    #kuma-top-three-redesign .k3-header { min-height: 66px; }
+    #kuma-top-three-redesign .k3-brand-name { font-size: 17px; }
+    #kuma-top-three-redesign .k3-nav a { font-size: 10px; }
+    #kuma-top-three-redesign .k3-home-hero,
+    #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-home-hero { padding: 45px 0 34px; }
+    #kuma-top-three-redesign .k3-home-title,
+    #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-home-title { font-size: 40px; }
+    #kuma-top-three-redesign .k3-home-dek { font-size: 13px; }
+    #kuma-top-three-redesign .k3-lead-copy { padding: 25px 21px; }
+    #kuma-top-three-redesign .k3-lead-title { font-size: 30px; }
+    #kuma-top-three-redesign .k3-shelves { grid-template-columns: 1fr; }
+    #kuma-top-three-redesign .k3-shelf { min-height: 90px; }
+    #kuma-top-three-redesign .k3-shelf h4 { margin-top: 12px; }
+    #kuma-top-three-redesign .k3-latest-row { gap: 9px 13px; grid-template-columns: 66px 1fr; }
+    #kuma-top-three-redesign .k3-article-layout { grid-template-columns: 1fr; }
+    #kuma-top-three-redesign .k3-tag { display: none; }
+    #kuma-top-three-redesign .k3-post-view,
+    #kuma-top-three-redesign .k3-site[data-theme=&quot;mori&quot;] .k3-post-view { padding-top: 40px; }
+    #kuma-top-three-redesign .k3-article-title { font-size: 40px; }
+    #kuma-top-three-redesign .k3-article-dek { font-size: 14px; }
+    #kuma-top-three-redesign .k3-article-layout { display: block; padding-top: 30px; }
+    #kuma-top-three-redesign .k3-toc { display: none; }
+    #kuma-top-three-redesign .k3-article-body p,
+    #kuma-top-three-redesign .k3-site[data-theme=&quot;control&quot;] .k3-article-body p { font-size: 16px; }
+    #kuma-top-three-redesign .k3-inline-flow { grid-template-columns: 1fr; }
+    #kuma-top-three-redesign .k3-inline-arrow { text-align: center; transform: rotate(90deg); }
+    #kuma-top-three-redesign .k3-footer { align-items: start; flex-direction: column; gap: 8px; }
+  }
+&lt;/style&gt;
+
+&lt;section id=&quot;kuma-top-three-redesign&quot; aria-label=&quot;Kuma Blog top three design review&quot;&gt;
+  &lt;div class=&quot;k3-review-controls&quot; aria-label=&quot;Design review controls&quot;&gt;
+    &lt;div class=&quot;k3-review-group&quot; aria-label=&quot;Choose design direction&quot;&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-k3-theme=&quot;journal&quot; aria-pressed=&quot;true&quot;&gt;1 · Paper Journal&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-k3-theme=&quot;control&quot; aria-pressed=&quot;false&quot;&gt;2 · Control Room&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-k3-theme=&quot;mori&quot; aria-pressed=&quot;false&quot;&gt;3 · Mori Notebook&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;k3-review-group&quot; aria-label=&quot;Choose page view&quot;&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-k3-view=&quot;home&quot; aria-pressed=&quot;true&quot;&gt;Homepage&lt;/button&gt;
+      &lt;button class=&quot;btn&quot; type=&quot;button&quot; data-k3-view=&quot;post&quot; aria-pressed=&quot;false&quot;&gt;Article&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;p class=&quot;k3-review-status text-small&quot; id=&quot;k3-review-status&quot; aria-live=&quot;polite&quot;&gt;Paper Journal · trust-first editorial system for research and long-form writing&lt;/p&gt;
+
+  &lt;article class=&quot;k3-site&quot; id=&quot;k3-site&quot; data-theme=&quot;journal&quot; data-view=&quot;home&quot; aria-label=&quot;Kuma Blog design preview&quot;&gt;
+    &lt;div class=&quot;k3-mori-scenery&quot; aria-hidden=&quot;true&quot;&gt;
+      &lt;span class=&quot;k3-mori-sun&quot;&gt;&lt;/span&gt;&lt;span class=&quot;k3-mori-cloud&quot;&gt;&lt;/span&gt;&lt;span class=&quot;k3-mori-hill-one&quot;&gt;&lt;/span&gt;&lt;span class=&quot;k3-mori-hill-two&quot;&gt;&lt;/span&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;k3-page&quot;&gt;
+      &lt;header class=&quot;k3-header&quot;&gt;
+        &lt;a class=&quot;k3-brand&quot; href=&quot;#k3-featured&quot; aria-label=&quot;Kuma Research Journal home&quot;&gt;
+          &lt;span class=&quot;k3-brand-mark&quot;&gt;K&lt;/span&gt;&lt;span class=&quot;k3-brand-name&quot;&gt;Kuma Research Journal&lt;/span&gt;
+        &lt;/a&gt;
+        &lt;nav class=&quot;k3-nav&quot; aria-label=&quot;Site navigation&quot;&gt;
+          &lt;a href=&quot;#k3-featured&quot;&gt;Writing&lt;/a&gt;&lt;a href=&quot;#k3-shelves&quot;&gt;Topics&lt;/a&gt;&lt;a href=&quot;#k3-latest&quot;&gt;Visuals&lt;/a&gt;&lt;a href=&quot;#k3-latest&quot;&gt;About&lt;/a&gt;
+        &lt;/nav&gt;
+      &lt;/header&gt;
+
+      &lt;div class=&quot;k3-home-view&quot;&gt;
+        &lt;section class=&quot;k3-home-hero&quot;&gt;
+          &lt;div&gt;
+            &lt;p class=&quot;k3-overline&quot;&gt;Field notes on reliable AI systems&lt;/p&gt;
+            &lt;h1 class=&quot;k3-home-title&quot;&gt;Understand the systems &lt;em&gt;around intelligence.&lt;/em&gt;&lt;/h1&gt;
+            &lt;p class=&quot;k3-home-dek&quot;&gt;Source-grounded essays, working diagrams, and honest experiments about agent harnesses, memory, evaluation, and the infrastructure that makes models useful.&lt;/p&gt;
+          &lt;/div&gt;
+          &lt;aside class=&quot;k3-research-rail&quot; aria-label=&quot;Current research threads&quot;&gt;
+            &lt;p class=&quot;k3-rail-title&quot;&gt;Current research threads&lt;/p&gt;
+            &lt;div class=&quot;k3-rail-item&quot;&gt;&lt;span class=&quot;k3-rail-number&quot;&gt;01&lt;/span&gt;&lt;span class=&quot;k3-rail-copy&quot;&gt;Why the same model behaves differently inside different harnesses&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;k3-rail-item&quot;&gt;&lt;span class=&quot;k3-rail-number&quot;&gt;02&lt;/span&gt;&lt;span class=&quot;k3-rail-copy&quot;&gt;Memory under stale and conflicting facts&lt;/span&gt;&lt;/div&gt;
+            &lt;div class=&quot;k3-rail-item&quot;&gt;&lt;span class=&quot;k3-rail-number&quot;&gt;03&lt;/span&gt;&lt;span class=&quot;k3-rail-copy&quot;&gt;Self-improving systems on held-out tasks&lt;/span&gt;&lt;/div&gt;
+          &lt;/aside&gt;
+        &lt;/section&gt;
+
+        &lt;section class=&quot;k3-lead-story&quot; id=&quot;k3-featured&quot;&gt;
+          &lt;div class=&quot;k3-lead-copy&quot;&gt;
+            &lt;p class=&quot;k3-story-label&quot;&gt;Featured field guide&lt;/p&gt;
+            &lt;h2 class=&quot;k3-lead-title&quot;&gt;How to Build an Agent Harness&lt;/h2&gt;
+            &lt;p class=&quot;k3-lead-summary&quot;&gt;A practical architecture for turning model capability into dependable work: context assembly, tools, policy, memory, traces, and evaluation loops.&lt;/p&gt;
+            &lt;div class=&quot;k3-meta&quot;&gt;&lt;span&gt;Mar 22, 2026&lt;/span&gt;&lt;span&gt;16 min&lt;/span&gt;&lt;span&gt;Agent systems&lt;/span&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class=&quot;k3-system-figure&quot; aria-label=&quot;Agent harness system flow&quot;&gt;
+            &lt;div class=&quot;k3-flow&quot;&gt;
+              &lt;div class=&quot;k3-flow-node&quot;&gt;GOAL + CONTEXT&lt;/div&gt;&lt;div class=&quot;k3-flow-node&quot;&gt;HARNESS / POLICY / TOOLS&lt;/div&gt;&lt;div class=&quot;k3-flow-node&quot;&gt;MODEL&lt;/div&gt;&lt;div class=&quot;k3-flow-node&quot;&gt;TRACE → EVAL → MEMORY&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;section id=&quot;k3-shelves&quot;&gt;
+          &lt;div class=&quot;k3-section-head&quot;&gt;&lt;h3&gt;Research shelves&lt;/h3&gt;&lt;span&gt;04 ACTIVE TOPICS&lt;/span&gt;&lt;/div&gt;
+          &lt;div class=&quot;k3-shelves&quot;&gt;
+            &lt;article class=&quot;k3-shelf&quot;&gt;&lt;span&gt;01&lt;/span&gt;&lt;h4&gt;Agents &amp;amp; Harnesses&lt;/h4&gt;&lt;/article&gt;
+            &lt;article class=&quot;k3-shelf&quot;&gt;&lt;span&gt;02&lt;/span&gt;&lt;h4&gt;Memory &amp;amp; Context&lt;/h4&gt;&lt;/article&gt;
+            &lt;article class=&quot;k3-shelf&quot;&gt;&lt;span&gt;03&lt;/span&gt;&lt;h4&gt;Evals &amp;amp; Reliability&lt;/h4&gt;&lt;/article&gt;
+            &lt;article class=&quot;k3-shelf&quot;&gt;&lt;span&gt;04&lt;/span&gt;&lt;h4&gt;Inference Systems&lt;/h4&gt;&lt;/article&gt;
+          &lt;/div&gt;
+        &lt;/section&gt;
+
+        &lt;section id=&quot;k3-latest&quot;&gt;
+          &lt;div class=&quot;k3-section-head&quot;&gt;&lt;h3&gt;Latest notes&lt;/h3&gt;&lt;span&gt;SOURCE-GROUNDED · DIAGRAM-RICH&lt;/span&gt;&lt;/div&gt;
+          &lt;article class=&quot;k3-latest-row&quot;&gt;&lt;time&gt;MAR 22&lt;/time&gt;&lt;h4&gt;Demystifying Agent Harnesses: the system around the model&lt;/h4&gt;&lt;span class=&quot;k3-tag&quot;&gt;Harnesses&lt;/span&gt;&lt;/article&gt;
+          &lt;article class=&quot;k3-latest-row&quot;&gt;&lt;time&gt;FEB 13&lt;/time&gt;&lt;h4&gt;Claude Code Agent Teams: coordination patterns that hold up&lt;/h4&gt;&lt;span class=&quot;k3-tag&quot;&gt;Agents&lt;/span&gt;&lt;/article&gt;
+          &lt;article class=&quot;k3-latest-row&quot;&gt;&lt;time&gt;FEB 02&lt;/time&gt;&lt;h4&gt;AI Inference Batching, Explained&lt;/h4&gt;&lt;span class=&quot;k3-tag&quot;&gt;Systems&lt;/span&gt;&lt;/article&gt;
+        &lt;/section&gt;
+      &lt;/div&gt;
+
+      &lt;div class=&quot;k3-post-view&quot;&gt;
+        &lt;p class=&quot;k3-breadcrumb&quot;&gt;Agents &amp;amp; Harnesses / Field Guide 01&lt;/p&gt;
+        &lt;header class=&quot;k3-article-head&quot;&gt;
+          &lt;h1 class=&quot;k3-article-title&quot;&gt;How to Build an Agent Harness&lt;/h1&gt;
+          &lt;p class=&quot;k3-article-dek&quot;&gt;A model is only one component. Reliability comes from the system that assembles context, mediates tools, records traces, and turns failures into better evaluations.&lt;/p&gt;
+          &lt;div class=&quot;k3-meta&quot;&gt;&lt;span&gt;Mar 22, 2026&lt;/span&gt;&lt;span&gt;16 min&lt;/span&gt;&lt;span&gt;Updated Aug 19&lt;/span&gt;&lt;span&gt;12 sources&lt;/span&gt;&lt;/div&gt;
+        &lt;/header&gt;
+
+        &lt;div class=&quot;k3-article-layout&quot;&gt;
+          &lt;aside class=&quot;k3-toc&quot; aria-label=&quot;Article contents&quot;&gt;
+            &lt;p class=&quot;k3-toc-title&quot;&gt;On this page&lt;/p&gt;
+            &lt;a href=&quot;#k3-problem&quot;&gt;The real problem&lt;/a&gt;&lt;a href=&quot;#k3-loop&quot;&gt;Harness loop&lt;/a&gt;&lt;a href=&quot;#k3-evidence&quot;&gt;Evidence&lt;/a&gt;&lt;a href=&quot;#k3-failures&quot;&gt;Failure modes&lt;/a&gt;&lt;a href=&quot;#k3-sources&quot;&gt;Sources&lt;/a&gt;
+          &lt;/aside&gt;
+          &lt;article class=&quot;k3-article-body&quot;&gt;
+            &lt;section class=&quot;k3-key-points&quot; aria-label=&quot;Key takeaways&quot;&gt;
+              &lt;h3&gt;Three takeaways&lt;/h3&gt;
+              &lt;ul&gt;&lt;li&gt;Harness design changes outcomes even when the underlying model stays fixed.&lt;/li&gt;&lt;li&gt;Tools need policy boundaries, observable traces, and explicit failure handling.&lt;/li&gt;&lt;li&gt;Evaluations should test the system—not only the model response.&lt;/li&gt;&lt;/ul&gt;
+            &lt;/section&gt;
+
+            &lt;h2 id=&quot;k3-problem&quot;&gt;The model is not the product&lt;/h2&gt;
+            &lt;p&gt;Agent quality emerges from an entire execution environment. The harness decides what context the model sees, which actions it may take, how errors return, and what evidence survives after the run.&lt;/p&gt;
+            &lt;p&gt;That means two products can use the same model and still produce very different results. The important design question is no longer only “which model?” It is “which feedback loop surrounds it?”&lt;/p&gt;
+
+            &lt;figure class=&quot;k3-inline-diagram&quot; id=&quot;k3-loop&quot; aria-label=&quot;Closed-loop agent system diagram&quot;&gt;
+              &lt;div class=&quot;k3-inline-flow&quot;&gt;&lt;div class=&quot;k3-inline-node&quot;&gt;CONTEXT&lt;/div&gt;&lt;span class=&quot;k3-inline-arrow&quot;&gt;→&lt;/span&gt;&lt;div class=&quot;k3-inline-node&quot;&gt;ACT + OBSERVE&lt;/div&gt;&lt;span class=&quot;k3-inline-arrow&quot;&gt;→&lt;/span&gt;&lt;div class=&quot;k3-inline-node&quot;&gt;EVALUATE&lt;/div&gt;&lt;/div&gt;
+            &lt;/figure&gt;
+            &lt;p class=&quot;k3-caption&quot;&gt;Figure 1 · A dependable harness closes the loop between context, action, observation, and evaluation.&lt;/p&gt;
+
+            &lt;h2 id=&quot;k3-evidence&quot;&gt;What to measure&lt;/h2&gt;
+            &lt;p&gt;Measure task completion, policy compliance, recovery from tool failure, context efficiency, and the quality of the final evidence. A successful response without a trustworthy trace is still difficult to improve.&lt;/p&gt;
+            &lt;div class=&quot;k3-evidence&quot;&gt;&lt;strong&gt;Evidence rule&lt;/strong&gt;&lt;span&gt;Keep the claim, observation, and supporting trace adjacent. Readers should be able to distinguish measured results from design opinion.&lt;/span&gt;&lt;/div&gt;
+
+            &lt;h2 id=&quot;k3-failures&quot;&gt;Failure modes worth publishing&lt;/h2&gt;
+            &lt;p&gt;Document where the harness stalled, repeated work, selected the wrong tool, or carried stale facts forward. These are often more useful than polished success narratives because they reveal which assumptions are actually load-bearing.&lt;/p&gt;
+          &lt;/article&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;footer class=&quot;k3-footer&quot; id=&quot;k3-sources&quot;&gt;&lt;span&gt;© 2026 KUMA RESEARCH JOURNAL&lt;/span&gt;&lt;span&gt;BUILT OPENLY ON GITHUB&lt;/span&gt;&lt;/footer&gt;
+    &lt;/div&gt;
+  &lt;/article&gt;
+&lt;/section&gt;
+
+&lt;script&gt;
+  (() =&gt; {
+    const root = document.getElementById(&#x27;kuma-top-three-redesign&#x27;);
+    const site = document.getElementById(&#x27;k3-site&#x27;);
+    const status = document.getElementById(&#x27;k3-review-status&#x27;);
+    if (!root || !site || !status) return;
+
+    const themeCopy = {
+      journal: &#x27;Paper Journal · trust-first editorial system for research and long-form writing&#x27;,
+      control: &#x27;Control Room · technical identity for harness guides, experiments, traces, and evals&#x27;,
+      mori: &#x27;Mori Notebook · original Japanese-inspired field journal with a warmer personal voice&#x27;
+    };
+
+    const themeButtons = [...root.querySelectorAll(&#x27;[data-k3-theme]&#x27;)];
+    const viewButtons = [...root.querySelectorAll(&#x27;[data-k3-view]&#x27;)];
+
+    themeButtons.forEach((button) =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
+      const theme = button.getAttribute(&#x27;data-k3-theme&#x27;);
+      site.setAttribute(&#x27;data-theme&#x27;, theme);
+      status.textContent = themeCopy[theme] || themeCopy.journal;
+      themeButtons.forEach((candidate) =&gt; candidate.setAttribute(&#x27;aria-pressed&#x27;, candidate === button ? &#x27;true&#x27; : &#x27;false&#x27;));
+    }));
+
+    viewButtons.forEach((button) =&gt; button.addEventListener(&#x27;click&#x27;, () =&gt; {
+      const view = button.getAttribute(&#x27;data-k3-view&#x27;);
+      site.setAttribute(&#x27;data-view&#x27;, view);
+      viewButtons.forEach((candidate) =&gt; candidate.setAttribute(&#x27;aria-pressed&#x27;, candidate === button ? &#x27;true&#x27; : &#x27;false&#x27;));
+    }));
+  })();
+&lt;/script&gt;
+
+&lt;script src=&quot;https://unpkg.com/@floating-ui/core@1.7.3/dist/floating-ui.core.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://unpkg.com/@floating-ui/dom@1.7.4/dist/floating-ui.dom.umd.min.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  if (window.FloatingUIDOM == null) {
+    return;
+  }
+  const { autoUpdate, computePosition, flip, offset, shift, size } =
+    window.FloatingUIDOM;
+  const tooltipPlacements = new Set([&quot;top&quot;, &quot;right&quot;, &quot;bottom&quot;, &quot;left&quot;]);
+  const tooltipId = `codex-visualization-tooltip-${
+    window.crypto?.randomUUID?.() ?? Date.now().toString(36)
+  }`;
+  const tooltipGap = 5;
+  const hoverDelay = 700;
+  const skipDelay = 300;
+  let activeTrigger = null;
+  let pendingTrigger = null;
+  let tooltip = null;
+  let openTimeout = null;
+  let autoUpdateCleanup = null;
+  let positionRequest = 0;
+  let skipDelayUntil = 0;
+
+  const getTrigger = (target) =&gt;
+    target?.nodeType === Node.ELEMENT_NODE
+      ? target.closest(&quot;[data-tooltip]&quot;)
+      : null;
+  const containsTarget = (trigger, target) =&gt;
+    target?.nodeType != null &amp;&amp; trigger.contains(target);
+  const getContent = (trigger) =&gt;
+    trigger.getAttribute(&quot;data-tooltip&quot;)?.trim() ?? &quot;&quot;;
+  const getPlacement = (trigger) =&gt; {
+    const placement = trigger.getAttribute(&quot;data-tooltip-placement&quot;);
+    return tooltipPlacements.has(placement) ? placement : &quot;top&quot;;
+  };
+  const getTooltip = () =&gt; {
+    if (tooltip == null) {
+      tooltip = document.createElement(&quot;div&quot;);
+      tooltip.id = tooltipId;
+      tooltip.className = &quot;tooltip&quot;;
+      tooltip.setAttribute(&quot;role&quot;, &quot;tooltip&quot;);
+    }
+    return tooltip;
+  };
+  const setDescribedBy = (trigger, described) =&gt; {
+    const ids = new Set(
+      (trigger.getAttribute(&quot;aria-describedby&quot;) ?? &quot;&quot;)
+        .split(/\s+/)
+        .filter(Boolean),
+    );
+    if (described) {
+      ids.add(tooltipId);
+    } else {
+      ids.delete(tooltipId);
+    }
+    if (ids.size === 0) {
+      trigger.removeAttribute(&quot;aria-describedby&quot;);
+    } else {
+      trigger.setAttribute(&quot;aria-describedby&quot;, [...ids].join(&quot; &quot;));
+    }
+  };
+  const clearOpenTimeout = () =&gt; {
+    if (openTimeout != null) {
+      window.clearTimeout(openTimeout);
+      openTimeout = null;
+    }
+    pendingTrigger = null;
+  };
+  const closeTooltip = (activateSkipDelay = true) =&gt; {
+    clearOpenTimeout();
+    positionRequest += 1;
+    autoUpdateCleanup?.();
+    autoUpdateCleanup = null;
+    if (activeTrigger == null) {
+      return;
+    }
+    setDescribedBy(activeTrigger, false);
+    activeTrigger = null;
+    tooltip?.remove();
+    if (activateSkipDelay) {
+      skipDelayUntil = Date.now() + skipDelay;
+    }
+  };
+  const updatePosition = (trigger, floating) =&gt; {
+    const request = ++positionRequest;
+    void computePosition(trigger, floating, {
+      middleware: [
+        offset(tooltipGap),
+        flip({ padding: tooltipGap }),
+        shift({ padding: tooltipGap }),
+        size({
+          padding: tooltipGap,
+          apply({ availableHeight, availableWidth, elements }) {
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-width&quot;,
+              `${Math.max(0, availableWidth)}px`,
+            );
+            elements.floating.style.setProperty(
+              &quot;--tooltip-available-height&quot;,
+              `${Math.max(0, availableHeight)}px`,
+            );
+          },
+        }),
+      ],
+      placement: getPlacement(trigger),
+      strategy: &quot;fixed&quot;,
+    })
+      .then(({ x, y }) =&gt; {
+        if (activeTrigger !== trigger || request !== positionRequest) {
+          return;
+        }
+        const scale = window.devicePixelRatio || 1;
+        floating.style.transform = `translate(${Math.round(x * scale) / scale}px, ${Math.round(y * scale) / scale}px)`;
+        floating.style.visibility = &quot;visible&quot;;
+      })
+      .catch(() =&gt; {
+        if (activeTrigger === trigger &amp;&amp; request === positionRequest) {
+          closeTooltip(false);
+        }
+      });
+  };
+  const openTooltip = (trigger) =&gt; {
+    const content = getContent(trigger);
+    if (!trigger.isConnected || content.length === 0) {
+      return;
+    }
+    clearOpenTimeout();
+    if (activeTrigger === trigger) {
+      return;
+    }
+    closeTooltip();
+    const floating = getTooltip();
+    floating.textContent = content;
+    floating.style.visibility = &quot;hidden&quot;;
+    floating.style.transform = &quot;translate(0, 0)&quot;;
+    document.body.appendChild(floating);
+    activeTrigger = trigger;
+    setDescribedBy(trigger, true);
+    autoUpdateCleanup = autoUpdate(trigger, floating, () =&gt; {
+      updatePosition(trigger, floating);
+    });
+  };
+  const requestOpen = (trigger, immediate = false) =&gt; {
+    if (
+      getContent(trigger).length === 0 ||
+      activeTrigger === trigger ||
+      pendingTrigger === trigger
+    ) {
+      return;
+    }
+    clearOpenTimeout();
+    pendingTrigger = trigger;
+    const delay =
+      immediate || activeTrigger != null || Date.now() &lt; skipDelayUntil
+        ? 0
+        : hoverDelay;
+    if (delay === 0) {
+      openTooltip(trigger);
+      return;
+    }
+    openTimeout = window.setTimeout(() =&gt; {
+      openTimeout = null;
+      pendingTrigger = null;
+      openTooltip(trigger);
+    }, delay);
+  };
+  const handlePointerOpen = (event) =&gt; {
+    if (event.pointerType === &quot;touch&quot;) {
+      return;
+    }
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    requestOpen(trigger);
+  };
+  const handleLeave = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger == null || containsTarget(trigger, event.relatedTarget)) {
+      return;
+    }
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const handleFocusIn = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (trigger?.matches(&quot;:focus-visible&quot;)) {
+      requestOpen(trigger, true);
+    }
+  };
+  const handleKeyDown = (event) =&gt; {
+    if (event.key === &quot;Escape&quot;) {
+      closeTooltip();
+    }
+  };
+  const handleContextMenu = (event) =&gt; {
+    const trigger = getTrigger(event.target);
+    if (activeTrigger === trigger || pendingTrigger === trigger) {
+      closeTooltip();
+    }
+  };
+  const destroy = () =&gt; {
+    closeTooltip(false);
+    document.removeEventListener(&quot;pointerover&quot;, handlePointerOpen);
+    document.removeEventListener(&quot;pointerout&quot;, handleLeave);
+    document.removeEventListener(&quot;focusin&quot;, handleFocusIn);
+    document.removeEventListener(&quot;focusout&quot;, handleLeave);
+    document.removeEventListener(&quot;keydown&quot;, handleKeyDown);
+    document.removeEventListener(&quot;contextmenu&quot;, handleContextMenu);
+    tooltip = null;
+  };
+
+  document.addEventListener(&quot;pointerover&quot;, handlePointerOpen);
+  document.addEventListener(&quot;pointerout&quot;, handleLeave);
+  document.addEventListener(&quot;focusin&quot;, handleFocusIn);
+  document.addEventListener(&quot;focusout&quot;, handleLeave);
+  document.addEventListener(&quot;keydown&quot;, handleKeyDown);
+  document.addEventListener(&quot;contextmenu&quot;, handleContextMenu);
+  window.addEventListener(&quot;pagehide&quot;, destroy, { once: true });
+})();
+&lt;/script&gt;
+&lt;script id=&quot;codex-visualization-lucide&quot; async src=&quot;https://unpkg.com/lucide@1.17.0/dist/umd/lucide.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+(() =&gt; {
+  const initialize = () =&gt; {
+    globalThis.lucide?.createIcons({ attrs: { width: 16, height: 16 } });
+  };
+  if (globalThis.lucide != null) {
+    initialize();
+    return;
+  }
+  document
+    .getElementById(&quot;codex-visualization-lucide&quot;)
+    ?.addEventListener(&quot;load&quot;, initialize, { once: true });
+})();
+&lt;/script&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;
+"></iframe>
+</body>
+</html>
