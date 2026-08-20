@@ -25,7 +25,7 @@ batches:
   - id: "repair-known-relative-links"
     sequence: 1
     action: "repair-in-place"
-    status: "ready-for-maintenance-review"
+    status: "implemented-and-verified"
     tracked_files: 2
     sources:
       - "AI-manga-learnings/future-of-enterprise-software/future-of-enterprise-software.md"
@@ -234,4 +234,3 @@ batches:
       - "Inventory unique material one final time."
       - "Request an exact archive or deletion decision for each source."
     rollback: "Restore the source and remove its redirect in one reviewed revert."
-

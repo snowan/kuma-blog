@@ -46,7 +46,7 @@ Michi tries the radical approach: "Fire the software! Let Agents do it all!" Thi
 
 Relying solely on non-deterministic agents for core business processes leads to chaos. Without the rigid rules of software, you get inconsistency and operational failure.
 
-![The Bad Idea](02-page-chaos.png)
+![The Bad Idea](02-pager-chaos.png)
 
 ---
 
