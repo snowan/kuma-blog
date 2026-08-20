@@ -1,0 +1,182 @@
+---
+title: "What an Agent Harness Actually Does"
+description: "A practical definition of the control layer around a model: tools, state, permissions, context, verification, and recovery."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: essay
+presentation: journal
+topic: agents-harnesses
+series: harness-lab
+tags: [agents, harnesses, reliability, architecture]
+featured: true
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "A model proposes actions; a harness owns the loop that authorizes, executes, records, and evaluates them.",
+  "Reliability is a property of the model and its surrounding system, not of the model in isolation.",
+  "Good harness boundaries stay stable while model-specific scaffolding remains easy to remove.",
+]} />
+
+The phrase **agent harness** is useful, but it is not yet a perfectly standardized product category. Framework vendors, model providers, and application teams draw the boundary in different places. Rather than argue over branding, I use a testable working definition:
+
+> An agent harness is the control layer that turns model output into bounded action and returns evidence to the next model call or to a human.
+
+That definition deliberately centers responsibility. A model can suggest a tool call, but it does not open the network connection, enforce a filesystem boundary, persist a session, or prove that a requested outcome exists. The harness does.
+
+Anthropic makes a similar distinction in its evaluation guidance: when we evaluate an agent, we are evaluating the model and harness together. Its managed-agent architecture separates a session, a harness that runs the model/tool loop, and a sandbox that performs the work ([Anthropic, “Demystifying evals for AI agents”](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents); [“Scaling Managed Agents”](https://www.anthropic.com/engineering/managed-agents)).
+
+## The shortest useful mental model
+
+<SystemDiagram
+  title="The harness control loop"
+  steps={[
+    { label: "Interpret", detail: "Resolve intent and constraints" },
+    { label: "Propose", detail: "Ask the model for the next action" },
+    { label: "Authorize", detail: "Apply tool, data, and risk policy" },
+    { label: "Execute", detail: "Run the tool in a controlled environment" },
+    { label: "Evaluate", detail: "Check evidence, recover, or stop" },
+  ]}
+  caption="The model participates in the proposal step. The harness owns the transitions, state, and stop conditions around it."
+/>
+
+This loop is the center, not the whole system. A useful harness also needs durable state, tool adapters, context assembly, permission policy, observability, and a completion contract. The exact implementation varies by product.
+
+OpenAI’s Codex App Server is a concrete example of the boundary: multiple user interfaces share one underlying harness, while a bidirectional JSON-RPC protocol exposes durable conversation primitives to clients ([OpenAI, “Unlocking the Codex harness”](https://openai.com/index/unlocking-the-codex-harness/)). The interface can change without forcing every surface to reimplement the agent loop.
+
+## Model, framework, runtime, and harness
+
+These terms overlap. I find the following distinction useful as an **author synthesis**, not an industry standard:
+
+| Layer | Primary question | Typical responsibility |
+| --- | --- | --- |
+| Model | “What should happen next?” | Generate text, structured output, or tool calls |
+| Framework or SDK | “How do I assemble an agent?” | APIs, abstractions, integrations, handoffs |
+| Runtime | “How does work keep running?” | Scheduling, persistence, streaming, retries |
+| Harness | “How is this particular agent controlled?” | Loop, tools, context, permissions, evidence, stop conditions |
+| Application | “What outcome does the user receive?” | Product workflow, domain rules, user experience |
+
+The layers can live in one package. A framework may ship runtime features; a product may expose its harness as an SDK. LangChain’s own taxonomy makes the same broader point: compare systems by the responsibility they own, not by the label on the homepage ([LangChain, “Agent Frameworks, Runtimes, and Harnesses”](https://www.langchain.com/blog/agent-frameworks-runtimes-and-harnesses-oh-my)).
+
+<Callout title="A naming test" kind="note">
+  <p>If replacing the model leaves the tool boundary, state machine, permission gates, and completion checks mostly intact, those surviving parts are a good approximation of the harness.</p>
+</Callout>
+
+## Six responsibilities that belong around the model
+
+### 1. Context assembly
+
+The harness decides which instructions, retrieved documents, prior events, and tool results enter the next model call. More context is not automatically better. Context has to be selected, ordered, and compacted without erasing the state needed for recovery.
+
+For long tasks, Anthropic demonstrated a pattern built around persistent progress artifacts and fresh context windows. The important idea is not one specific file format; it is that task state must survive the model’s temporary working context ([Anthropic, “Effective harnesses for long-running agents”](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)).
+
+### 2. Tool execution
+
+Tool schemas tell the model what it may request. The harness still has to validate arguments, apply timeouts, constrain the environment, normalize results, and distinguish a tool error from a task failure.
+
+A tool result should be an event with provenance: which tool ran, with which approved arguments, against which state, and what result or error came back. Without that record, a later model call receives text but the system loses accountability.
+
+### 3. State and memory
+
+Conversation history is not enough. The system may need an append-only event log, a task snapshot, user-approved durable memory, and external artifacts too large to keep in context. These stores have different retention and privacy rules.
+
+My preference is to make durable state explicit and inspectable. “The model will remember” is not an architecture.
+
+### 4. Permissions and policy
+
+The harness decides whether a proposed action is allowed. Read-only inspection, editing a scoped file, publishing a deployment, and deleting data should not share one implicit permission.
+
+Policy needs to be enforced outside the model. A prompt can explain the rule; an approval gate, sandbox, allowlist, or capability token makes it binding.
+
+### 5. Evidence and evaluation
+
+The harness must distinguish **a plausible final message** from **a verified outcome**. A coding task might require a clean diff and passing tests. A booking task might require a reservation in the database. A research task might require claims mapped to authoritative sources.
+
+Anthropic’s eval guidance calls this distinction the transcript versus the outcome. It recommends combining code-based, model-based, and human graders according to the task rather than relying on one universal score ([Anthropic, “Demystifying evals for AI agents”](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)).
+
+### 6. Recovery and handoff
+
+Failures need typed transitions: retry a transient request, revise invalid arguments, request missing authority, restore a checkpoint, or escalate to a human. A blind retry loop is not recovery.
+
+Human review is also a first-class transition, not a last-minute escape hatch. The harness should preserve the evidence a reviewer needs and make the pending decision explicit.
+
+## Why the surrounding system changes model behavior
+
+Model capability sets an upper bound, but the harness shapes which capabilities are reachable and repeatable.
+
+OpenAI’s harness-engineering report describes a repository designed to be legible to agents: small maps instead of monolithic instructions, worktree-local environments, browser-visible UI state, mechanical architecture checks, and feedback loops that turn failures into enforceable constraints ([OpenAI, “Harness engineering”](https://openai.com/index/harness-engineering/)). These are not changes to model weights. They change the environment in which the model acts.
+
+<EvidenceNote title="Evidence boundary" source="Primary engineering reports" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>The cited teams report that harness design materially changes their systems. That does not establish a universal performance gain for every model, task, or harness. Your own held-out tasks still decide whether a component helps.</p>
+</EvidenceNote>
+
+That limitation matters. A harness can hide model weaknesses, but it can also encode stale assumptions. Anthropic’s 2026 managed-agent write-up describes removing or revisiting scaffolding as models improved. Every component should therefore answer two questions:
+
+1. Which observed failure does this prevent?
+2. Which evaluation would tell us it is no longer needed?
+
+## The failure modes of harness engineering
+
+The most common mistake is to make the harness “smart” everywhere. Complex planners, overlapping memory systems, dynamic tool mutation, and nested agent hierarchies can create more states than the team can inspect.
+
+Other warning signs:
+
+- retry logic is harder to understand than the task;
+- the event log cannot reconstruct what happened;
+- policy exists only in prompt text;
+- a completion message is accepted without checking the environment;
+- model upgrades require a rewrite because interfaces and scaffolding are coupled;
+- observability captures volume but not decision-relevant evidence;
+- the harness exposes many tools before tasks demonstrate a need for them.
+
+The countermeasure is not a universally tiny harness. It is a **legible** one: explicit boundaries, inspectable state, narrowly owned components, and evaluations that justify complexity.
+
+## A design review checklist
+
+When reviewing a harness, I ask:
+
+1. What state exists outside the context window?
+2. Who authorizes each class of tool action?
+3. Can the event log reconstruct the run without hidden state?
+4. What proves the requested outcome, independently of the final answer?
+5. Which failures retry, recover, or escalate?
+6. What private data is retained, and for how long?
+7. Which component is model-specific, and how can it be removed?
+8. Which held-out tasks protect against regressions?
+
+The companion guide, <a href={withBase("writing/how-to-build-agent-harness/")}>How to Build a Minimal Agent Harness</a>, turns those questions into a small implementation sequence.
+
+## Sources
+
+- [OpenAI: Harness engineering](https://openai.com/index/harness-engineering/)
+- [OpenAI: Unlocking the Codex harness](https://openai.com/index/unlocking-the-codex-harness/)
+- [Anthropic: Scaling Managed Agents](https://www.anthropic.com/engineering/managed-agents)
+- [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+- [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
+- [LangChain: The anatomy of an agent harness](https://www.langchain.com/blog/the-anatomy-of-an-agent-harness)
+- [LangChain: Agent frameworks, runtimes, and harnesses](https://www.langchain.com/blog/agent-frameworks-runtimes-and-harnesses-oh-my)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Prepared the canonical concept draft after consolidating three overlapping repository drafts and rechecking primary sources." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/how-to-build-agent-harness/"),
+    title: "How to Build a Minimal Agent Harness",
+    description: "A staged implementation guide for the loop, tool boundary, state, evidence, and recovery.",
+  },
+  {
+    href: withBase("visuals/agent-harness-control-loop/"),
+    title: "The Agent Harness Control Loop",
+    description: "A visual reading guide to the five transitions around a model call.",
+  },
+]} />

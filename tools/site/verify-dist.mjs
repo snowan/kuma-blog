@@ -159,6 +159,20 @@ if (
   fail("draft fixtures leaked into dist");
 }
 
+const unpublishedHarnessDrafts = [
+  "demystifying-agent-harness",
+  "how-to-build-agent-harness",
+  "agent-harness-control-loop",
+];
+for (const slug of unpublishedHarnessDrafts) {
+  if (relativeFiles.some((path) => path.includes(slug))) {
+    fail(`unpublished harness draft leaked into dist: ${slug}`);
+  }
+  if (rss.includes(slug) || sitemap.includes(slug)) {
+    fail(`unpublished harness draft leaked into a discovery feed: ${slug}`);
+  }
+}
+
 if (!process.exitCode) {
   console.log(`verify-dist: ${relativeFiles.length} generated files passed`);
 }

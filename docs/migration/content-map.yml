@@ -212,7 +212,8 @@ canonical_clusters:
         proposed_role: "merge-source-then-redirect"
         proposed_route: "/series/harness-lab/"
         presentation: "journal"
-    implementation_status: "pending-explicit-consolidation-approval"
+    implementation_status: "canonical-drafts-prepared-publication-and-retirement-pending"
+    review_record: "docs/migration/2026-08-20-harness-consolidation.md"
     preserve:
       - "Unique evidence, examples, diagrams, and citations."
       - "A clear conceptual versus practical reader boundary."

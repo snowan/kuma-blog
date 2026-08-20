@@ -1,0 +1,306 @@
+---
+title: "How to Build a Minimal Agent Harness"
+description: "Build a bounded tool-calling loop with explicit state, permissions, evidence, recovery, and an eval path before adding orchestration."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: guide
+presentation: control
+topic: agents-harnesses
+series: harness-lab
+tags: [agents, harnesses, tools, evaluation, reliability]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "Define completion and authority before writing the model loop.",
+  "Keep one append-only event stream and make every tool transition explicit.",
+  "Add scaffolding in response to observed failures, then protect it with held-out evaluations.",
+]} />
+
+This guide builds the smallest harness I would trust as an engineering baseline. It is deliberately not a production-ready package. The code is typed pseudocode: adapt the model client, persistence, sandbox, and policy layer to your environment, then threat-model and test them.
+
+If you first need the boundary, read <a href={withBase("writing/demystifying-agent-harness/")}>What an Agent Harness Actually Does</a>.
+
+## Outcome and prerequisites
+
+By the end, the harness will:
+
+- call a tool-capable model;
+- validate and authorize proposed tool calls;
+- record every transition in an append-only event log;
+- stop on a budget or explicit completion;
+- verify the outcome outside the model;
+- distinguish retry, recovery, and human escalation.
+
+You need a model API that can return structured tool calls, a small tool registry, a persistent store, and a few realistic tasks with inspectable outcomes. Start with one task family. General-purpose orchestration can wait.
+
+<Callout title="Before code" kind="warning">
+  <p>Do not give the first version production credentials or broad shell access. Use synthetic inputs, a disposable environment, least-privilege tools, and explicit approval for consequential actions.</p>
+</Callout>
+
+## Step 0: write the completion contract
+
+An agent cannot reliably finish a task whose success remains implicit. Define the contract as data:
+
+~~~ts
+type CompletionContract = {
+  requiredEvidence: string[];
+  maxSteps: number;
+  deadlineMs: number;
+  allowedTools: string[];
+  requiresHumanApproval: string[];
+};
+~~~
+
+For a repository edit, the evidence might be diff reviewed, tests passed, and head verified. For a support workflow, it might be ticket updated plus a human-approved outbound message. The final model response is not evidence by itself.
+
+Anthropic’s evaluation guidance separates a run’s transcript from its outcome: an agent may claim a flight was booked, while the environment shows no reservation. Design the completion contract around the environment you can inspect ([Anthropic, “Demystifying evals for AI agents”](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)).
+
+## Step 1: make the control loop visible
+
+<SystemDiagram
+  title="A minimal bounded run"
+  steps={[
+    { label: "Load", detail: "Task, policy, state, budget" },
+    { label: "Call model", detail: "Request one next action" },
+    { label: "Authorize", detail: "Validate tool and arguments" },
+    { label: "Execute", detail: "Run in the scoped environment" },
+    { label: "Verify", detail: "Check outcome or continue" },
+  ]}
+  caption="Every arrow is a harness transition that should be logged and testable."
+/>
+
+Keep the first loop single-threaded. Parallel work, subagents, dynamic plans, and long-term memory add coordination states. Earn that complexity with a failure you can reproduce.
+
+## Step 2: define durable state
+
+Use an append-only event log as the source of truth and derive the current run snapshot from it.
+
+~~~ts
+type RunEvent =
+  | { type: "run_started"; taskId: string; at: string }
+  | { type: "model_output"; messageId: string; at: string }
+  | { type: "tool_requested"; callId: string; tool: string; input: unknown; at: string }
+  | { type: "tool_denied"; callId: string; reason: string; at: string }
+  | { type: "tool_completed"; callId: string; resultRef: string; at: string }
+  | { type: "tool_failed"; callId: string; errorCode: string; at: string }
+  | { type: "evidence_recorded"; name: string; artifactRef: string; at: string }
+  | { type: "human_input_required"; question: string; at: string }
+  | { type: "run_completed"; outcomeRef: string; at: string };
+~~~
+
+Store large or sensitive results outside the event itself and retain a governed reference. Redact secrets before persistence. Decide retention, access, and deletion policy before calling the store “memory.”
+
+An event log provides three benefits:
+
+1. the run can resume after a crash;
+2. a reviewer can reconstruct what happened;
+3. evals can grade both trajectory and final state.
+
+## Step 3: build a narrow tool boundary
+
+Each tool owns validation, authorization, execution, and result normalization. The model-facing schema is only the request surface.
+
+~~~ts
+type ToolContext = {
+  runId: string;
+  actorId: string;
+  approvedCapabilities: Set<string>;
+  signal: AbortSignal;
+};
+
+type Tool<I, O> = {
+  name: string;
+  capability: string;
+  parse(input: unknown): I;
+  execute(input: I, context: ToolContext): Promise<O>;
+  summarize(output: O): string;
+};
+
+async function executeTool(
+  requestedName: string,
+  rawInput: unknown,
+  context: ToolContext,
+) {
+  const tool = registry.get(requestedName);
+  if (!tool) return { status: "denied", reason: "unknown_tool" };
+  if (!context.approvedCapabilities.has(tool.capability)) {
+    return { status: "denied", reason: "missing_capability" };
+  }
+
+  const input = tool.parse(rawInput);
+  const output = await tool.execute(input, context);
+  return { status: "completed", summary: tool.summarize(output) };
+}
+~~~
+
+Production implementations also need timeouts, output limits, sandboxing, network policy, idempotency rules, and audit-safe error handling. Keep those concerns at the tool boundary rather than asking the model to remember them.
+
+## Step 4: implement the loop with budgets
+
+~~~ts
+async function runAgent(task: Task, contract: CompletionContract) {
+  const events = await eventStore.start(task);
+
+  for (let step = 0; step < contract.maxSteps; step += 1) {
+    const state = reduce(events);
+    const context = assembleContext(task, state, contract);
+    const response = await model.next(context, toolSchemas(contract.allowedTools));
+    await events.append({ type: "model_output", messageId: response.id, at: now() });
+
+    if (response.kind === "final") {
+      const verdict = await verifyOutcome(task, contract, state);
+      if (verdict.ok) return complete(events, verdict);
+      await events.append(failureAsEvidence(verdict));
+      continue;
+    }
+
+    for (const call of response.toolCalls) {
+      await events.append(toolRequested(call));
+      const result = await executeTool(call.name, call.input, state.toolContext);
+      await events.append(toolResultEvent(call, result));
+    }
+  }
+
+  return requireHumanInput(events, "Run reached its step budget without verified completion.");
+}
+~~~
+
+Three details matter:
+
+- the harness, not the model, owns the budget;
+- completion calls an external verifier;
+- exhausting the budget produces an explicit state, not a fabricated success.
+
+## Step 5: assemble context from state
+
+Treat the context window as a view over durable state, not the state itself.
+
+A simple context assembler can include:
+
+1. stable role and policy;
+2. the task and completion contract;
+3. the current plan or next unresolved requirement;
+4. a bounded window of recent events;
+5. references to artifacts the model can retrieve;
+6. summaries with provenance back to source events.
+
+For work that spans context windows, persist a task ledger and restart with a fresh context plus a structured handoff. Anthropic’s long-running-agent work used an initializer, incremental worker sessions, feature lists, and progress artifacts to maintain continuity ([Anthropic, “Effective harnesses for long-running agents”](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)).
+
+Do not add compaction until you test what information it loses. A summary that cannot point back to source events is difficult to audit or repair.
+
+## Step 6: make policy enforceable
+
+Classify actions by capability and consequence:
+
+| Class | Example | Default |
+| --- | --- | --- |
+| Inspect | read a scoped file, query public metadata | allow within scope |
+| Mutate | edit a scoped draft, write a temporary artifact | allow only with explicit capability |
+| External | send a message, publish, deploy, change hosted state | require workflow authorization |
+| Destructive | delete, overwrite, revoke, force-push | require exact-target approval and recovery plan |
+
+The prompt should explain the policy because the model needs to plan around it. Enforcement still belongs in code. For local execution, the sandbox is part of that enforcement boundary; OpenAI’s Codex architecture similarly separates harness logic from the environment that performs commands ([OpenAI, “Unlocking the Codex harness”](https://openai.com/index/unlocking-the-codex-harness/)).
+
+## Step 7: verify outcomes and recovery
+
+Start with deterministic checks where possible:
+
+- state query: did the target record change?
+- file check: does the expected diff exist?
+- test: do relevant unit or integration tests pass?
+- policy check: were all consequential actions approved?
+- link check: do cited or generated routes resolve?
+
+Use rubric or model graders only where deterministic checks cannot represent quality, and calibrate them with human review.
+
+<EvidenceNote title="No benchmark claim" source="Kuma Blog implementation guide" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>This article does not claim that the pseudocode improves a benchmark or production success rate. It defines an inspectable baseline. Measure it on your own held-out tasks before and after each harness change.</p>
+</EvidenceNote>
+
+Model each failure as a recovery decision:
+
+| Failure | Response |
+| --- | --- |
+| Invalid tool arguments | return a structured validation error once |
+| Missing capability | deny and request the exact authority if necessary |
+| Transient service failure | retry with bounded backoff and idempotency |
+| Repeated identical action | stop the loop and surface the repeated state |
+| Verification failure | preserve evidence and allow a bounded repair attempt |
+| Budget exhausted | hand off to a human with the event log and unresolved checks |
+
+## Step 8: build the first eval suite
+
+Use realistic, privacy-safe tasks with inspectable starting and ending state. For each task, record:
+
+- input and environment fixture;
+- allowed tools and permissions;
+- required evidence;
+- maximum steps and time;
+- deterministic outcome checks;
+- rubric checks, if any;
+- expected escalation conditions.
+
+Run multiple trials when model variance matters. Keep capability tasks—things the agent does not yet reliably solve—separate from regression tasks that should remain stable. Anthropic recommends combining code-based, model-based, and human graders, and reading transcripts rather than trusting aggregates alone ([Anthropic, “Demystifying evals for AI agents”](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)).
+
+## Add complexity only against a measured failure
+
+OpenAI’s harness-engineering report describes turning missing capabilities and repeated failures into repository-local tools, documentation, and mechanical constraints ([OpenAI, “Harness engineering”](https://openai.com/index/harness-engineering/)). The transferable lesson is the feedback loop, not its exact scale.
+
+Use this sequence:
+
+1. reproduce a failure on a held-out task;
+2. identify the smallest boundary that can prevent it;
+3. add the harness component;
+4. rerun the task and regression suite;
+5. keep the component only while the evidence supports it.
+
+That last step matters because models change. Anthropic’s managed-agent work explicitly warns that harness assumptions can become stale as model capability improves ([Anthropic, “Scaling Managed Agents”](https://www.anthropic.com/engineering/managed-agents)).
+
+## Production-readiness checklist
+
+- [ ] Tool inputs are schema-validated.
+- [ ] Tool execution is scoped, cancellable, and time-bounded.
+- [ ] Consequential and destructive actions have explicit authorization.
+- [ ] Events are durable, ordered, redacted, and access-controlled.
+- [ ] Large results retain provenance through artifact references.
+- [ ] Completion is checked against environment state.
+- [ ] Retries are bounded and idempotent.
+- [ ] Repeated actions and budget exhaustion stop safely.
+- [ ] Human handoff includes evidence and one clear decision.
+- [ ] A held-out eval suite covers success, denial, failure, and recovery.
+- [ ] Data retention and deletion behavior are documented and tested.
+
+## Sources
+
+- [OpenAI: Harness engineering](https://openai.com/index/harness-engineering/)
+- [OpenAI: Unlocking the Codex harness](https://openai.com/index/unlocking-the-codex-harness/)
+- [Anthropic: Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents)
+- [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
+- [Anthropic: Scaling Managed Agents](https://www.anthropic.com/engineering/managed-agents)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Prepared a minimal, evidence-first guide after consolidating the implementation material from the harness draft cluster." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/demystifying-agent-harness/"),
+    title: "What an Agent Harness Actually Does",
+    description: "The architectural boundary and tradeoffs behind the implementation.",
+  },
+  {
+    href: withBase("visuals/agent-harness-control-loop/"),
+    title: "The Agent Harness Control Loop",
+    description: "A visual map of the transitions the harness owns.",
+  },
+]} />

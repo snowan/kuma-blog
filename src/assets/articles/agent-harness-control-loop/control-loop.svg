@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" role="img" aria-labelledby="title description">
+  <title id="title">The agent harness control loop</title>
+  <desc id="description">A five-step loop moves from intent to model proposal, policy gate, tool execution, and evidence. Evidence either completes the task or returns structured state to the next model call.</desc>
+  <rect width="1440" height="900" fill="#f3f0e8"/>
+  <text x="100" y="120" fill="#172335" font-family="Georgia, serif" font-size="68" font-weight="700">The harness owns the transitions</text>
+  <text x="100" y="175" fill="#5f697c" font-family="Arial, sans-serif" font-size="26">A model proposes an action. The surrounding system decides what happens next.</text>
+  <g font-family="Arial, sans-serif">
+    <g transform="translate(90 290)">
+      <rect width="230" height="210" fill="#fffdf7" stroke="#d2cab9" stroke-width="3"/>
+      <text x="24" y="42" fill="#194fb7" font-family="monospace" font-size="20">01 · INTENT</text>
+      <text x="24" y="100" fill="#172335" font-size="32" font-weight="700">Request</text>
+      <text x="24" y="142" fill="#5f697c" font-size="21">Goal, constraints,</text>
+      <text x="24" y="172" fill="#5f697c" font-size="21">and authority</text>
+    </g>
+    <g transform="translate(345 290)">
+      <rect width="230" height="210" fill="#fffdf7" stroke="#d2cab9" stroke-width="3"/>
+      <text x="24" y="42" fill="#194fb7" font-family="monospace" font-size="20">02 · MODEL</text>
+      <text x="24" y="100" fill="#172335" font-size="32" font-weight="700">Propose</text>
+      <text x="24" y="142" fill="#5f697c" font-size="21">One response or</text>
+      <text x="24" y="172" fill="#5f697c" font-size="21">tool request</text>
+    </g>
+    <g transform="translate(600 290)">
+      <rect width="230" height="210" fill="#e8e3d8" stroke="#194fb7" stroke-width="4"/>
+      <text x="24" y="42" fill="#194fb7" font-family="monospace" font-size="20">03 · POLICY</text>
+      <text x="24" y="100" fill="#172335" font-size="32" font-weight="700">Authorize</text>
+      <text x="24" y="142" fill="#5f697c" font-size="21">Validate scope,</text>
+      <text x="24" y="172" fill="#5f697c" font-size="21">risk, and inputs</text>
+    </g>
+    <g transform="translate(855 290)">
+      <rect width="230" height="210" fill="#fffdf7" stroke="#d2cab9" stroke-width="3"/>
+      <text x="24" y="42" fill="#194fb7" font-family="monospace" font-size="20">04 · TOOL</text>
+      <text x="24" y="100" fill="#172335" font-size="32" font-weight="700">Execute</text>
+      <text x="24" y="142" fill="#5f697c" font-size="21">Act inside the</text>
+      <text x="24" y="172" fill="#5f697c" font-size="21">bounded environment</text>
+    </g>
+    <g transform="translate(1110 290)">
+      <rect width="230" height="210" fill="#fffdf7" stroke="#d2cab9" stroke-width="3"/>
+      <text x="24" y="42" fill="#194fb7" font-family="monospace" font-size="20">05 · EVIDENCE</text>
+      <text x="24" y="100" fill="#172335" font-size="32" font-weight="700">Evaluate</text>
+      <text x="24" y="142" fill="#5f697c" font-size="21">Complete, repair,</text>
+      <text x="24" y="172" fill="#5f697c" font-size="21">or ask a human</text>
+    </g>
+    <g fill="none" stroke="#b94727" stroke-width="5">
+      <path d="M320 395h25"/><path d="M575 395h25"/><path d="M830 395h25"/><path d="M1085 395h25"/>
+      <path d="M1225 520v140H460V520"/>
+    </g>
+    <g fill="#b94727">
+      <path d="m340 385 16 10-16 10z"/><path d="m595 385 16 10-16 10z"/><path d="m850 385 16 10-16 10z"/><path d="m1105 385 16 10-16 10z"/>
+      <path d="m450 525 10-16 10 16z"/>
+    </g>
+    <text x="690" y="715" fill="#172335" font-size="28" font-weight="700">Structured state returns to the next model call</text>
+    <text x="690" y="758" fill="#5f697c" font-size="22">The event log preserves results, errors, approvals, and unresolved checks.</text>
+  </g>
+</svg>
