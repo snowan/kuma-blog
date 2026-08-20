@@ -1,0 +1,98 @@
+---
+title: "The Agent Harness Control Loop"
+description: "A visual explanation of the five transitions that turn a model proposal into bounded action and verified evidence."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: visual-explainer
+presentation: journal
+topic: agents-harnesses
+series: harness-lab
+tags: [agents, harnesses, architecture, visual-explainer]
+featured: false
+cover:
+  src: ../../../assets/articles/agent-harness-control-loop/control-loop.svg
+  alt: "Five-step agent harness loop: request, model proposal, policy authorization, tool execution, and evidence evaluation."
+---
+
+import diagram from "../../../assets/articles/agent-harness-control-loop/control-loop.svg";
+import Figure from "../../../components/Figure.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "The model proposes; the harness controls each transition around that proposal.",
+  "Policy is checked before execution, while evidence is checked after execution.",
+  "A failed check returns structured state to the loop instead of becoming a success message.",
+]} />
+
+<Figure
+  src={diagram.src}
+  alt="Five-step agent harness loop. A request containing a goal, constraints, and authority goes to a model proposal. A policy gate validates scope, risk, and inputs before a tool acts in a bounded environment. Evidence then completes the task, triggers repair, or asks a human. Structured state loops back to the model."
+  caption="A conceptual control-flow diagram. It represents responsibilities, not live telemetry or a benchmark result."
+  wide
+/>
+
+## How to read the loop
+
+The model is one participant in the system. It receives context and proposes the next response or tool call. Four surrounding transitions determine whether that proposal becomes dependable work:
+
+1. **Intent** records the requested outcome, constraints, and granted authority.
+2. **Proposal** asks the model for one next action using the available tool schemas.
+3. **Policy** validates the tool, arguments, scope, and consequence before anything changes.
+4. **Execution** runs the approved action in a bounded environment and records the result.
+5. **Evidence** compares the environment with the completion contract.
+
+Evidence can end the run, support a bounded repair attempt, or produce a clear human decision. It should not be collapsed into the model saying “done.”
+
+## The two boundaries
+
+The diagram emphasizes two checks that are easy to blur:
+
+| Boundary | Question | Example |
+| --- | --- | --- |
+| Authorization | Is this action allowed now? | May this run publish the generated site? |
+| Verification | Did the requested outcome occur? | Does the hosted route serve the exact tested commit? |
+
+Authorization without verification permits actions but cannot prove success. Verification without authorization may prove that a change occurred while ignoring whether the system had permission to make it.
+
+## What returns to the next call
+
+When the run continues, the harness should return structured state:
+
+- the tool result or typed error;
+- its provenance and artifact reference;
+- remaining budget;
+- unresolved completion checks;
+- any authority that is still missing.
+
+This is why an append-only event log is more useful than conversation text alone. The log gives context assembly, recovery, audit, and evaluation one shared history.
+
+For the architectural definition, read <a href={withBase("writing/demystifying-agent-harness/")}>What an Agent Harness Actually Does</a>. For an implementation sequence, continue with <a href={withBase("writing/how-to-build-agent-harness/")}>How to Build a Minimal Agent Harness</a>.
+
+## Sources and method
+
+The diagram is an original synthesis based on:
+
+- [Anthropic: Scaling Managed Agents](https://www.anthropic.com/engineering/managed-agents)
+- [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
+- [OpenAI: Unlocking the Codex harness](https://openai.com/index/unlocking-the-codex-harness/)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Prepared the accessible control-loop diagram and reading guide." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/demystifying-agent-harness/"),
+    title: "What an Agent Harness Actually Does",
+    description: "A practical definition of the control layer around a model.",
+  },
+  {
+    href: withBase("writing/how-to-build-agent-harness/"),
+    title: "How to Build a Minimal Agent Harness",
+    description: "A staged path from completion contract to eval suite.",
+  },
+]} />

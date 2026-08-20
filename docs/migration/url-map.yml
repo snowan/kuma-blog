@@ -27,17 +27,17 @@ entries:
   - source: "AI-blogs/demystifying-agent-harness.md"
     target: "/writing/demystifying-agent-harness/"
     action: "migrate-canonical"
-    status: "pending"
+    status: "canonical-draft-prepared-publication-pending"
 
   - source: "AI-blogs/how-to-build-agent-harness.md"
     target: "/writing/how-to-build-agent-harness/"
     action: "migrate-canonical"
-    status: "pending"
+    status: "canonical-draft-prepared-publication-pending"
 
   - source: "AI-blogs/agent-harness-deep-dive.md"
     target: "/series/harness-lab/"
     action: "merge-source-then-static-redirect"
-    status: "pending-explicit-approval"
+    status: "unique-material-reviewed-redirect-and-retirement-pending"
 
   - source: "AI-blogs/boris-cherny-customize-claude-code.md"
     target: "/writing/customizing-claude-code/"
