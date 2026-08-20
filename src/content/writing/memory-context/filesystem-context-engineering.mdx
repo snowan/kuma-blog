@@ -1,0 +1,241 @@
+---
+title: "Filesystem Context Engineering for Long-Running Agents"
+description: "A practical artifact model for giving agents persistent, inspectable context without treating the active context window as durable state."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: guide
+presentation: control
+topic: memory-context
+tags: [agents, context-engineering, filesystems, provenance, long-running-agents]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "A filesystem is an addressable context substrate; it becomes memory only when retention, retrieval, provenance, and update rules are defined.",
+  "Keep raw evidence and durable task state separate from disposable indexes, summaries, and scratch work.",
+  "A good handoff lets a fresh context recover the task without replaying the entire transcript.",
+]} />
+
+A long-running agent needs more information than should fit in every model call. Files are a useful answer because they provide stable names, hierarchy, familiar search tools, and artifacts a human can inspect. But “give the agent a filesystem” is not yet an architecture.
+
+The design problem is to decide:
+
+- which artifacts are authoritative;
+- which may be rewritten or deleted;
+- how the agent discovers the right slice;
+- how summaries point back to evidence;
+- which identities may read or mutate each path;
+- what a new session needs to resume safely.
+
+If you need the broader selection model first, read <a href={withBase("writing/context-engineering/")}>Context Engineering for Agents: A Working Map</a>.
+
+## The filesystem is a substrate, not a verdict
+
+Manus describes its filesystem as externalized context: large observations can leave the active window while a restorable path remains. Anthropic similarly describes just-in-time exploration using file paths and commands rather than preloading entire corpora. LangChain frames filesystems as one way to help agents write, select, compress, and isolate context.
+
+These reports support a useful pattern, but not the claim that files are always superior to a database, event store, or object store. A production system may expose several backends through a file-like namespace. The important properties are addressability, bounded retrieval, governance, and recovery.
+
+<EvidenceNote title="Research status" source="Product engineering reports and two arXiv preprints" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>Filesystem context is an active design area. “Everything is Context” proposes a governed file abstraction with provenance and evaluation; a 2026 structured-context preprint reports model-dependent results. Treat both as evidence to investigate, not proof that one layout works for every model.</p>
+</EvidenceNote>
+
+## Start with five artifact classes
+
+Use separate lifecycles instead of placing every file in one “memory” folder.
+
+| Class | Example | Authority | Default retention |
+| --- | --- | --- | --- |
+| Source evidence | downloaded document, test output, API response | External source or tool result | Preserve or retain a reproducible reference |
+| Task state | contract, decisions, unresolved checks, progress ledger | Harness and approved human changes | Through completion and audit window |
+| Working artifact | draft, calculation, patch, extracted table | Current task | Until reviewed or superseded |
+| Derived view | index, embedding, summary, cache | Rebuildable process | Replace when stale |
+| Policy and instruction | scope, tool rules, approval state | Authorized owner | Versioned; never silently rewritten by the task agent |
+
+This classification prevents two dangerous shortcuts: treating a generated summary as the original source, and treating a mutable instruction file as ordinary scratch space.
+
+## A minimal workspace
+
+~~~text
+workspace/
+├── task/
+│   ├── contract.md        # outcome, scope, budgets, approvals
+│   ├── progress.md        # completed work, next step, blockers
+│   └── decisions.jsonl    # append-only decision events
+├── evidence/
+│   ├── manifest.jsonl     # provenance, timestamps, hashes, access scope
+│   └── sources/           # captured or mounted source artifacts
+├── work/
+│   ├── drafts/            # editable task outputs
+│   └── scratch/           # explicitly disposable intermediates
+├── views/
+│   ├── index/             # rebuildable search data
+│   └── summaries/         # derived text with source references
+└── policy/
+    └── capabilities.json  # read/write/execute boundaries
+~~~
+
+The names are illustrative. The boundary is what matters: evidence is not scratch, indexes are not sources of truth, and policy is not task-authored content.
+
+## Step 1: create the task contract
+
+Before the first model call, record:
+
+- the requested outcome and non-goals;
+- permitted roots and tools;
+- consequential actions that require approval;
+- completion evidence;
+- time, step, and cost budgets;
+- retention and privacy rules.
+
+The active context can include a compact rendering of this file. The harness should enforce the same capability rules outside the prompt.
+
+<Callout title="Do not use path text as authorization" kind="warning">
+  <p>A path such as <code>evidence/private/</code> describes location, not permission. Resolve the actor, capability, and exact target before every read, write, or execution operation.</p>
+</Callout>
+
+## Step 2: write evidence with provenance
+
+Every material artifact should have a manifest event:
+
+~~~ts
+type ArtifactEvent = {
+  artifactId: string;
+  path: string;
+  sourceUri?: string;
+  capturedAt: string;
+  contentHash: string;
+  actor: string;
+  accessScope: string[];
+  derivedFrom: string[];
+  status: "source" | "derived" | "superseded";
+};
+~~~
+
+The content hash detects silent replacement. `derivedFrom` lets a reviewer move from a summary to its inputs. `accessScope` prevents a low-sensitivity summary from laundering high-sensitivity material into a wider context.
+
+For changing external data, also record a freshness policy. “Retrieved yesterday” can be adequate for a stable paper and dangerous for a price, permission, or deployment state.
+
+## Step 3: make retrieval progressive
+
+Do not start by concatenating the workspace. Give the agent cheap discovery operations:
+
+1. list relevant directories or manifests;
+2. search filenames and compact metadata;
+3. inspect headings or bounded excerpts;
+4. load the smallest artifact slice that answers the question;
+5. expand only when evidence is missing.
+
+The hierarchy and names become retrieval signals. That is useful only when they remain predictable. Date prefixes, stable identifiers, clear topics, and explicit `draft`, `source`, or `generated` boundaries reduce ambiguous discovery.
+
+LangChain describes the core retrieval failures as missing information, retrieving the wrong information, or retrieving far more than needed ([“How agents can use filesystems for context engineering”](https://www.langchain.com/blog/how-agents-can-use-filesystems-for-context-engineering)). Log which case occurred; each needs a different fix.
+
+## Step 4: compact reversibly
+
+Compaction should reduce active tokens without erasing the route back to evidence.
+
+<SystemDiagram
+  title="Restorable compaction"
+  steps={[
+    { label: "Raw result", detail: "Store exact artifact" },
+    { label: "Manifest", detail: "Record provenance and policy" },
+    { label: "Summary", detail: "Extract task-relevant facts" },
+    { label: "Active context", detail: "Load summary plus source IDs" },
+    { label: "Recover", detail: "Reopen source when detail matters" },
+  ]}
+  caption="The summary saves tokens; the source identifier preserves an escape hatch when the summary is incomplete."
+/>
+
+Summaries should contain:
+
+- purpose and scope;
+- decisions and unresolved questions;
+- exact identifiers, paths, or citations;
+- confidence or ambiguity;
+- freshness timestamp;
+- source artifact IDs.
+
+Do not summarize secrets into a less protected location. Do not compress a failed tool result into “attempt failed” when the error text is needed to avoid repeating the same action.
+
+## Step 5: design a clean-session handoff
+
+Long tasks eventually need compaction or a fresh context. Anthropic's long-running harness work emphasizes progress artifacts and, in 2026, reports that clean resets can help when compaction alone leaves a degraded working state. A reset succeeds only if the handoff is complete enough for the next session ([“Harness design for long-running application development”](https://www.anthropic.com/engineering/harness-design-long-running-apps)).
+
+A useful `progress.md` answers:
+
+1. What is the task contract?
+2. What was completed and how was it verified?
+3. Which decisions are settled, and where is their evidence?
+4. What remains, in priority order?
+5. What failed, and what should not be repeated?
+6. Which approvals or external changes are pending?
+7. What is the single safest next action?
+
+Test the handoff by starting a fresh context with only the contract, progress file, policy, and discovery tools. If the new session has to replay the transcript, the workspace is not yet durable task state.
+
+## Step 6: keep derived views disposable
+
+Search indexes, embeddings, caches, and summaries will become stale. Record their input version and rebuild command. Prefer a recoverable rebuild over hand-editing an index.
+
+This also makes deduplication safer. Similar artifacts may represent distinct evidence, translations, snapshots, or reader outcomes. Use similarity to form a review queue; consolidate only after checking provenance and unique material.
+
+## Failure modes to test
+
+| Failure | Test |
+| --- | --- |
+| Stale summary | Change the source and verify the view is invalidated |
+| Missing niche fact | Hide it below several directories and test discovery |
+| Conflicting instructions | Place an unauthorized rule in work output and verify policy wins |
+| Context overflow | Generate a large tool result and verify bounded, restorable loading |
+| Cross-task leakage | Run two workspaces and verify isolation at tool and retrieval layers |
+| Lost handoff | Restart with a clean context and verify progress continues correctly |
+| Provenance break | Ask the agent to trace every important claim to an artifact ID |
+| Unsafe cleanup | Mark similar files and verify no source is removed without review |
+
+## Production review checklist
+
+- [ ] Artifact classes have distinct write and retention policies.
+- [ ] Tool enforcement matches the capabilities described in context.
+- [ ] Source evidence has hashes, timestamps, provenance, and access scope.
+- [ ] Summaries retain references to their exact inputs.
+- [ ] Retrieval is progressive and bounded.
+- [ ] Derived views declare their input version and rebuild path.
+- [ ] Compaction is tested for recall before optimizing brevity.
+- [ ] A clean-session test validates the handoff artifact.
+- [ ] Cross-task and cross-user isolation are tested.
+- [ ] Cleanup, archive, and deletion require exact reviewed targets.
+
+## Sources
+
+- [Anthropic: Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+- [Manus: Context Engineering for AI Agents](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
+- [LangChain: Context Engineering for Agents](https://www.langchain.com/blog/context-engineering-for-agents)
+- [LangChain: How agents can use filesystems for context engineering](https://www.langchain.com/blog/how-agents-can-use-filesystems-for-context-engineering)
+- [Xu et al.: Everything is Context](https://arxiv.org/abs/2512.05470)
+- [McMillan: Structured Context Engineering for File-Native Agentic Systems](https://arxiv.org/abs/2602.05447)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Prepared the filesystem implementation draft after separating it from the broader context-engineering resource map." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/context-engineering/"),
+    title: "Context Engineering for Agents: A Working Map",
+    description: "The selection lifecycle, context classes, failure taxonomy, and evaluation approach behind this guide.",
+  },
+  {
+    href: withBase("writing/how-to-build-agent-harness/"),
+    title: "How to Build a Minimal Agent Harness",
+    description: "A bounded model and tool loop that treats context as a view over durable state.",
+  },
+]} />

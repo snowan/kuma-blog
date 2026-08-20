@@ -241,7 +241,8 @@ canonical_clusters:
       - source: "AI/ai-resources/context-engineering/context-engineering-with-file-system.md"
         proposed_role: "filesystem-thesis"
         proposed_route: "/writing/filesystem-context-engineering/"
-    implementation_status: "pending-differentiation-review"
+    implementation_status: "canonical-drafts-prepared-publication-and-retirement-pending"
+    review_record: "docs/migration/2026-08-20-context-engineering-consolidation.md"
     requirements:
       - "Keep both articles."
       - "Remove duplicated setup, state scope, and cross-link them."
