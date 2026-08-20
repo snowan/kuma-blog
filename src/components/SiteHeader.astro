@@ -1,0 +1,15 @@
+---
+import { SITE_TITLE, withBase } from "../lib/site";
+---
+
+<header class="site-header" data-pagefind-ignore>
+  <a class="brand" href={withBase()}>{SITE_TITLE}</a>
+  <nav class="site-nav" aria-label="Primary navigation">
+    <a href={withBase("writing/")}>Writing</a>
+    <a href={withBase("topics/")}>Topics</a>
+    <a href={withBase("lab-notes/")}>Lab Notes</a>
+    <a href={withBase("visuals/")}>Visuals</a>
+    <a href={withBase("about/")}>About</a>
+    <a href={withBase("search/")}>Search</a>
+  </nav>
+</header>

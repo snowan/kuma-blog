@@ -110,5 +110,7 @@ Run checks proportional to the change:
 
   Report unavailable dependencies or partial scans instead of silently
   omitting them.
-- Once the Astro site exists, require its documented build, type, link,
-  accessibility, and `/kuma-blog/` base-path checks before deployment.
+- For Astro work, follow
+  [`docs/runbooks/site-development.md`](docs/runbooks/site-development.md) and
+  require its build, type, link, accessibility, and `/kuma-blog/` base-path
+  checks before deployment.

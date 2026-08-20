@@ -1,0 +1,38 @@
+---
+import type { CollectionEntry } from "astro:content";
+import SiteLayout from "./SiteLayout.astro";
+import { formatDate } from "../lib/site";
+
+type ArticleEntry =
+  | CollectionEntry<"writing">
+  | CollectionEntry<"labNotes">
+  | CollectionEntry<"visuals">;
+
+interface Props {
+  entry: ArticleEntry;
+  section: "Writing" | "Lab Notes" | "Visuals";
+}
+
+const { entry, section } = Astro.props;
+const { data } = entry;
+---
+
+<SiteLayout title={data.title} description={data.description} canonicalUrl={data.canonicalUrl}>
+  <main id="main-content" data-pagefind-body>
+    <article class={`presentation-${data.presentation}`}>
+      <header class="article-header reading-column">
+        <p class="eyebrow">{section} · {data.topic}</p>
+        <h1 data-pagefind-meta="title">{data.title}</h1>
+        <p class="lede">{data.description}</p>
+        <p class="article-meta">
+          {data.publishedAt && <span>Published {formatDate(data.publishedAt)}</span>}
+          {data.updatedAt && <span> · Updated {formatDate(data.updatedAt)}</span>}
+          {data.lastVerified && <span> · Verified {formatDate(data.lastVerified)}</span>}
+        </p>
+      </header>
+      <div class="article-body">
+        <slot />
+      </div>
+    </article>
+  </main>
+</SiteLayout>

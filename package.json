@@ -1,0 +1,30 @@
+{
+  "name": "kuma-blog",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.8.1",
+  "engines": {
+    "node": ">=22.12.0",
+    "pnpm": ">=10.8.1"
+  },
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build && pagefind --site dist",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "test:dist": "node tools/site/verify-dist.mjs",
+    "verify": "pnpm run check && pnpm run build && pnpm run test:dist",
+    "test": "pnpm run verify"
+  },
+  "dependencies": {
+    "@astrojs/rss": "4.0.19",
+    "@astrojs/sitemap": "3.7.3",
+    "astro": "7.2.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "pagefind": "1.5.2",
+    "typescript": "6.0.3"
+  }
+}

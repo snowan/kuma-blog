@@ -1,0 +1,33 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate, slugFromId, withBase } from "../lib/site";
+
+type IndexEntry =
+  | CollectionEntry<"writing">
+  | CollectionEntry<"labNotes">
+  | CollectionEntry<"visuals">;
+
+interface Props {
+  entries: IndexEntry[];
+  route: "writing" | "lab-notes" | "visuals";
+  emptyMessage: string;
+}
+
+const { entries, route, emptyMessage } = Astro.props;
+---
+
+{
+  entries.length > 0 ? (
+    <ol class="content-list">
+      {entries.map((entry) => (
+        <li class="content-row">
+          <a href={withBase(`${route}/${slugFromId(entry.id)}/`)}>{entry.data.title}</a>
+          <p>{entry.data.description}</p>
+          {entry.data.publishedAt && <small>{formatDate(entry.data.publishedAt)}</small>}
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p class="notice">{emptyMessage}</p>
+  )
+}

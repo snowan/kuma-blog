@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+import ContentIndex from "../../components/ContentIndex.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+
+const entries = await getCollection("labNotes", ({ data }) => data.status === "published");
+entries.sort((left, right) =>
+  (right.data.publishedAt?.getTime() ?? 0) - (left.data.publishedAt?.getTime() ?? 0),
+);
+---
+
+<SiteLayout title="Lab Notes" description="Kuma Blog experiments, evaluations, and runbooks.">
+  <main id="main-content" data-pagefind-body>
+    <div class="reading-column">
+      <p class="eyebrow">Evidence</p>
+      <h1>Lab Notes</h1>
+      <p class="lede">Experiments, evaluation reports, traces, and implementation runbooks.</p>
+      <ContentIndex
+        entries={entries}
+        route="lab-notes"
+        emptyMessage="Reviewed experiments will appear here with inspectable evidence."
+      />
+    </div>
+  </main>
+</SiteLayout>

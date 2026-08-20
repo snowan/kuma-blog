@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://snowan.github.io/kuma-blog/sitemap-index.xml
