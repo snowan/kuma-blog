@@ -1,0 +1,18 @@
+{
+  "type": "design",
+  "designSystems": [],
+  "primaryDesignSystem": null,
+  "assets": {
+    "Kuma Blog Top Three Design Review": {
+      "versions": [
+        {
+          "path": "Kuma Blog Top Three.html",
+          "createdAt": "2026-08-20T05:54:02.763Z",
+          "status": "approved"
+        }
+      ]
+    }
+  },
+  "createdAt": "2026-08-20T05:54:02.764Z",
+  "updatedAt": "2026-08-20T06:03:44.258Z"
+}
