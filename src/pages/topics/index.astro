@@ -1,0 +1,20 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { TOPICS, withBase } from "../../lib/site";
+---
+
+<SiteLayout title="Topics" description="The four primary Kuma Blog research topics.">
+  <main id="main-content" data-pagefind-body>
+    <h1>Topics</h1>
+    <div class="topic-grid">
+      {
+        TOPICS.map((topic) => (
+          <article class="topic-card">
+            <h2><a href={withBase(`topics/${topic.id}/`)}>{topic.label}</a></h2>
+            <p>{topic.description}</p>
+          </article>
+        ))
+      }
+    </div>
+  </main>
+</SiteLayout>

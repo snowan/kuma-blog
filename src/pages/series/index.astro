@@ -1,0 +1,13 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { SERIES, withBase } from "../../lib/site";
+---
+
+<SiteLayout title="Series" description="Recurring Kuma Blog research and experiment series.">
+  <main id="main-content" data-pagefind-body>
+    <h1>Series</h1>
+    <ul class="content-list">
+      {SERIES.map((series) => <li class="content-row"><a href={withBase(`series/${series.id}/`)}>{series.label}</a></li>)}
+    </ul>
+  </main>
+</SiteLayout>

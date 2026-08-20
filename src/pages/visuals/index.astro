@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+import ContentIndex from "../../components/ContentIndex.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+
+const entries = await getCollection("visuals", ({ data }) => data.status === "published");
+entries.sort((left, right) =>
+  (right.data.publishedAt?.getTime() ?? 0) - (left.data.publishedAt?.getTime() ?? 0),
+);
+---
+
+<SiteLayout title="Visuals" description="Kuma Blog visual explainers and illustrated field notes.">
+  <main id="main-content" data-pagefind-body>
+    <div class="reading-column">
+      <p class="eyebrow">Visual learning</p>
+      <h1>Visuals</h1>
+      <p class="lede">Accessible diagrams, visual explainers, and illustrated field notes.</p>
+      <ContentIndex
+        entries={entries}
+        route="visuals"
+        emptyMessage="Reviewed visual explainers will appear here after source and accessibility checks."
+      />
+    </div>
+  </main>
+</SiteLayout>

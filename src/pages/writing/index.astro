@@ -1,0 +1,25 @@
+---
+import { getCollection } from "astro:content";
+import ContentIndex from "../../components/ContentIndex.astro";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+
+const entries = await getCollection("writing", ({ data }) => data.status === "published");
+entries.sort((left, right) =>
+  (right.data.publishedAt?.getTime() ?? 0) - (left.data.publishedAt?.getTime() ?? 0),
+);
+---
+
+<SiteLayout title="Writing" description="Canonical Kuma Blog essays and technical guides.">
+  <main id="main-content" data-pagefind-body>
+    <div class="reading-column">
+      <p class="eyebrow">Publication</p>
+      <h1>Writing</h1>
+      <p class="lede">Research essays, canonical explainers, reviews, and technical guides.</p>
+      <ContentIndex
+        entries={entries}
+        route="writing"
+        emptyMessage="Canonical articles will appear here after reviewed migration."
+      />
+    </div>
+  </main>
+</SiteLayout>

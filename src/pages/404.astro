@@ -1,0 +1,14 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { withBase } from "../lib/site";
+---
+
+<SiteLayout title="Not found" description="The requested Kuma Blog page was not found." noindex>
+  <main id="main-content">
+    <div class="reading-column">
+      <p class="eyebrow">404</p>
+      <h1>That field note is not here.</h1>
+      <p><a href={withBase()}>Return to Kuma Blog</a></p>
+    </div>
+  </main>
+</SiteLayout>

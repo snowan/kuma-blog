@@ -1,0 +1,35 @@
+---
+import SiteLayout from "../layouts/SiteLayout.astro";
+import { TOPICS, withBase } from "../lib/site";
+---
+
+<SiteLayout>
+  <main id="main-content" data-pagefind-body>
+    <section class="reading-column">
+      <p class="eyebrow">Kuma Research Journal</p>
+      <h1>Field notes on reliable AI systems</h1>
+      <p class="lede">
+        A curated publication about agents, harnesses, memory, evaluation,
+        reliability, and the systems that make model behavior useful.
+      </p>
+      <p class="notice">
+        The site foundation is active. Existing posts remain outside the public
+        collection until their migration is reviewed.
+      </p>
+    </section>
+
+    <section aria-labelledby="topics-heading">
+      <h2 id="topics-heading">Topics</h2>
+      <div class="topic-grid">
+        {
+          TOPICS.map((topic) => (
+            <article class="topic-card">
+              <h3><a href={withBase(`topics/${topic.id}/`)}>{topic.label}</a></h3>
+              <p>{topic.description}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+</SiteLayout>

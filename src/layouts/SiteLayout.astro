@@ -1,0 +1,47 @@
+---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { SITE_DESCRIPTION, SITE_TITLE, withBase } from "../lib/site";
+import "../styles/global.css";
+
+interface Props {
+  title?: string | undefined;
+  description?: string | undefined;
+  canonicalUrl?: string | undefined;
+  noindex?: boolean | undefined;
+}
+
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  canonicalUrl,
+  noindex = false,
+} = Astro.props;
+const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
+const canonical = canonicalUrl ?? new URL(Astro.url.pathname, Astro.site).toString();
+const feedUrl = new URL(withBase("rss.xml"), Astro.site).toString();
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={withBase("favicon.svg")} />
+    <link rel="alternate" type="application/rss+xml" title={SITE_TITLE} href={feedUrl} />
+    <title>{pageTitle}</title>
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <div class="site-shell">
+      <SiteHeader />
+      <slot />
+      <SiteFooter />
+    </div>
+  </body>
+</html>

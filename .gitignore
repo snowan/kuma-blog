@@ -32,7 +32,10 @@ venv/
 
 # Node
 node_modules/
+.astro/
+.cache/
+.playwright-cli/
 
 # Build artifacts
-lib/
+/lib/
 target/
