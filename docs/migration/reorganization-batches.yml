@@ -1,0 +1,237 @@
+schema_version: 1
+updated_at: "2026-08-20"
+status: "proposal-only"
+source_revision: "aee25b604cc4db2cb6f6ed19b5f7ae0b42030c0c"
+audit_record: "docs/migration/2026-08-20-reorganization-audit.md"
+
+authorization:
+  moves_approved: false
+  archives_approved: false
+  deletions_approved: false
+  publication_approved: false
+  history_rewrite_approved: false
+  note: >-
+    This file is a review queue. No batch becomes executable until its exact
+    paths and action receive explicit approval in a later PR.
+
+precedence:
+  - "Exact paths override globs."
+  - "Canonical content-map entries override archive families."
+  - "Assets move only with an identified owner."
+  - "A source stays in place when it matches more than one unresolved batch."
+  - "A deletion candidate stays in place unless deletion is separately approved."
+
+batches:
+  - id: "repair-known-relative-links"
+    sequence: 1
+    action: "repair-in-place"
+    status: "ready-for-maintenance-review"
+    tracked_files: 2
+    sources:
+      - "AI-manga-learnings/future-of-enterprise-software/future-of-enterprise-software.md"
+      - "Books/Designing-Data-Intensive-Applications/Chapter1-Reliability-Scalability-Maintainability-Applications.md"
+    requirements:
+      - "Confirm the intended tracked image visually."
+      - "Render or inspect the Markdown after the path change."
+      - "Run the complete relative-link audit."
+    rollback: "Revert only the two link-line edits."
+
+  - id: "archive-ai-news-digests"
+    sequence: 2
+    action: "move"
+    status: "pending-explicit-approval"
+    sources:
+      - "AI/reports/**"
+    destination: "archive/ai-news-digests/"
+    tracked_files: 2
+    tracked_bytes: 21489
+    exclusions: []
+    requirements:
+      - "Keep filenames and dates."
+      - "Confirm neither report is linked from a public route."
+      - "Do not rewrite archive-only prose to satisfy scanner flags."
+    rollback: "Move the two files back to their exact original paths."
+
+  - id: "archive-system-design"
+    sequence: 3
+    action: "move"
+    status: "pending-explicit-approval"
+    sources:
+      - "AI-blogs/design-*.md"
+      - "AI-blogs/chess-system-design.md"
+    destination: "archive/system-design/"
+    tracked_files: 13
+    tracked_bytes: 644835
+    exclusions:
+      - path: "AI-blogs/design-chatgpt-ai-inference-platform.md"
+        until: "llm-serving-control-plane publication and redirect approval"
+    requirements:
+      - "Expand the glob to an exact path list in the implementation PR."
+      - "Check inbound and relative links for every file."
+      - "Preserve source history for the inference consolidation record."
+    rollback: "Restore every moved file using the reviewed exact-path ledger."
+
+  - id: "archive-algorithms"
+    sequence: 4
+    action: "move"
+    status: "pending-explicit-approval"
+    sources:
+      - "Leetcode/**"
+      - "Google/chunked-palindrome-cn.md"
+    destination: "archive/leetcode/"
+    tracked_files: 95
+    tracked_bytes: 326108
+    exclusions: []
+    requirements:
+      - "Protect English and Chinese translations as distinct documents."
+      - "Protect algorithm variants such as rotated-array problem I and II."
+      - "Review the Google and LeetCode chunked-palindrome pair by exact path."
+      - "Retain Unicode filenames."
+    rollback: "Restore paths from the exact migration ledger; do not transliterate filenames."
+
+  - id: "archive-books-and-readings"
+    sequence: 5
+    action: "move"
+    status: "pending-explicit-approval"
+    sources:
+      - "Books/**"
+      - "Readings/**"
+    destination: "archive/books/"
+    tracked_files: 12
+    tracked_bytes: 636938
+    exclusions:
+      - path: "Books/System-Performance/Chapter1.md"
+        disposition: "hold-or-move-without-deleting"
+      - path: "Readings/2020/Design-Data-Intensive-Application.md"
+        disposition: "hold-or-move-without-deleting"
+    requirements:
+      - "Repair the known Designing Data-Intensive Applications image link first."
+      - "Keep book assets beside their owning notes."
+      - "Handle deletion candidates only in a separately approved action."
+    rollback: "Restore the Books and Readings trees from the exact migration ledger."
+
+  - id: "archive-general-engineering"
+    sequence: 6
+    action: "move"
+    status: "pending-explicit-approval"
+    sources:
+      - "Setup/**"
+      - "Languages/**"
+      - "kubernetes/**"
+    destination: "archive/setup/"
+    tracked_files: 4
+    tracked_bytes: 9503
+    exclusions:
+      - "Google/chunked-palindrome-cn.md belongs to archive-algorithms."
+    requirements:
+      - "Preserve runbook commands verbatim unless a concrete defect is verified."
+      - "Keep the Japanese learning note distinct from engineering setup notes within the archive."
+    rollback: "Restore all four files to their original roots."
+
+  - id: "archive-personal"
+    sequence: 7
+    action: "move"
+    status: "pending-explicit-approval"
+    sources:
+      - "Entertainment/**"
+      - "travels/**"
+    destination: "archive/personal/"
+    tracked_files: 18
+    tracked_bytes: 45636608
+    exclusions: []
+    requirements:
+      - "Review travel photos for public-repository suitability and metadata."
+      - "Keep photo filenames stable."
+      - "Do not optimize or recompress originals in the move-only PR."
+    rollback: "Restore both trees without modifying binary contents."
+
+  - id: "split-visual-studio-material"
+    sequence: 8
+    action: "classify-then-move"
+    status: "blocked-on-owner-and-license-ledger"
+    sources:
+      - "AI-manga-learnings/**"
+      - "AI-slide-learnings/**"
+      - "AI/AI-manga-learnings/**"
+      - "AI-blogs/infographic/**"
+    destinations:
+      published_final: "src/content/visuals/<topic>/ and src/assets/articles/<slug>/"
+      support_material: "studio/storyboards/ or studio/prompts/"
+      retained_sources: "studio/research/"
+      retired_material: "archive/legacy-ai/"
+    tracked_files: 174
+    tracked_bytes: 240303174
+    requirements:
+      - "Create an exact owner, role, provenance, and license ledger first."
+      - "Select one reviewed final visual per public explainer."
+      - "Keep prompts, storyboards, PDFs, and intermediates out of dist."
+      - "Do not imitate protected characters, settings, compositions, or trade dress."
+      - "Do not combine classification, recompression, and moves in one PR."
+    rollback: "Use the owner ledger to restore each binary byte-for-byte."
+
+  - id: "separate-embedded-applications"
+    sequence: 9
+    action: "architecture-decision"
+    status: "deferred"
+    sources:
+      - "AI/kuma-ai-agents/**"
+    proposed_destinations:
+      - "labs/experiments/"
+      - "dedicated repositories"
+    tracked_files: 36
+    tracked_bytes: 105182
+    requirements:
+      - "Choose monorepo labs versus dedicated repositories per application."
+      - "Preserve current tests, CI paths, and environment examples."
+      - "Resolve dependency alerts in place before any structural move."
+      - "Never publish application source as blog content."
+    rollback: "No move is allowed until the destination ADR defines rollback."
+
+  - id: "classify-shared-assets"
+    sequence: 10
+    action: "classify"
+    status: "blocked-on-owner-ledger"
+    sources:
+      - "assets/**"
+      - "AI-blogs/resources/**"
+      - "AI/**/resources/**"
+    proposed_destinations:
+      - "src/assets/articles/<slug>/"
+      - "studio/research/"
+      - "archive/"
+    requirements:
+      - "Record owning document, provenance, license, role, and byte size."
+      - "Deduplicate only byte-identical assets with the same ownership and license."
+      - "Do not rewrite Git history or introduce Git LFS without a separate decision."
+    rollback: "Classification changes metadata only; later moves use exact owner records."
+
+  - id: "delete-empty-placeholders"
+    sequence: 11
+    action: "delete"
+    status: "pending-explicit-approval"
+    sources:
+      - "Books/System-Performance/Chapter1.md"
+      - "Readings/2020/Design-Data-Intensive-Application.md"
+    tracked_files: 2
+    tracked_bytes: 0
+    evidence: "Both files are zero-byte and form the only exact duplicate group."
+    requirements:
+      - "Approve both exact paths."
+      - "Confirm no inbound links rely on either placeholder."
+      - "Land deletion separately from archive moves."
+    rollback: "Restore the two empty files from Git history."
+
+  - id: "retire-canonical-merge-sources"
+    sequence: 12
+    action: "archive-or-delete"
+    status: "blocked-on-publication-and-redirect-approval"
+    sources:
+      - "AI-blogs/agent-harness-deep-dive.md"
+      - "AI-blogs/design-chatgpt-ai-inference-platform.md"
+    requirements:
+      - "Publish the replacement canonical articles with explicit approval."
+      - "Verify canonical routes and static redirects below /kuma-blog/."
+      - "Inventory unique material one final time."
+      - "Request an exact archive or deletion decision for each source."
+    rollback: "Restore the source and remove its redirect in one reviewed revert."
+

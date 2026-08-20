@@ -1,153 +1,85 @@
-# 🐻 Kuma Blog
+# Kuma Blog
 
-A personal knowledge repository featuring AI research, technical learning notes, LeetCode solutions, and curated content on emerging technologies.
+Field notes on reliable AI systems: agents and harnesses, memory and context,
+evals and reliability, and inference systems.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Last Updated](https://img.shields.io/badge/updated-2026--01-brightgreen)
-[![Blog](https://img.shields.io/badge/📚_Blog-GitBook-orange)](https://snowan.gitbook.io/study-notes/)
+[Read the GitHub Pages site](https://snowan.github.io/kuma-blog/) ·
+[Editorial policy](docs/editorial/editorial-policy.md) ·
+[Target architecture](docs/architecture/information-architecture.md) ·
+[Reorganization proposal](docs/migration/reorganization-batches.yml)
 
----
+## Repository boundary
 
-## 📖 Overview
+Kuma Blog currently contains two deliberately separate layers:
 
-**Kuma Blog** is a comprehensive collection of technical writings, research analyses, and learning materials focused primarily on Artificial Intelligence, software engineering, and problem-solving. The repository serves as both a personal knowledge base and a resource for anyone interested in staying current with AI advancements.
+- `src/` is the curated Astro publication. Only reviewed entries with
+  `status: published` may enter the generated site.
+- The legacy roots contain research, visual sources, applications, algorithms,
+  book notes, and personal material. They remain visible in the public Git
+  repository but are excluded from the generated Pages artifact.
 
-🔗 **Read the blog**: [snowan.gitbook.io/study-notes](https://snowan.gitbook.io/study-notes/)
+The target model separates publication, labs, studio material, and archive
+content. It will be implemented in small, explicitly approved migration PRs;
+the proposal does not authorize moves or deletion.
 
----
-
-## 📂 Repository Structure
-
-```
+```text
 kuma-blog/
-├── AI/                          # Main AI content hub
-│   ├── Kuma_AI_Daily_NewsLetter/  # 160+ daily AI news digests
-│   ├── AI_Blogs/                   # In-depth AI blog posts
-│   ├── AI-article-analysis/        # Deep-dive analyses of AI articles/papers
-│   ├── kuma-ai-agents/             # AI agent projects and experiments
-│   ├── ai-resources/               # Curated AI learning resources
-│   ├── michi_ai_papers/            # Research paper summaries
-│   └── claude-code/                # Claude Code tooling resources
-│
-├── AI-manga-learnings/          # AI paper summaries in visual/comic format
-│   ├── magma-agentic-memory/      # MAGMA paper visual breakdown
-│   ├── simplemem-lifelong-memory/ # SimpleMem paper analysis
-│   ├── openai-data-agent/         # OpenAI Data Agent comic
-│   └── future-of-enterprise-software/
-│
-├── AI-slide-learnings/          # AI concepts in slide deck format
-│   └── context-graphs-trillion-dollar/
-│
-├── Leetcode/                    # Algorithm problem solutions
-│   ├── 30DayChallenge/            # 30-day coding challenges
-│   ├── python/                     # Python solutions
-│   ├── English Solution/           # Solutions in English
-│   └── 中文版解题/                  # Solutions in Chinese
-│
-├── Books/                       # Book notes and summaries
-│   ├── Designing-Data-Intensive-Applications/
-│   └── System-Performance/
-│
-├── Readings/                    # Reading notes and reviews
-│
-├── Entertainment/               # Entertainment-related content
-│
-├── Languages/                   # Programming language learnings
-│
-├── kubernetes/                  # Kubernetes notes and guides
-│
-├── Setup/                       # Development setup guides
-│
-├── Google/                      # Google-specific content
-│
-└── travels/                     # Travel logs
+├── src/       # reviewed public site and content collections
+├── labs/      # reproducible, privacy-safe experiments
+├── studio/    # drafts, research, prompts, and intermediates
+├── archive/   # preserved legacy notes outside the site
+├── public/    # explicitly reviewed static downloads
+├── tools/     # site and content validation
+├── tests/     # content, links, accessibility, and base-path checks
+└── docs/      # architecture, decisions, policy, and migration records
 ```
 
----
+See the [information architecture](docs/architecture/information-architecture.md)
+for the complete proposed folder structure and URL model.
 
-## ✨ Key Features
+## Local development
 
-### 🤖 AI Daily Newsletter
-Over **160+ daily AI news digests** covering the latest developments in:
-- Large Language Models (LLMs)
-- AI Safety & Security
-- Industry news from OpenAI, Anthropic, Google, Microsoft, etc.
-- Research breakthroughs
-- AI funding and business news
+Requirements: Node.js 22.12 or newer and pnpm 10.8.1 or newer.
 
-### 📊 AI Paper Analyses
-Deep-dive analyses of cutting-edge AI research papers, including:
-- **MAGMA**: Agentic Memory systems
-- **SimpleMem**: Lifelong memory for AI agents
-- **Context Graphs**: The trillion-dollar AI opportunity
-- Advanced tool use in AI systems
-
-### 💡 Visual Learning Content
-Unique visual breakdowns of complex AI concepts:
-- **AI Manga Learnings**: Research papers transformed into visual comic format
-  - OpenAI Data Agent (Kawaii Style)
-  - MAGMA Agentic Memory
-- **AI Slide Decks**: Presentation-style summaries of key AI topics
-
-### 🧮 LeetCode Solutions
-Algorithm problem solutions in multiple languages:
-- Python implementations
-- Solutions in both English and Chinese
-- Organized by challenges and difficulty levels
-
-### 📚 Technical Book Notes
-Detailed notes from essential engineering books:
-- *Designing Data-Intensive Applications*
-- *Systems Performance*
-
----
-
-## 🚀 Getting Started
-
-Clone the repository:
 ```bash
-git clone https://github.com/snowan/kuma-blog.git
-cd kuma-blog
+pnpm install --frozen-lockfile
+pnpm dev
 ```
 
-Browse the content directly or open in your favorite markdown editor/viewer.
+The production site is a static Astro build configured for the GitHub Pages
+project path `/kuma-blog/`.
 
----
+```bash
+pnpm verify
+```
 
-## 📅 Recent Updates
+Verification runs Astro diagnostics, contrast checks, the production build,
+Pagefind indexing, base-path checks, route checks, and artifact leakage checks.
 
-- **AI Daily Newsletters**: Updated through November 2025
-- **AI Paper Analyses**: New analyses on context engineering and agentic memory
-- **Visual Learnings**: New manga-style breakdowns of AI research
+## Content workflow
 
----
+1. Research or draft outside the public collection.
+2. Apply the editorial evidence and privacy checklist.
+3. Add reviewed content under `src/content/` with validated metadata.
+4. Test the selected Paper Journal, Control Room, or Mori Notebook presentation.
+5. Request publication approval separately from deployment approval.
 
-## 🛠️ Contributing
+Repository presence is not publication. Draft entries are excluded from the
+production artifact.
 
-This is primarily a personal knowledge repository, but suggestions and corrections are welcome! Feel free to:
-1. Open an issue for corrections or suggestions
-2. Submit a pull request for fixes
+## Legacy reorganization
 
----
+The latest audit covers 286 tracked Markdown and MDX documents. Its scanner
+results are triage cues, not authorship or deletion verdicts. Review the
+[audit snapshot](docs/migration/2026-08-20-reorganization-audit.md) and
+[proposed batches](docs/migration/reorganization-batches.yml) before changing a
+legacy path.
 
-## 📜 License
+No archive move or deletion is approved by those records. Every implementation
+PR must use an exact path ledger, check links and redirects, preserve protected
+translations and variants, and provide a rollback.
 
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+## License and contributions
 
----
-
-## 👤 Author
-
-**snowan** - [GitHub Profile](https://github.com/snowan)
-
----
-
-## 🌟 Support
-
-If you find this repository helpful, please consider giving it a ⭐!
-
----
-
-<p align="center">
-  <i>Generated with 🐻 by Kuma</i>
-</p>
+The repository is licensed under the [MIT License](LICENSE). Corrections and
+focused improvements are welcome through issues or small pull requests.
