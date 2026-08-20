@@ -1,0 +1,187 @@
+---
+title: "Context Engineering for Agents: A Working Map"
+description: "A decision-oriented map for selecting, ordering, refreshing, and evaluating the information an agent receives at each model call."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: essay
+presentation: journal
+topic: memory-context
+tags: [agents, context-engineering, retrieval, memory, evaluation]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "Context engineering is the repeated construction of a model call, not a synonym for a longer prompt.",
+  "The context window should be a bounded view over durable, governed state rather than the only copy of that state.",
+  "Context quality needs task-level evaluation: relevance, sufficiency, freshness, provenance, and cost all matter.",
+]} />
+
+Prompt engineering asks how to express an instruction. **Context engineering asks what the model should be allowed to see for this step, why it is there, and when it should be replaced.**
+
+That wider boundary matters for agents. A tool-using loop accumulates instructions, user messages, plans, tool definitions, observations, retrieved documents, errors, summaries, and memory. Passing all of it forward is not neutral. It changes latency and cost, creates more places for stale or conflicting evidence to hide, and can make the next action less reliable even when the model accepts the token count.
+
+Anthropic defines context engineering as curating and maintaining the information used during inference, including instructions, tools, external data, and message history. Its practical target is the smallest high-signal set that still makes the desired behavior likely ([Anthropic, “Effective context engineering for AI agents”](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)).
+
+## Context is a runtime product
+
+<SystemDiagram
+  title="The context construction loop"
+  steps={[
+    { label: "Write", detail: "Persist observations and decisions" },
+    { label: "Select", detail: "Choose task-relevant evidence" },
+    { label: "Compress", detail: "Reduce size without losing recovery" },
+    { label: "Isolate", detail: "Keep unrelated work out" },
+    { label: "Evaluate", detail: "Measure the resulting behavior" },
+  ]}
+  caption="Write, select, compress, and isolate are adapted from LangChain's context-engineering taxonomy. Evaluation closes the loop for this article."
+/>
+
+The first four operations are a useful organizing framework from LangChain ([“Context Engineering for Agents”](https://www.langchain.com/blog/context-engineering-for-agents)). I add **evaluate** because a tidy context pipeline can still select the wrong material. The artifact to optimize is not the prompt; it is the agent's behavior on representative tasks.
+
+This leads to a practical distinction:
+
+| Layer | What it contains | Typical lifetime |
+| --- | --- | --- |
+| Durable state | Events, approved memory, source artifacts, task records | Beyond one model call or session |
+| Retrieval layer | Indexes, metadata, queries, access rules | Rebuilt or refreshed as sources change |
+| Context assembler | Selection, ordering, compression, token budgeting | Once per model call |
+| Active context | The exact tokens given to the model | One inference request |
+
+The active context is a **view**. If it is also the only copy of the task state, compaction and context resets become destructive operations.
+
+## Six context classes
+
+I use six classes during design reviews. This is an author synthesis, not a standard taxonomy.
+
+### 1. Stable policy and role
+
+Include the durable constraints that define authority, safety boundaries, output contracts, and tool use. Keep the stable prefix deterministic when provider caching matters, but do not let cache optimization prevent a necessary policy update.
+
+### 2. Task contract
+
+State the requested outcome, scope, completion evidence, budgets, and unresolved approvals. A plan belongs here only while it reflects current state.
+
+### 3. Working state
+
+Keep the recent decisions, failures, and next action required for continuity. A progress ledger or task snapshot is usually more useful than replaying an entire transcript.
+
+### 4. Environment and tools
+
+Expose the tools and schemas required for the current work. Tool descriptions should be distinct and token-efficient. When a large tool catalog exists, use discovery or staged loading rather than inserting every definition before the user request.
+
+### 5. Retrieved evidence
+
+Load source passages, files, records, and prior examples that are relevant to this decision. Retain a source identifier and freshness signal so an answer can be checked later.
+
+### 6. Recent observations
+
+Keep raw results when exact details affect the next step. Replace bulky, older results with governed references or summaries only when the original remains recoverable.
+
+## Four selection strategies
+
+No single retrieval strategy fits every class.
+
+| Strategy | Best for | Main risk |
+| --- | --- | --- |
+| Always loaded | Small, stable policy and task identity | Staleness and prefix bloat |
+| Just in time | Large files, codebases, documents, changing data | Missing evidence because discovery failed |
+| Compacted | Long histories with repetitive observations | Irreversible loss of a detail needed later |
+| Isolated | Focused research or specialized subtasks | A weak handoff drops cross-cutting constraints |
+
+Anthropic describes just-in-time retrieval with lightweight references such as file paths, queries, and links. It also identifies compaction, structured note-taking, and isolated sub-agent contexts as different responses to long-horizon work. These are alternatives with different failure modes, not a maturity ladder.
+
+Manus reports a related production pattern: write large observations to the filesystem, preserve a restorable reference, and load them on demand. The same report emphasizes stable prefixes for KV-cache efficiency ([Manus, “Context Engineering for AI Agents”](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)). Those observations come from one product architecture; they should be tested before being generalized to another model, provider, or workload.
+
+## The five failure questions
+
+When an agent fails, “the context was bad” is too vague to fix. Classify the failure:
+
+1. **Availability:** Did the system have access to the required information?
+2. **Selection:** Was that information retrieved for the relevant step?
+3. **Focus:** Was it surrounded by so much noise that the model failed to use it?
+4. **Freshness:** Was the selected information still valid?
+5. **Provenance:** Could the system or reviewer trace it to an authorized source?
+
+This separates model capability from pipeline failure. If the necessary fact never entered the active context, retrying the same call with a different temperature does not repair the system.
+
+<Callout title="Context is not permission" kind="warning">
+  <p>Retrieving a document does not prove the agent was authorized to read or reuse it. Selection must apply access rules before content enters the model call, and persisted summaries must retain the source's policy and provenance.</p>
+</Callout>
+
+## How to evaluate a context pipeline
+
+Start with task outcomes, then inspect the context that produced them.
+
+For each held-out task, record a **context manifest**:
+
+- selected source identifiers and versions;
+- excluded candidates and the selection rule;
+- token contribution by context class;
+- any summaries and their source references;
+- policy decisions and access scope;
+- task result, cost, latency, and grader evidence.
+
+Then run controlled comparisons:
+
+- remove one context class and measure the change;
+- replace a summary with the raw source;
+- inject a stale but plausible record and test freshness handling;
+- include conflicting sources and test precedence;
+- hide a niche fact and test discovery;
+- reset the active window and test whether the handoff preserves progress.
+
+Useful context metrics are diagnostic, not substitutes for outcomes. Retrieval recall does not prove that the model used the evidence. Fewer tokens do not prove higher reliability. A task can pass for the wrong reason, so read representative transcripts and inspect environment state as well as aggregate scores.
+
+<EvidenceNote title="Evidence boundary" source="Primary engineering reports and research preprints" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>The cited sources establish recurring design patterns, not a universal best architecture. Claims from product reports describe those products; arXiv papers linked below are preprints unless a venue is stated. Kuma Blog's recommendation is to select the simplest strategy that passes workload-specific held-out tests.</p>
+</EvidenceNote>
+
+## A working review checklist
+
+- [ ] The requested outcome and completion evidence are explicit.
+- [ ] Durable state exists outside the active context window.
+- [ ] Every retrieved item has a source, freshness signal, and access scope.
+- [ ] Large observations remain recoverable after compaction.
+- [ ] Stable instructions do not conflict with recent task state.
+- [ ] Tool descriptions are distinct and relevant to the task.
+- [ ] Isolation boundaries preserve global policy and task constraints.
+- [ ] Held-out tasks cover missing, noisy, stale, and conflicting context.
+- [ ] Context manifests make selection decisions inspectable.
+
+The companion guide, <a href={withBase("writing/filesystem-context-engineering/")}>Filesystem Context Engineering for Long-Running Agents</a>, turns this map into an artifact and handoff design.
+
+## Sources and further reading
+
+- [Anthropic: Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents)
+- [Anthropic: Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps)
+- [Manus: Context Engineering for AI Agents](https://manus.im/blog/Context-Engineering-for-AI-Agents-Lessons-from-Building-Manus)
+- [LangChain: Context Engineering for Agents](https://www.langchain.com/blog/context-engineering-for-agents)
+- [LangChain: How agents can use filesystems for context engineering](https://www.langchain.com/blog/how-agents-can-use-filesystems-for-context-engineering)
+- [Xu et al.: Everything is Context: Agentic File System Abstraction for Context Engineering](https://arxiv.org/abs/2512.05470)
+- [McMillan: Structured Context Engineering for File-Native Agentic Systems](https://arxiv.org/abs/2602.05447)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Prepared a decision-oriented context-engineering draft from the legacy resource map and refreshed primary sources." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/filesystem-context-engineering/"),
+    title: "Filesystem Context Engineering for Long-Running Agents",
+    description: "An implementation pattern for governed artifacts, selective loading, compaction, and handoff.",
+  },
+  {
+    href: withBase("writing/demystifying-agent-harness/"),
+    title: "What an Agent Harness Actually Does",
+    description: "Where context assembly fits within the broader control layer around a model.",
+  },
+]} />

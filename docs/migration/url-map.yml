@@ -51,13 +51,13 @@ entries:
 
   - source: "AI/ai-resources/context-engineering/context-engineering.md"
     target: "/writing/context-engineering/"
-    action: "migrate-after-scope-review"
-    status: "pending"
+    action: "migrate-canonical"
+    status: "canonical-draft-prepared-publication-pending"
 
   - source: "AI/ai-resources/context-engineering/context-engineering-with-file-system.md"
     target: "/writing/filesystem-context-engineering/"
-    action: "migrate-after-scope-review"
-    status: "pending"
+    action: "migrate-canonical"
+    status: "canonical-draft-prepared-publication-pending"
 
   - source: "AI/AI-article-analysis/memory-in-the-age-of-agent-survey.md"
     target: "/writing/agent-memory-survey/"
