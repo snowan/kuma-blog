@@ -5,6 +5,7 @@ on:
     branches: [master]
     paths:
       - ".github/workflows/site-ci.yml"
+      - ".github/workflows/static.yml"
       - "astro.config.mjs"
       - "package.json"
       - "pnpm-lock.yaml"
@@ -16,6 +17,7 @@ on:
     branches: [master]
     paths:
       - ".github/workflows/site-ci.yml"
+      - ".github/workflows/static.yml"
       - "astro.config.mjs"
       - "package.json"
       - "pnpm-lock.yaml"
