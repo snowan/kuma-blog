@@ -1,0 +1,17 @@
+---
+import Caption from "./Caption.astro";
+
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string | undefined;
+  wide?: boolean | undefined;
+}
+
+const { src, alt, caption, wide = false } = Astro.props;
+---
+
+<figure class:list={["figure", { "figure-wide": wide }]}>
+  <img src={src} alt={alt} loading="lazy" decoding="async" />
+  {caption && <Caption>{caption}</Caption>}
+</figure>

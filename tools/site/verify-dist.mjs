@@ -26,6 +26,10 @@ const required = [
   "404.html",
   "about/index.html",
   "archive/index.html",
+  "design-system/control/index.html",
+  "design-system/index.html",
+  "design-system/journal/index.html",
+  "design-system/mori/index.html",
   "lab-notes/index.html",
   "methodology/index.html",
   "rss.xml",
@@ -127,6 +131,24 @@ if (!rss.includes("<link>https://snowan.github.io/kuma-blog/</link>")) {
 const sitemap = readFileSync(join(dist, "sitemap-0.xml"), "utf8");
 if (sitemap.includes("/404")) {
   fail("404 route leaked into sitemap");
+}
+if (sitemap.includes("/design-system/")) {
+  fail("noindex design previews leaked into sitemap");
+}
+
+for (const presentation of ["journal", "control", "mori"]) {
+  const preview = readFileSync(join(dist, `design-system/${presentation}/index.html`), "utf8");
+  for (const expected of [
+    `data-presentation="${presentation}"`,
+    '<meta name="robots" content="noindex">',
+    "From model call to reliable agent",
+    "A bounded agent run",
+    'aria-label="On this page"',
+  ]) {
+    if (!preview.includes(expected)) {
+      fail(`${presentation} design preview is missing ${expected}`);
+    }
+  }
 }
 
 if (

@@ -1,0 +1,30 @@
+---
+interface Step {
+  label: string;
+  detail?: string | undefined;
+}
+
+interface Props {
+  title: string;
+  steps: Step[];
+  caption?: string | undefined;
+}
+
+const { title, steps, caption } = Astro.props;
+---
+
+<figure class="system-diagram figure-wide" aria-labelledby="diagram-title">
+  <div class="diagram-heading">
+    <span class="diagram-kicker">System diagram</span>
+    <strong id="diagram-title">{title}</strong>
+  </div>
+  <ol>
+    {steps.map((step, index) => (
+      <li>
+        <span class="diagram-index" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <span><strong>{step.label}</strong>{step.detail && <small>{step.detail}</small>}</span>
+      </li>
+    ))}
+  </ol>
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>

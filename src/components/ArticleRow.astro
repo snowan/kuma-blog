@@ -1,0 +1,15 @@
+---
+interface Props {
+  href: string;
+  title: string;
+  description: string;
+  meta?: string | undefined;
+}
+
+const { href, title, description, meta } = Astro.props;
+---
+
+<article class="article-row">
+  <div>{meta && <p class="eyebrow">{meta}</p>}<h3><a href={href}>{title}</a></h3></div>
+  <p>{description}</p>
+</article>

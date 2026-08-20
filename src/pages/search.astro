@@ -1,11 +1,10 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import Search from "../components/Search.astro";
 import { withBase } from "../lib/site";
 
 const pagefindCss = withBase("pagefind/pagefind-component-ui.css");
 const pagefindScript = withBase("pagefind/pagefind-component-ui.js");
-const pagefindBundle = withBase("pagefind/");
-const baseUrl = withBase();
 ---
 
 <SiteLayout title="Search" description="Search published Kuma Blog writing, lab notes, and visuals.">
@@ -14,10 +13,7 @@ const baseUrl = withBase();
     <div class="reading-column">
       <p class="eyebrow">Published content only</p>
       <h1>Search</h1>
-      <div class="search-shell">
-        <pagefind-config bundle-path={pagefindBundle} base-url={baseUrl}></pagefind-config>
-        <pagefind-searchbox placeholder="Search Kuma Blog" show-sub-results></pagefind-searchbox>
-      </div>
+      <Search />
       <noscript>Search requires JavaScript. RSS and topic indexes remain available without it.</noscript>
     </div>
   </main>

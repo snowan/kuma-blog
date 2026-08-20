@@ -1,0 +1,28 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { withBase } from "../../lib/site";
+
+const presentations = [
+  { id: "journal", label: "Paper Journal", detail: "Canonical essays and research explainers." },
+  { id: "control", label: "Control Room", detail: "Guides, experiments, evals, and runbooks." },
+  { id: "mori", label: "Mori Notebook", detail: "Personal field notes and illustrated essays." },
+] as const;
+---
+
+<SiteLayout title="Design system previews" noindex>
+  <main id="main-content" data-pagefind-ignore>
+    <section class="reading-column">
+      <p class="eyebrow">Internal review surface · Not indexed</p>
+      <h1>One system, three presentations</h1>
+      <p class="lede">Review the same semantic article structure through each approved Kuma Blog presentation.</p>
+    </section>
+    <div class="topic-grid">
+      {presentations.map((item) => (
+        <article class="topic-card">
+          <h2><a href={withBase(`design-system/${item.id}/`)}>{item.label}</a></h2>
+          <p>{item.detail}</p>
+        </article>
+      ))}
+    </div>
+  </main>
+</SiteLayout>

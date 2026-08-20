@@ -1,0 +1,20 @@
+---
+interface Article {
+  href: string;
+  title: string;
+  description: string;
+}
+
+interface Props {
+  articles: Article[];
+}
+
+const { articles } = Astro.props;
+---
+
+{articles.length > 0 && (
+  <aside class="related-articles" aria-labelledby="related-heading">
+    <h2 id="related-heading">Related reading</h2>
+    <ul>{articles.map((article) => <li><a href={article.href}>{article.title}</a><p>{article.description}</p></li>)}</ul>
+  </aside>
+)}

@@ -1,0 +1,18 @@
+---
+import { withBase } from "../lib/site";
+
+interface Props {
+  id: string;
+  label: string;
+  description: string;
+  index?: number | undefined;
+}
+
+const { id, label, description, index } = Astro.props;
+---
+
+<article class="topic-card">
+  {index !== undefined && <span class="topic-number" aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>}
+  <h3><a href={withBase(`topics/${id}/`)}>{label}</a></h3>
+  <p>{description}</p>
+</article>

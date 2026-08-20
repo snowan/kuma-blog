@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { formatDate, slugFromId, withBase } from "../lib/site";
+import ArticleRow from "./ArticleRow.astro";
 
 type IndexEntry =
   | CollectionEntry<"writing">
@@ -20,10 +21,13 @@ const { entries, route, emptyMessage } = Astro.props;
   entries.length > 0 ? (
     <ol class="content-list">
       {entries.map((entry) => (
-        <li class="content-row">
-          <a href={withBase(`${route}/${slugFromId(entry.id)}/`)}>{entry.data.title}</a>
-          <p>{entry.data.description}</p>
-          {entry.data.publishedAt && <small>{formatDate(entry.data.publishedAt)}</small>}
+        <li>
+          <ArticleRow
+            href={withBase(`${route}/${slugFromId(entry.id)}/`)}
+            title={entry.data.title}
+            description={entry.data.description}
+            meta={entry.data.publishedAt ? formatDate(entry.data.publishedAt) : undefined}
+          />
         </li>
       ))}
     </ol>

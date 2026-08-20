@@ -9,6 +9,7 @@ interface Props {
   description?: string | undefined;
   canonicalUrl?: string | undefined;
   noindex?: boolean | undefined;
+  presentation?: "journal" | "control" | "mori" | undefined;
 }
 
 const {
@@ -16,6 +17,7 @@ const {
   description = SITE_DESCRIPTION,
   canonicalUrl,
   noindex = false,
+  presentation = "journal",
 } = Astro.props;
 const pageTitle = title ? `${title} · ${SITE_TITLE}` : SITE_TITLE;
 const canonical = canonicalUrl ?? new URL(Astro.url.pathname, Astro.site).toString();
@@ -23,7 +25,7 @@ const feedUrl = new URL(withBase("rss.xml"), Astro.site).toString();
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" data-presentation={presentation}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
@@ -36,7 +38,7 @@ const feedUrl = new URL(withBase("rss.xml"), Astro.site).toString();
     <title>{pageTitle}</title>
     <slot name="head" />
   </head>
-  <body>
+  <body class={`presentation-${presentation}`}>
     <a class="skip-link" href="#main-content">Skip to content</a>
     <div class="site-shell">
       <SiteHeader />
