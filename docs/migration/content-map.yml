@@ -266,6 +266,41 @@ canonical_clusters:
       - "Keep the three distinct reader outcomes."
       - "Create one comparison table and series index instead of repeating the taxonomy."
 
+  - id: "agent-evals"
+    topic: "evals-reliability"
+    series: "agent-reliability-notes"
+    entries:
+      - source: "AI/ai-resources/evals/anthropic-demisfy-ai-evals.md"
+        proposed_role: "canonical-guide"
+        proposed_route: "/writing/agent-evals-that-diagnose-failure/"
+        presentation: "control"
+    implementation_status: "canonical-draft-prepared-publication-and-retirement-pending"
+    review_record: "docs/migration/2026-08-20-evals-inference-consolidation.md"
+    requirements:
+      - "Grade outcomes before final-message claims."
+      - "Record environment and harness variables for each trial."
+
+  - id: "inference-serving"
+    topic: "inference-systems"
+    entries:
+      - source: "AI-blogs/ai-inference-batching-explained.md"
+        proposed_role: "batching-source"
+        proposed_route: "/writing/llm-serving-control-plane/"
+        presentation: "journal"
+      - source: "AI-blogs/design-chatgpt-ai-inference-platform.md"
+        proposed_role: "architecture-merge-source"
+        proposed_route: "/writing/llm-serving-control-plane/"
+        presentation: "journal"
+      - source: "AI-blogs/dynamic-rate-limiting-ai-inference.md"
+        proposed_role: "admission-control-guide"
+        proposed_route: "/writing/llm-admission-control/"
+        presentation: "control"
+    implementation_status: "canonical-drafts-prepared-publication-and-retirement-pending"
+    review_record: "docs/migration/2026-08-20-evals-inference-consolidation.md"
+    requirements:
+      - "Attribute paper results to evaluated configurations."
+      - "Keep serving scheduling separate from gateway admission control."
+
 protected_similarity_groups:
   - pattern: "Leetcode/English Solution/*-en.md and Leetcode/中文版解题/*-cn.md"
     decision: "keep-distinct"

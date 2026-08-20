@@ -1,0 +1,198 @@
+---
+title: "Agent Evals That Diagnose Failure"
+description: "A practical guide to tasks, trials, outcomes, graders, traces, non-determinism, and infrastructure controls for useful agent evaluations."
+updatedAt: 2026-08-20
+lastVerified: 2026-08-20
+status: draft
+type: guide
+presentation: control
+topic: evals-reliability
+series: agent-reliability-notes
+tags: [agents, evals, reliability, graders, experiments]
+featured: false
+---
+
+import Callout from "../../../components/Callout.astro";
+import EvidenceNote from "../../../components/EvidenceNote.astro";
+import KeyPoints from "../../../components/KeyPoints.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import RevisionHistory from "../../../components/RevisionHistory.astro";
+import SystemDiagram from "../../../components/SystemDiagram.astro";
+import { withBase } from "../../../lib/site";
+
+<KeyPoints points={[
+  "Grade the environment outcome before trusting the agent's final message.",
+  "Separate capability, regression, and reliability questions; one score cannot answer all three.",
+  "Treat tools, compute, network, fixtures, and harness version as experimental variables.",
+]} />
+
+An agent can say that it fixed a bug while leaving the test failing. It can produce a plausible research report with unsupported claims. It can complete one lucky run and fail the next four.
+
+An eval becomes useful when it tells you **which boundary failed** and gives a reviewer enough evidence to reproduce the result. That requires more than a prompt and an LLM judge.
+
+## The unit under test
+
+Anthropic's eval guide defines an agent evaluation with several parts: a task, one or more trials, graders, a transcript or trace, an environment outcome, an agent harness, and the evaluation harness that runs and aggregates the work.
+
+The distinction between agent and evaluation harness matters. A model call does not act alone. Tool schemas, permissions, retry rules, context assembly, and completion checks influence the result. Changing any of them changes the system under test.
+
+<SystemDiagram
+  title="One trial, four evidence layers"
+  steps={[
+    { label: "Task", detail: "Goal, setup, authority, and success contract" },
+    { label: "Run", detail: "Model plus agent harness acts in an environment" },
+    { label: "Observe", detail: "Trace and final environment state are captured" },
+    { label: "Grade", detail: "Deterministic, rubric, and human checks apply" },
+    { label: "Diagnose", detail: "Failure is assigned to a testable boundary" },
+  ]}
+  caption="The final response is evidence, but it is not the outcome."
+/>
+
+## Start with a completion contract
+
+Before writing a task, state:
+
+- initial environment and fixtures;
+- requested outcome and non-goals;
+- tools and authority available to the agent;
+- observable success and prohibited side effects;
+- time, token, step, and cost budgets;
+- evidence the grader may inspect.
+
+A reference solution should pass every grader. If a competent human cannot reliably determine whether the task passed, the task is not ready to measure an agent.
+
+<Callout title="A zero is often a test bug" kind="warning">
+  <p>When a strong system repeatedly scores zero, inspect the task, fixtures, permissions, and grader before concluding that the capability is absent. Hidden filepath assumptions and unreachable resources measure the benchmark, not the intended skill.</p>
+</Callout>
+
+## Use a grader stack
+
+Prefer the least subjective check that measures the requirement.
+
+| Layer | Best use | Typical failure |
+| --- | --- | --- |
+| Environment state | File exists, reservation is recorded, UI state changed | Agent claims completion without the state change |
+| Deterministic checks | Tests, schemas, static analysis, exact policy assertions | Brittle check rejects a valid alternative |
+| Trace constraints | Tool boundary, source use, budget, prohibited action | Correct outcome reached through an unsafe path |
+| Model rubric | Tone, coverage, synthesis, usefulness | Judge preference drifts or rewards style over truth |
+| Human review | Ambiguity, calibration, high-impact cases | Too slow or inconsistent for every trial |
+
+Do not replace an available state check with a model judge. A database query can prove that a booking exists; an eloquent completion message cannot.
+
+For open-ended work, split the rubric into observable dimensions. A research task might grade citation validity, claim support, required coverage, source quality, and uncertainty separately. This makes disagreement diagnosable.
+
+## Capability, regression, and reliability
+
+These suites serve different decisions:
+
+- **Capability:** Can the system succeed on tasks that are currently difficult? A low initial score provides room to improve.
+- **Regression:** Does a previously working behavior still work? The expected score should be near the established baseline.
+- **Reliability:** How consistently does a user-critical behavior succeed across repeated, representative conditions?
+
+As capability tasks saturate, graduate stable cases into regression coverage and add harder capability cases. Do not keep celebrating a suite that has stopped distinguishing changes.
+
+## Non-determinism changes the question
+
+Let a task have per-trial success probability `p` under a fixed setup. Two common quantities answer opposite questions:
+
+~~~text
+at least one success in k trials:  pass@k = 1 - (1 - p)^k
+all k trials succeed:             pass^k = p^k
+~~~
+
+`pass@k` fits workflows where several independent attempts are allowed and one valid result is enough. `pass^k` exposes consistency for a behavior expected to work every time. Report the number of tasks and trials with the estimate; do not compare rounded percentages without uncertainty or matched task sets.
+
+Repeated trials are not independent when they share a flaky service, cached artifact, or rate limit. Record run ordering and infrastructure events so a cluster of failures is not mistaken for model variance.
+
+## Control the environment
+
+Anthropic's 2026 study of agentic coding evals found that resource configuration can materially change benchmark results. Its recommendation is to treat compute allocation and enforcement as first-class experimental variables.
+
+For every run, capture:
+
+~~~ts
+type EvalRunManifest = {
+  suiteRevision: string;
+  taskId: string;
+  trial: number;
+  model: string;
+  agentHarnessRevision: string;
+  evalHarnessRevision: string;
+  toolVersions: Record<string, string>;
+  fixtureHash: string;
+  cpuLimit: string;
+  memoryLimit: string;
+  timeoutSeconds: number;
+  networkPolicy: string;
+  startedAt: string;
+};
+~~~
+
+Also record human interventions, retries, service errors, and missing evidence. If the environment changed mid-comparison, label the result rather than pooling it silently.
+
+## Build balanced tasks
+
+Test both sides of a policy:
+
+- use a tool when current data is required, and avoid it for a stable fact;
+- ask for approval before a consequential action, and proceed autonomously for a read-only check;
+- retain an explicit durable preference, and reject a speculative personal inference;
+- repair a failing test, and preserve a protected test that should not change.
+
+One-sided tasks teach the system—and the team—to maximize the visible action instead of making the correct decision.
+
+## Diagnose by boundary
+
+Use a failure label that points to an owner and next experiment:
+
+| Boundary | Diagnostic question |
+| --- | --- |
+| Task | Was the requested outcome unambiguous and solvable? |
+| Setup | Were fixtures, tools, permissions, and resources available? |
+| Policy | Did the harness permit or block the right action? |
+| Context | Did required evidence reach the model call? |
+| Model | Did the model choose or express the wrong action with sufficient context? |
+| Tool | Did execution return the correct state and error type? |
+| Verification | Did the harness inspect the real outcome? |
+| Grader | Did the scoring logic accept valid alternatives and reject false success? |
+
+Read traces from passes as well as failures. A passing agent may exploit a fixture loophole, receive an accidental hint, or satisfy a weak grader without completing the intended task.
+
+<EvidenceNote title="Method boundary" source="Anthropic engineering reports" verifiedAt={new Date("2026-08-20T00:00:00Z")}>
+  <p>The cited reports describe practices and experiments in Anthropic's environments. The task contracts, manifests, and failure labels in this article are Kuma Blog's synthesis. Validate them against the risks and operating conditions of your own agent.</p>
+</EvidenceNote>
+
+## A small eval-driven loop
+
+1. Turn one manual check or production failure into a task.
+2. Add a reference solution and the narrowest outcome grader.
+3. Run several trials under a recorded environment.
+4. Read the traces and dispute unfair grades.
+5. Label failures by boundary and change one variable.
+6. Re-run capability and regression suites together.
+7. Add production monitoring and human calibration; neither is replaced by offline evals.
+
+The companion <a href={withBase("writing/how-to-build-agent-harness/")}>minimal harness guide</a> shows where completion checks and evidence collection belong in the runtime itself.
+
+## Sources and further reading
+
+- [Anthropic: Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents)
+- [Anthropic: Quantifying infrastructure noise in agentic coding evals](https://www.anthropic.com/engineering/infrastructure-noise)
+- [Anthropic: How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system)
+
+<RevisionHistory revisions={[
+  { date: new Date("2026-08-20T00:00:00Z"), note: "Rebuilt the legacy eval summary as an outcome-first, failure-diagnostic guide with explicit environment controls." },
+]} />
+
+<RelatedArticles articles={[
+  {
+    href: withBase("writing/how-to-build-agent-harness/"),
+    title: "How to Build a Minimal Agent Harness",
+    description: "The runtime completion contract, event log, policy gate, and repair loop that evals exercise.",
+  },
+  {
+    href: withBase("writing/agent-memory-deep-dive/"),
+    title: "Build an Agent Memory System You Can Correct",
+    description: "Held-out tests for memory insertion, gathering, use, change, and deletion.",
+  },
+]} />
