@@ -31,6 +31,15 @@ http://localhost:4321/kuma-blog/
 
 Do not treat a page that works only at `/` as valid.
 
+To review draft article routes without changing their publication status, use:
+
+```bash
+pnpm dev:drafts --host 127.0.0.1 --port 4321
+```
+
+Draft preview exists only in development mode. See
+[`publishing.md`](publishing.md) for the authorization and verification gates.
+
 ## Required verification
 
 Run the complete local gate:
@@ -48,6 +57,8 @@ It performs:
 4. `tools/site/verify-dist.mjs` to check required routes, generated internal
    links, canonical URLs, RSS, sitemap, 404 metadata, draft exclusion, and the
    curated deployment boundary.
+5. A second production build with the draft-preview flag set, proving that the
+   development switch cannot expose a draft in `dist/` or discovery feeds.
 
 The verifier fails when legacy repository trees, draft fixtures, dependency
 archives, or root-relative links escape into `dist/`.

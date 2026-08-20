@@ -1,10 +1,10 @@
 ---
 import { getCollection, render, type CollectionEntry } from "astro:content";
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
-import { slugFromId } from "../../lib/site";
+import { isContentVisible, slugFromId } from "../../lib/site";
 
 export async function getStaticPaths() {
-  const entries = await getCollection("visuals", ({ data }) => data.status === "published");
+  const entries = await getCollection("visuals", ({ data }) => isContentVisible(data.status));
   return entries.map((entry) => ({ params: { slug: slugFromId(entry.id) }, props: { entry } }));
 }
 

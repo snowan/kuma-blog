@@ -2,7 +2,7 @@
 import { getCollection } from "astro:content";
 import ContentIndex from "../../components/ContentIndex.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
-import { TOPICS } from "../../lib/site";
+import { isContentVisible, TOPICS } from "../../lib/site";
 
 export function getStaticPaths() {
   return TOPICS.map((topic) => ({ params: { topic: topic.id }, props: { topic } }));
@@ -11,15 +11,15 @@ export function getStaticPaths() {
 const { topic } = Astro.props;
 const writing = await getCollection(
   "writing",
-  ({ data }) => data.status === "published" && data.topic === topic.id,
+  ({ data }) => isContentVisible(data.status) && data.topic === topic.id,
 );
 const labNotes = await getCollection(
   "labNotes",
-  ({ data }) => data.status === "published" && data.topic === topic.id,
+  ({ data }) => isContentVisible(data.status) && data.topic === topic.id,
 );
 const visuals = await getCollection(
   "visuals",
-  ({ data }) => data.status === "published" && data.topic === topic.id,
+  ({ data }) => isContentVisible(data.status) && data.topic === topic.id,
 );
 ---
 

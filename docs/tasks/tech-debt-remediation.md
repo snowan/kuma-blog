@@ -2,6 +2,12 @@
 
 Audit: [2026-02-07](../technical-debt/audit-2026-02-07.md)
 
+> Historical plan. The source audit describes the repository as it existed on
+> 2026-02-07. Since then, the Telegram bot gained `pyproject.toml`, pytest
+> coverage, CI, Dependabot, and patched direct dependencies. Re-audit remaining
+> application debt before executing an old phase; do not treat the table below
+> as confirmed current state.
+
 ## Phases
 
 | Phase | Branch | Status | Issues Addressed |

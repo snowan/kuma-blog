@@ -40,6 +40,11 @@ export function slugFromId(id: string) {
   return id.split("/").at(-1) ?? id;
 }
 
+export function isContentVisible(status: "draft" | "published" | "archived") {
+  const localDraftPreview = import.meta.env.DEV && process.env.KUMA_PREVIEW_DRAFTS === "1";
+  return status === "published" || (status === "draft" && localDraftPreview);
+}
+
 export function formatDate(value?: Date) {
   return value
     ? new Intl.DateTimeFormat("en", {
