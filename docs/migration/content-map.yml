@@ -14,19 +14,22 @@ guardrails:
 
 audit_baseline:
   date: "2026-08-20"
-  tracked_base_revision: "800496a837c552c4a393a773d4c122ff525d5132"
-  scope: "local working tree, including untracked Markdown"
+  tracked_base_revision: "aee25b604cc4db2cb6f6ed19b5f7ae0b42030c0c"
+  scope: "clean tracked worktree, including Markdown and MDX"
   includes_this_governance_change: false
   refresh_required_before_migration: true
-  documents: 273
-  post_candidates: 176
-  support_documents: 97
-  words: 268199
+  audit_record: "docs/migration/2026-08-20-reorganization-audit.md"
+  documents: 286
+  post_candidates: 190
+  support_documents: 96
+  words: 271383
+  complete_scans: 286
+  incomplete_scans: 0
   exact_duplicate_groups: 1
   similar_pairs_at_0_72: 11
   hard_phrase_findings: 15
   documents_with_hard_findings: 11
-  broken_relative_links: 1
+  broken_relative_links: 2
   interpretation: >-
     Scanner findings are editorial triage cues, not authorship probabilities or
     automatic deletion decisions.
@@ -229,7 +232,7 @@ canonical_clusters:
         proposed_route: null
     implementation_status: "pending-unique-material-review"
     notes:
-      - "The untracked candidate contains the remaining audited broken image link."
+      - "The candidate was local-only during the original audit and is absent from the tracked baseline."
       - "Deletion requires separate approval after unique-content review."
 
   - id: "context-engineering"
