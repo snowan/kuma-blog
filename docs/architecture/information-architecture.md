@@ -180,10 +180,15 @@ asset references, canonical URLs, and tests must account for that base path.
 Before moving an existing document:
 
 1. Record its legacy path and proposed canonical route in `url-map.yml`.
-2. Check whether the legacy path has known inbound links.
-3. Preserve the slug or generate a static redirect page where practical.
-4. Check all internal links and images after the move.
-5. Keep the old path until the redirect behavior is reviewed.
+2. Resolve any overlapping family globs with one exact content-map entry.
+3. Check whether the legacy path has known inbound links.
+4. Preserve the slug or generate a static redirect page where practical.
+5. Check all internal links and images after the move.
+6. Keep the old path until the redirect behavior is reviewed.
+
+Globs in the migration manifest are discovery scopes, not executable move
+rules. If a file matches more than one family, it remains unclassified until a
+reviewed exact-path entry chooses its destination.
 
 GitHub Pages has no server-side redirect rules. Redirects must be implemented as
 generated static pages or avoided by retaining a compatible route.

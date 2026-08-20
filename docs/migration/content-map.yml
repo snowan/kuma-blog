@@ -14,7 +14,10 @@ guardrails:
 
 audit_baseline:
   date: "2026-08-20"
+  tracked_base_revision: "800496a837c552c4a393a773d4c122ff525d5132"
   scope: "local working tree, including untracked Markdown"
+  includes_this_governance_change: false
+  refresh_required_before_migration: true
   documents: 273
   post_candidates: 176
   support_documents: 97
@@ -27,6 +30,17 @@ audit_baseline:
   interpretation: >-
     Scanner findings are editorial triage cues, not authorship probabilities or
     automatic deletion decisions.
+
+classification_rules:
+  - "An exact path in canonical_clusters overrides a family glob."
+  - "Protected similarity groups cannot be merged by an automated migration."
+  - >-
+    Family globs are discovery scopes, not executable move rules. A file that
+    matches more than one family remains unclassified until a reviewed entry
+    selects one destination.
+  - >-
+    No disposition authorizes a move, merge, archive, deletion, or publication
+    while the corresponding top-level guardrail is false.
 
 target_topics:
   - "agents-harnesses"
