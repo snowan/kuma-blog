@@ -1,0 +1,45 @@
+---
+import type { LegacyPost } from "../lib/legacy-content";
+import { legacySourceUrl } from "../lib/legacy-content";
+import { withBase } from "../lib/site";
+import TableOfContents from "../components/TableOfContents.astro";
+import SiteLayout from "./SiteLayout.astro";
+
+interface Props {
+  post: LegacyPost;
+  headings?: { depth: number; slug: string; text: string }[] | undefined;
+}
+
+const { post, headings = [] } = Astro.props;
+const readingMinutes = Math.max(1, Math.ceil(post.words / 220));
+---
+
+<SiteLayout title={post.title} description={post.description} presentation="journal" ogType="article">
+  <main id="main-content" data-pagefind-body>
+    <article class="legacy-article">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={withBase()}>Home</a><span aria-hidden="true">/</span>
+        <a href={withBase("library/")}>All Posts</a><span aria-hidden="true">/</span>
+        <span>{post.collectionLabel}</span>
+      </nav>
+      <header class="article-header">
+        <p class="eyebrow" data-pagefind-meta="collection">Legacy Library · {post.collectionLabel}</p>
+        <h1 data-pagefind-meta="title">{post.title}</h1>
+        <p class="lede">{post.description}</p>
+        <dl class="article-meta">
+          <div><dt class="sr-only">Reading time</dt><dd>{readingMinutes} min read</dd></div>
+          <div><dt class="sr-only">Source collection</dt><dd>{post.collectionLabel}</dd></div>
+        </dl>
+      </header>
+      <aside class="legacy-note" aria-label="Legacy editorial note">
+        <strong>Preserved legacy note</strong>
+        <span>This article is published for access and search, but may predate the current sourcing and verification standard.</span>
+        <a href={legacySourceUrl(post)}>View the original Markdown on GitHub</a>
+      </aside>
+      <div class="article-grid">
+        <TableOfContents headings={headings} />
+        <div class="article-body"><slot /></div>
+      </div>
+    </article>
+  </main>
+</SiteLayout>

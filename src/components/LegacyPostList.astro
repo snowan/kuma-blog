@@ -1,0 +1,33 @@
+---
+import type { LegacyPost } from "../lib/legacy-content";
+import { withBase } from "../lib/site";
+import ArticleRow from "./ArticleRow.astro";
+
+interface Props {
+  posts: LegacyPost[];
+  emptyMessage?: string | undefined;
+  limit?: number | undefined;
+}
+
+const { posts, emptyMessage = "No legacy posts in this section.", limit } = Astro.props;
+const visible = typeof limit === "number" ? posts.slice(0, limit) : posts;
+---
+
+{
+  visible.length > 0 ? (
+    <ol class="content-list legacy-content-list">
+      {visible.map((post) => (
+        <li>
+          <ArticleRow
+            href={withBase(`library/${post.slug}/`)}
+            title={post.title}
+            description={post.description}
+            meta={`${post.collectionLabel} · ${Math.max(1, Math.ceil(post.words / 220))} min`}
+          />
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p class="notice">{emptyMessage}</p>
+  )
+}

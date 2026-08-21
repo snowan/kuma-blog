@@ -1,0 +1,150 @@
+---
+import { getCollection } from "astro:content";
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { legacyCollections, legacyPosts } from "../../lib/legacy-content";
+import { slugFromId, withBase } from "../../lib/site";
+
+interface DirectoryItem {
+  kind: "curated" | "legacy";
+  title: string;
+  description: string;
+  href: string;
+  collection: string;
+  collectionLabel: string;
+  topics: string[];
+  meta: string;
+}
+
+const [writing, labNotes, visuals] = await Promise.all([
+  getCollection("writing", ({ data }) => data.status === "published"),
+  getCollection("labNotes", ({ data }) => data.status === "published"),
+  getCollection("visuals", ({ data }) => data.status === "published"),
+]);
+
+const curatedItems: DirectoryItem[] = [
+  ...writing.map((entry) => ({ entry, route: "writing", section: "Writing" })),
+  ...labNotes.map((entry) => ({ entry, route: "lab-notes", section: "Lab Note" })),
+  ...visuals.map((entry) => ({ entry, route: "visuals", section: "Visual" })),
+].map(({ entry, route, section }) => ({
+  kind: "curated",
+  title: entry.data.title,
+  description: entry.data.description,
+  href: withBase(`${route}/${slugFromId(entry.id)}/`),
+  collection: "curated",
+  collectionLabel: "Curated Publication",
+  topics: [entry.data.topic],
+  meta: `${section} · Reviewed`,
+}));
+
+const legacyItems: DirectoryItem[] = legacyPosts.map((post) => ({
+  kind: "legacy",
+  title: post.title,
+  description: post.description,
+  href: withBase(`library/${post.slug}/`),
+  collection: post.collection,
+  collectionLabel: post.collectionLabel,
+  topics: post.topics,
+  meta: `${post.collectionLabel} · ${Math.max(1, Math.ceil(post.words / 220))} min`,
+}));
+
+const items = [...curatedItems, ...legacyItems];
+const collectionOptions = [
+  { id: "all", label: `Every collection (${items.length})` },
+  { id: "curated", label: `Curated Publication (${curatedItems.length})` },
+  ...legacyCollections.map((collection) => ({
+    id: collection.id,
+    label: `${collection.label} (${collection.count})`,
+  })),
+];
+---
+
+<SiteLayout title="All Posts" description={`Search and browse all ${items.length} published Kuma Blog posts.`}>
+  <main id="main-content">
+    <section class="library-hero reading-column">
+      <p class="eyebrow">Complete publication directory</p>
+      <h1>All Posts</h1>
+      <p class="lede">
+        One searchable index for the reviewed publication and the preserved legacy library.
+        Legacy notes are clearly labeled when they predate the current editorial standard.
+      </p>
+      <dl class="publication-summary" aria-label="Publication totals">
+        <div><dt>All posts</dt><dd>{items.length}</dd></div>
+        <div><dt>Curated</dt><dd>{curatedItems.length}</dd></div>
+        <div><dt>Legacy</dt><dd>{legacyItems.length}</dd></div>
+        <div><dt>Collections</dt><dd>{legacyCollections.length + 1}</dd></div>
+      </dl>
+    </section>
+
+    <section class="home-section" aria-labelledby="directory-heading">
+      <div class="section-heading reading-column">
+        <p class="eyebrow">Find a post</p>
+        <h2 id="directory-heading">Browse the complete directory</h2>
+      </div>
+      <div class="library-controls" data-pagefind-ignore>
+        <label>
+          <span>Filter by title, description, or topic</span>
+          <input id="post-filter" type="search" placeholder="Try memory, agent harness, LeetCode…" autocomplete="off" />
+        </label>
+        <label>
+          <span>Collection</span>
+          <select id="collection-filter">
+            {collectionOptions.map((option) => <option value={option.id}>{option.label}</option>)}
+          </select>
+        </label>
+        <p id="result-count" class="filter-status" aria-live="polite">Showing all {items.length} posts</p>
+      </div>
+
+      <ol id="all-posts-list" class="library-list" data-pagefind-ignore>
+        {items.map((item) => (
+          <li
+            data-search={`${item.title} ${item.description} ${item.collectionLabel} ${item.topics.join(" ")}`.toLowerCase()}
+            data-collection={item.collection}
+          >
+            <article class="library-row">
+              <div>
+                <p class="eyebrow">{item.meta}</p>
+                <h3><a href={item.href}>{item.title}</a></h3>
+              </div>
+              <p>{item.description}</p>
+              <ul class="post-chips" aria-label="Post classification">
+                <li>{item.kind === "curated" ? "Curated" : "Legacy"}</li>
+                {item.topics.map((topic) => <li>{topic.replaceAll("-", " ")}</li>)}
+              </ul>
+            </article>
+          </li>
+        ))}
+      </ol>
+      <p id="no-results" class="notice" hidden>No posts match these filters. Try a broader term or another collection.</p>
+    </section>
+  </main>
+</SiteLayout>
+
+<script>
+  const search = document.querySelector<HTMLInputElement>("#post-filter");
+  const collection = document.querySelector<HTMLSelectElement>("#collection-filter");
+  const rows = Array.from(document.querySelectorAll<HTMLElement>("#all-posts-list > li"));
+  const status = document.querySelector<HTMLElement>("#result-count");
+  const empty = document.querySelector<HTMLElement>("#no-results");
+
+  function applyFilters() {
+    const query = search?.value.trim().toLowerCase() ?? "";
+    const selected = collection?.value ?? "all";
+    let visible = 0;
+    rows.forEach((row) => {
+      const matchesQuery = !query || (row.dataset.search ?? "").includes(query);
+      const matchesCollection = selected === "all" || row.dataset.collection === selected;
+      row.hidden = !(matchesQuery && matchesCollection);
+      if (!row.hidden) visible += 1;
+    });
+    if (status) status.textContent = `Showing ${visible} of ${rows.length} posts`;
+    if (empty) empty.hidden = visible !== 0;
+  }
+
+  search?.addEventListener("input", applyFilters);
+  collection?.addEventListener("change", applyFilters);
+  const initialCollection = new URLSearchParams(window.location.search).get("collection");
+  if (collection && initialCollection && Array.from(collection.options).some(({ value }) => value === initialCollection)) {
+    collection.value = initialCollection;
+  }
+  applyFilters();
+</script>

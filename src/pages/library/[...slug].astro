@@ -1,0 +1,15 @@
+---
+import LegacyArticleLayout from "../../layouts/LegacyArticleLayout.astro";
+import { legacyPosts, renderLegacyPost } from "../../lib/legacy-content";
+
+export function getStaticPaths() {
+  return legacyPosts.map((post) => ({ params: { slug: post.slug }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { html, headings } = await renderLegacyPost(post);
+---
+
+<LegacyArticleLayout post={post} headings={headings}>
+  <Fragment set:html={html} />
+</LegacyArticleLayout>

@@ -1,7 +1,6 @@
 # Kuma Blog design system
 
-Status: approved and implemented in the Astro site shell. Canonical content
-migration and GitHub Pages cutover remain separate reviewed changes.
+Status: approved and implemented in the Astro publication and legacy library.
 
 ## Decision
 
@@ -203,10 +202,9 @@ by AstroPaper's content, accessibility, and publishing architecture—not its
 visual identity. The project site must work under `/kuma-blog/`, and GitHub
 Pages should deploy only the generated static output.
 
-The Astro content model and shared presentation components are implemented.
-Content migration and the GitHub Pages deployment workflow still require their
-own reviewed changes; the noindex design routes are review fixtures, not
-published articles.
+The Astro content model, shared presentation components, canonical collection,
+legacy library, and GitHub Pages workflow are implemented. The noindex design
+routes remain review fixtures rather than published articles.
 
 ## Review checklist
 

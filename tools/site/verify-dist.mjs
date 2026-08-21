@@ -31,6 +31,7 @@ const required = [
   "design-system/journal/index.html",
   "design-system/mori/index.html",
   "lab-notes/index.html",
+  "library/index.html",
   "methodology/index.html",
   "rss.xml",
   "search/index.html",
@@ -126,6 +127,7 @@ for (const expected of [
   'href="/kuma-blog/writing/"',
   'href="/kuma-blog/topics/"',
   'href="/kuma-blog/search/"',
+  'href="/kuma-blog/library/"',
   'href="https://snowan.github.io/kuma-blog/"',
 ]) {
   if (!index.includes(expected)) {
@@ -153,6 +155,10 @@ const rss = readFileSync(join(dist, "rss.xml"), "utf8");
 if (!rss.includes("<link>https://snowan.github.io/kuma-blog/</link>")) {
   fail("RSS channel link does not include the project base path");
 }
+const rssItemCount = rss.match(/<item>/g)?.length ?? 0;
+if (rssItemCount !== 11) {
+  fail(`RSS should contain 11 reviewed items, found ${rssItemCount}`);
+}
 
 const sitemap = readFileSync(join(dist, "sitemap-0.xml"), "utf8");
 if (sitemap.includes("/404")) {
@@ -160,6 +166,57 @@ if (sitemap.includes("/404")) {
 }
 if (sitemap.includes("/design-system/")) {
   fail("noindex design previews leaked into sitemap");
+}
+
+const canonicalRoutes = [
+  "writing/demystifying-agent-harness",
+  "writing/how-to-build-agent-harness",
+  "writing/agent-evals-that-diagnose-failure",
+  "writing/llm-admission-control",
+  "writing/llm-serving-control-plane",
+  "writing/agent-memory-deep-dive",
+  "writing/agent-memory-survey",
+  "writing/context-engineering",
+  "writing/filesystem-context-engineering",
+  "visuals/agent-harness-control-loop",
+  "visuals/agent-memory-learning-series",
+];
+
+for (const route of canonicalRoutes) {
+  if (!existsSync(join(dist, route, "index.html"))) {
+    fail(`missing canonical publication route: ${route}`);
+  }
+  if (!sitemap.includes(`https://snowan.github.io/kuma-blog/${route}/`)) {
+    fail(`canonical publication route is missing from sitemap: ${route}`);
+  }
+}
+
+const legacyManifest = JSON.parse(
+  readFileSync(join(root, "src/data/legacy-posts.json"), "utf8"),
+);
+if (legacyManifest.count !== 172 || legacyManifest.entries.length !== 172) {
+  fail(`legacy manifest should contain 172 approved posts, found ${legacyManifest.entries.length}`);
+}
+
+for (const entry of legacyManifest.entries) {
+  const route = join("library", ...entry.slug.split("/"), "index.html");
+  const output = join(dist, route);
+  if (!existsSync(output)) {
+    fail(`missing approved legacy route: ${route}`);
+    continue;
+  }
+  const html = readFileSync(output, "utf8");
+  for (const expected of [
+    "Preserved legacy note",
+    "data-pagefind-body",
+    "View the original Markdown on GitHub",
+  ]) {
+    if (!html.includes(expected)) fail(`legacy route ${route} is missing ${expected}`);
+  }
+  const publicUrl = new URL(`library/${entry.slug}/`, "https://snowan.github.io/kuma-blog/").toString();
+  if (!sitemap.includes(publicUrl)) {
+    fail(`approved legacy route is missing from sitemap: ${publicUrl}`);
+  }
 }
 
 for (const presentation of ["journal", "control", "mori"]) {
