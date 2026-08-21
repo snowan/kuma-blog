@@ -9,6 +9,8 @@
     "pnpm": ">=10.8.1"
   },
   "scripts": {
+    "content:manifest": "node tools/site/generate-legacy-manifest.mjs",
+    "content:manifest:check": "node tools/site/generate-legacy-manifest.mjs --check",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "dev:drafts": "KUMA_PREVIEW_DRAFTS=1 ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
@@ -17,10 +19,11 @@
     "test:dist": "node tools/site/verify-dist.mjs",
     "test:production-boundary": "KUMA_PREVIEW_DRAFTS=1 pnpm run build && pnpm run test:dist",
     "test:contrast": "node tools/site/verify-contrast.mjs",
-    "verify": "pnpm run check && pnpm run test:contrast && pnpm run build && pnpm run test:dist && pnpm run test:production-boundary",
+    "verify": "pnpm run content:manifest:check && pnpm run check && pnpm run test:contrast && pnpm run build && pnpm run test:dist && pnpm run test:production-boundary",
     "test": "pnpm run verify"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "7.2.4",
     "@astrojs/mdx": "7.0.7",
     "@astrojs/rss": "4.0.19",
     "@astrojs/sitemap": "3.7.3",

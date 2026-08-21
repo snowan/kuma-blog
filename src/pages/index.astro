@@ -1,9 +1,24 @@
 ---
+import { getCollection } from "astro:content";
 import SiteLayout from "../layouts/SiteLayout.astro";
+import ContentIndex from "../components/ContentIndex.astro";
 import FeaturedArticle from "../components/FeaturedArticle.astro";
 import SystemDiagram from "../components/SystemDiagram.astro";
 import TopicCard from "../components/TopicCard.astro";
-import { TOPICS, withBase } from "../lib/site";
+import { legacyPostCount } from "../lib/legacy-content";
+import { formatDate, slugFromId, TOPICS, withBase } from "../lib/site";
+
+const [writing, labNotes, visuals] = await Promise.all([
+  getCollection("writing", ({ data }) => data.status === "published"),
+  getCollection("labNotes", ({ data }) => data.status === "published"),
+  getCollection("visuals", ({ data }) => data.status === "published"),
+]);
+writing.sort((left, right) =>
+  (right.data.publishedAt?.getTime() ?? 0) - (left.data.publishedAt?.getTime() ?? 0),
+);
+const featured = writing.find(({ data }) => data.featured) ?? writing[0];
+const curatedCount = writing.length + labNotes.length + visuals.length;
+const totalCount = curatedCount + legacyPostCount;
 ---
 
 <SiteLayout>
@@ -17,15 +32,22 @@ import { TOPICS, withBase } from "../lib/site";
       </p>
       <div class="hero-actions">
         <a class="button" href={withBase("writing/")}>Explore writing</a>
+        <a class="text-link" href={withBase("library/")}>Browse all {totalCount} posts</a>
         <a class="text-link" href={withBase("methodology/")}>How the research is verified</a>
       </div>
+      <dl class="publication-summary" aria-label="Publication totals">
+        <div><dt>Curated</dt><dd>{curatedCount}</dd></div>
+        <div><dt>Legacy library</dt><dd>{legacyPostCount}</dd></div>
+        <div><dt>All posts</dt><dd>{totalCount}</dd></div>
+      </dl>
     </section>
 
     <section class="home-section">
       <FeaturedArticle
-        eyebrow="Canonical guide · arriving with the reviewed content migration"
-        title="How an agent harness creates reliability"
-        description="A system-level map of the control loop, tool boundary, durable state, and evidence that sit around a model."
+        eyebrow={`Featured essay · ${formatDate(featured?.data.publishedAt) ?? "Published"}`}
+        title={featured?.data.title ?? "What an Agent Harness Actually Does"}
+        description={featured?.data.description ?? "A system-level map of the control loop, tool boundary, durable state, and evidence that sit around a model."}
+        href={featured ? withBase(`writing/${slugFromId(featured.id)}/`) : withBase("writing/")}
       >
         <SystemDiagram
           title="The harness control loop"
@@ -53,9 +75,9 @@ import { TOPICS, withBase } from "../lib/site";
     <section class="home-section split-section" aria-labelledby="latest-heading">
       <div>
         <p class="eyebrow">Latest writing</p>
-        <h2 id="latest-heading">Reviewed before published</h2>
-        <p>Canonical articles will appear here as the editorial migration lands. Draft repository notes remain private to the build.</p>
-        <a class="text-link" href={withBase("archive/")}>Browse the publication archive</a>
+        <h2 id="latest-heading">New from the journal</h2>
+        <ContentIndex entries={writing.slice(0, 5)} route="writing" emptyMessage="No published writing yet." />
+        <a class="text-link" href={withBase("library/")}>Browse the complete post directory</a>
       </div>
       <aside class="research-threads" aria-labelledby="threads-heading">
         <p class="eyebrow">Current threads</p>

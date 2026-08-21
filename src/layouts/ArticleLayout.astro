@@ -30,6 +30,8 @@ const isDraftPreview = data.status === "draft";
   canonicalUrl={data.canonicalUrl}
   noindex={isDraftPreview}
   presentation={data.presentation}
+  ogType="article"
+  publishedAt={data.publishedAt}
 >
   <main id="main-content" data-pagefind-body>
     <article>

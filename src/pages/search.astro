@@ -7,12 +7,13 @@ const pagefindCss = withBase("pagefind/pagefind-component-ui.css");
 const pagefindScript = withBase("pagefind/pagefind-component-ui.js");
 ---
 
-<SiteLayout title="Search" description="Search published Kuma Blog writing, lab notes, and visuals.">
+<SiteLayout title="Search" description="Search every curated and legacy Kuma Blog post.">
   <link slot="head" rel="stylesheet" href={pagefindCss} />
   <main id="main-content">
     <div class="reading-column">
-      <p class="eyebrow">Published content only</p>
+      <p class="eyebrow">Complete site search</p>
       <h1>Search</h1>
+      <p class="lede">Search the reviewed publication and the complete preserved post library.</p>
       <Search />
       <noscript>Search requires JavaScript. RSS and topic indexes remain available without it.</noscript>
     </div>

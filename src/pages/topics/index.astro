@@ -1,6 +1,21 @@
 ---
+import { getCollection } from "astro:content";
 import SiteLayout from "../../layouts/SiteLayout.astro";
+import { legacyPosts } from "../../lib/legacy-content";
 import { TOPICS, withBase } from "../../lib/site";
+
+const [writing, labNotes, visuals] = await Promise.all([
+  getCollection("writing", ({ data }) => data.status === "published"),
+  getCollection("labNotes", ({ data }) => data.status === "published"),
+  getCollection("visuals", ({ data }) => data.status === "published"),
+]);
+
+function topicCount(topic: string) {
+  return writing.filter(({ data }) => data.topic === topic).length
+    + labNotes.filter(({ data }) => data.topic === topic).length
+    + visuals.filter(({ data }) => data.topic === topic).length
+    + legacyPosts.filter((post) => post.topics.includes(topic)).length;
+}
 ---
 
 <SiteLayout title="Topics" description="The four primary Kuma Blog research topics.">
@@ -10,6 +25,7 @@ import { TOPICS, withBase } from "../../lib/site";
       {
         TOPICS.map((topic) => (
           <article class="topic-card">
+            <span class="topic-number">{topicCount(topic.id)} posts</span>
             <h2><a href={withBase(`topics/${topic.id}/`)}>{topic.label}</a></h2>
             <p>{topic.description}</p>
           </article>

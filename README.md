@@ -4,6 +4,7 @@ Field notes on reliable AI systems: agents and harnesses, memory and context,
 evals and reliability, and inference systems.
 
 [Read the GitHub Pages site](https://snowan.github.io/kuma-blog/) ·
+[Browse all posts](https://snowan.github.io/kuma-blog/library/) ·
 [Editorial policy](docs/editorial/editorial-policy.md) ·
 [Publishing runbook](docs/runbooks/publishing.md) ·
 [Research roadmap](docs/editorial/research-and-writing-roadmap.md) ·
@@ -12,13 +13,14 @@ evals and reliability, and inference systems.
 
 ## Repository boundary
 
-Kuma Blog currently contains two deliberately separate layers:
+Kuma Blog contains two deliberately labeled publication layers:
 
-- `src/` is the curated Astro publication. Only reviewed entries with
-  `status: published` may enter the generated site.
-- The legacy roots contain research, visual sources, applications, algorithms,
-  book notes, and personal material. They remain visible in the public Git
-  repository but are excluded from the generated Pages artifact.
+- `src/content/` is the curated Astro publication. Only reviewed entries with
+  `status: published` enter its primary topic and RSS feeds.
+- The legacy roots retain their repository paths. An explicit, digest-locked
+  manifest publishes 172 non-empty reader-facing notes under `/library/`, while
+  prompts, storyboards, operational documents, and empty placeholders remain
+  outside the generated Pages artifact.
 
 The target model separates publication, labs, studio material, and archive
 content. It will be implemented in small, explicitly approved migration PRs;
@@ -69,8 +71,8 @@ Pagefind indexing, base-path checks, route checks, and artifact leakage checks.
 4. Test the selected Paper Journal, Control Room, or Mori Notebook presentation.
 5. Request publication approval separately from deployment approval.
 
-Repository presence is not publication. Draft entries are excluded from the
-production artifact.
+Repository presence is not publication. Draft entries and legacy files absent
+from the approved manifest are excluded from the production artifact.
 
 ## Legacy reorganization
 

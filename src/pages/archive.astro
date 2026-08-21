@@ -1,16 +1,34 @@
 ---
 import SiteLayout from "../layouts/SiteLayout.astro";
+import { legacyCollections, legacyPostCount } from "../lib/legacy-content";
+import { withBase } from "../lib/site";
 ---
 
-<SiteLayout title="Archive" description="Legacy Kuma Blog collections preserved outside the main feed.">
+<SiteLayout title="Archive" description="Browse preserved Kuma Blog collections and the complete post directory.">
   <main id="main-content" data-pagefind-body>
     <div class="reading-column">
-      <p class="eyebrow">Preserved history</p>
+      <p class="eyebrow">Published and searchable</p>
       <h1>Archive</h1>
       <p class="lede">
-        Legacy collections remain in their current repository paths until each
-        migration batch and URL decision receives separate review.
+        {legacyPostCount} non-empty legacy posts are now readable on this site while their original
+        repository paths remain unchanged. Support files, prompts, and empty placeholders stay outside the publication.
       </p>
+      <div class="hero-actions">
+        <a class="button" href={withBase("library/")}>Browse all posts</a>
+        <a class="text-link" href="https://snowan.gitbook.io/study-notes/">Open the legacy GitBook</a>
+      </div>
     </div>
+    <section class="home-section" aria-labelledby="archive-collections">
+      <div class="section-heading"><p class="eyebrow">Collections</p><h2 id="archive-collections">Explore preserved writing</h2></div>
+      <div class="topic-grid">
+        {legacyCollections.map((collection, index) => (
+          <article class="topic-card">
+            <span class="topic-number">{String(index + 1).padStart(2, "0")}</span>
+            <h3><a href={`${withBase("library/")}?collection=${collection.id}#directory-heading`}>{collection.label}</a></h3>
+            <p>{collection.count} published legacy posts</p>
+          </article>
+        ))}
+      </div>
+    </section>
   </main>
 </SiteLayout>

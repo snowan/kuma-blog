@@ -1,0 +1,1995 @@
+{
+  "schemaVersion": 1,
+  "sourceRevision": "f2629d999bb5bfaef91e059c54926380a2061f6a",
+  "count": 172,
+  "entries": [
+    {
+      "sourcePath": "AI/reports/ai_news_report_20260123.md",
+      "slug": "ai/reports/ai-news-report-20260123",
+      "title": "🗞️ AI News Scan Report",
+      "description": "X (Twitter): Unable to fetch live data (Nitter instances unreachable/rate-limited). Fallback: Displaying AI highlights from Hacker News.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 358,
+      "digest": "ab44b76aaa599ef2de097d203fe453219e280d1474a8f10b7d28eae10ea9bda6"
+    },
+    {
+      "sourcePath": "AI/ai-resources/claude-code/claude-code.md",
+      "slug": "ai/ai-resources/claude-code/claude-code",
+      "title": "🚀 Claude Code Ultimate Resource Collection",
+      "description": "The definitive guide to Claude Code skills, plugins, subagents, commands, and best practices for 2025",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 2573,
+      "digest": "56ff8979081006274237acea35cf38a45b65939c1dc0a2e0cbeba245c8b38b3c"
+    },
+    {
+      "sourcePath": "AI/claude-code/boris-cherny-cc-tips.md",
+      "slug": "ai/claude-code/boris-cherny-cc-tips",
+      "title": "10 Tips for Using Claude Code from Its Creator, Boris Cherny",
+      "description": "Tips sourced directly from the Claude Code team — January 31, 2026",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 1325,
+      "digest": "254b8bfe680eb49e322039f31df657375a65d53c755a870d0434876b7d10799c"
+    },
+    {
+      "sourcePath": "AI-blogs/boris-cherny-customize-claude-code.md",
+      "slug": "ai-blogs/boris-cherny-customize-claude-code",
+      "title": "12 Ways to Customize Claude Code — Boris Cherny's Latest Guide",
+      "description": "Created: 2026-02-11 Author: Boris Cherny (@bcherny), Creator of Claude Code Source: X Thread Date: February 2026",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 1538,
+      "digest": "793c236732f166d6d2ef29e4b4c3b21732821bef7fae16b911083ccd9774d8c2"
+    },
+    {
+      "sourcePath": "AI/ai-resources/context-engineering/context-engineering-with-file-system.md",
+      "slug": "ai/ai-resources/context-engineering/context-engineering-with-file-system",
+      "title": "Agent Context Engineering with File Systems",
+      "description": "Agent context engineering is the discipline of deliberately managing what information an AI agent sees at each step of its reasoning and action loop.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 686,
+      "digest": "7de9f8b96c9224a668e5a7446a199ea9088e826c80905a35bf9b2cb26a6e445c"
+    },
+    {
+      "sourcePath": "AI/ai-resources/context-engineering/context-engineering.md",
+      "slug": "ai/ai-resources/context-engineering/context-engineering",
+      "title": "Agent Context Engineering: The Definitive Guide (Top 30 Resources)",
+      "description": "Last Updated: January 2026 Author: Michi Fact-Checked: January 9, 2026",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 2088,
+      "digest": "cfd78ea7b33bd25c98710428825701314ecab99c322158e21ba194a932a42598"
+    },
+    {
+      "sourcePath": "AI/ai-resources/AI-common/agent-design-patterns.md",
+      "slug": "ai/ai-resources/ai-common/agent-design-patterns",
+      "title": "Agent Design Patterns — Summary & Study Notes",
+      "description": "Source: Lance Martin Post: Agent design patterns Date: Jan 9, 2026 URL: agent design patterns",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 1051,
+      "digest": "04676eb19c6f9d23663b67d89847a13b4a140cb097403225e6465de507fd9ca8"
+    },
+    {
+      "sourcePath": "AI/AI-books.md",
+      "slug": "ai/ai-books",
+      "title": "AI books",
+      "description": "1. Jerry Kaplan -- Artificial Intelligence what everyone needs to know https://www.amazon.com/Artificial-Intelligence-What-Everyone-Needs/dp/0190602392",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 55,
+      "digest": "30792a0241e842e9e3d1c30788d3f975adc8f7ea4f16b42578d9811c93cdfb7d"
+    },
+    {
+      "sourcePath": "AI-blogs/ai-inference-batching-explained.md",
+      "slug": "ai-blogs/ai-inference-batching-explained",
+      "title": "AI Inference Batching: Static, Dynamic, and Continuous Batching Explained",
+      "description": "A comprehensive guide to AI inference batching mechanisms. Learn when to use static, dynamic, or continuous batching, understand the tradeoffs, and make informed decisions for your AI inference API design.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "inference-systems"
+      ],
+      "words": 1957,
+      "digest": "f265f9644ecf2ea082b7c04d6e7ee06a94647836991cbfec4c84eee71d2e65ac"
+    },
+    {
+      "sourcePath": "AI/reports/ai_news_20260125.md",
+      "slug": "ai/reports/ai-news-20260125",
+      "title": "AI News Digest - January 25, 2026",
+      "description": "Sources: Hacker News Coverage: Past 24-48 hours Generated: January 25, 2026",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 2495,
+      "digest": "f72bbc8730be49e6323d6b0309b2afbc4bb139c7a1ea2247702d15faddeb7559"
+    },
+    {
+      "sourcePath": "AI/AI-Resources.md",
+      "slug": "ai/ai-resources",
+      "title": "AI Resources",
+      "description": "1. Github AI notes it collected many AI resources",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 14,
+      "digest": "ba14c24907154d37e074d683c90c41fab853884e6158579e04f3d33465b0579a"
+    },
+    {
+      "sourcePath": "AI/ai-resources/AI-common/AI-trace-sot.md",
+      "slug": "ai/ai-resources/ai-common/ai-trace-sot",
+      "title": "AI trace sot",
+      "description": "Langchain CEO Harrison Chase Post on In software, the code documents the app. In AI, the traces do.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 413,
+      "digest": "3faa5926d69e0422fe2458a850e826926ad350fc48b447be44b1a644d5caf50c"
+    },
+    {
+      "sourcePath": "AI/AI-article-analysis/2025-the-year-in-llms-simon-willison.md",
+      "slug": "ai/ai-article-analysis/2025-the-year-in-llms-simon-willison",
+      "title": "Analysis: \"2025: The Year in LLMs\" by Simon Willison",
+      "description": "Source: https://simonwillison.net/2025/Dec/31/the-year-in-llms/ Published: December 31, 2025 Analysis Mode: Standard (Sections I-IV) Content Type: Technical blog / Annual review",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 1703,
+      "digest": "74fe383a530dbe5340857ad0547967177eb3613652034ead5e693429b5f3b844"
+    },
+    {
+      "sourcePath": "AI-blogs/boris-cherny-on-building-with-ai.md",
+      "slug": "ai-blogs/boris-cherny-on-building-with-ai",
+      "title": "Boris Cherny: How the Creator of Claude Code Actually Works",
+      "description": "Created: 2026-02-22 Subject: Boris Cherny (@bcherny), Head of Claude Code at Anthropic Sources: X Thread on Workflow · Lenny's Podcast · Developing.dev Interview · Fortune · InfoQ Workflow Deep Dive · Every.to Podcast…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 3490,
+      "digest": "b01837515afaecfcf3f2e11d0e4116fdd2bf8bab5085e19a46d5b33f5a34de89"
+    },
+    {
+      "sourcePath": "AI-blogs/dario-amodei-end-of-exponential-dwarkesh-2026.md",
+      "slug": "ai-blogs/dario-amodei-end-of-exponential-dwarkesh-2026",
+      "title": "Dario Amodei: \"We Are Near the End of the Exponential\"",
+      "description": "Created: 2026-02-22 Speaker(s): Dario Amodei (CEO, Anthropic), Dwarkesh Patel (host) Source: Dwarkesh Podcast — YouTube Podcast Page: dwarkesh.com Date: February 2026 Topics: AI scaling, AGI timelines, job…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 1859,
+      "digest": "3874d8fde2650662cc76e524f8070804136d6dd4e17f933e4ae7a719440b65dc"
+    },
+    {
+      "sourcePath": "AI/AI-article-analysis/Steam-Steel-and-Infinite-Minds.md",
+      "slug": "ai/ai-article-analysis/steam-steel-and-infinite-minds",
+      "title": "Deep Analysis: \"Steam, Steel, and Infinite Minds\"",
+      "description": "1. Core Argument AI is not just a tool but a foundational \"miracle material\" (like steam or steel) that will force a complete redesign of how individuals work, how organizations scale, and how economies function,…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 1227,
+      "digest": "4166bf4c4d05de41d0121f79521fb0f42ba646cb685e2797ae767ddcaf7eb3b4"
+    },
+    {
+      "sourcePath": "AI/AI-article-analysis/AI-trillion-dollar-opportunity-Context-graphs.md",
+      "slug": "ai/ai-article-analysis/ai-trillion-dollar-opportunity-context-graphs",
+      "title": "Deep Analysis: AI's Trillion-Dollar Opportunity (Context Graphs)",
+      "description": "1. Core Argument: The next generation of trillion-dollar enterprise software companies will not be built by merely adding AI to existing \"Systems of Record\" (which store data), but by creating new \"Context Graphs\" that…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "memory-context"
+      ],
+      "words": 991,
+      "digest": "df3af1213e5a068ed4e5e2a18ee79df5245aa689307ae22e1abcbd54d2c0f455"
+    },
+    {
+      "sourcePath": "AI/AI-article-analysis/memory-in-the-age-of-agent-survey.md",
+      "slug": "ai/ai-article-analysis/memory-in-the-age-of-agent-survey",
+      "title": "Deep Analysis: Memory in the Age of AI Agents",
+      "description": "Paper Title: Memory in the Age of AI Agents: A Survey (Forms, Functions and Dynamics) Paper Link: arXiv:2512.13564",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 1041,
+      "digest": "42415b94d5943c96b74f5f41e78aac1449114e68036a8c86c250f5be70dd571d"
+    },
+    {
+      "sourcePath": "AI-blogs/claude-code-memory-architecture.md",
+      "slug": "ai-blogs/claude-code-memory-architecture",
+      "title": "Deep Dive: Claude Code Memory Architecture",
+      "description": "Source: Claude Code GitHub | Official Docs Author: System Analysis Date: February 2, 2026",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 1907,
+      "digest": "c1154c2feaf5a3e6d58180408e9fe12aa22bfeef87fa1e18fd4b79461851bd5f"
+    },
+    {
+      "sourcePath": "AI-blogs/openclaw-memory-system-deep-dive.md",
+      "slug": "ai-blogs/openclaw-memory-system-deep-dive",
+      "title": "Deep Dive: How OpenClaw's Memory System Works",
+      "description": "A comprehensive look at OpenClaw's file-first memory system, exploring its hybrid search architecture, automatic memory flush, and implementation details.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "memory-context"
+      ],
+      "words": 3136,
+      "digest": "d471f0dbe1f99655b200cecdce3b88a5b30f470ae9ebac144ab433a253f09267"
+    },
+    {
+      "sourcePath": "AI-blogs/demystifying-agent-harness.md",
+      "slug": "ai-blogs/demystifying-agent-harness",
+      "title": "Demystifying Agent Harnesses: The Infrastructure Layer That Actually Makes AI Agents Work",
+      "description": "An agent harness is the software infrastructure that wraps around an AI model to manage everything except reasoning: tool execution, memory, state persistence, context management, error recovery, safety enforcement,…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 5482,
+      "digest": "28aa66f512bc45f6a5871a53c966a0e1e09a6c5648bedcaac669dbfc27813ac9"
+    },
+    {
+      "sourcePath": "AI/ai-resources/evals/anthropic-demisfy-ai-evals.md",
+      "slug": "ai/ai-resources/evals/anthropic-demisfy-ai-evals",
+      "title": "Demystifying Evals for AI Agents",
+      "description": "Source: Anthropic Engineering Article: Demystifying evals for AI agents Date: January 09, 2026 URL: demystifying-evals-for-ai-agents",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "evals-reliability"
+      ],
+      "words": 483,
+      "digest": "4f5d2806b54ccc00c942880ce6f04215ddc6a07f3480918b92bc41fcb092f3f3"
+    },
+    {
+      "sourcePath": "AI-blogs/dynamic-rate-limiting-ai-inference.md",
+      "slug": "ai-blogs/dynamic-rate-limiting-ai-inference",
+      "title": "Dynamic Rate Limiting for AI Inference: Why RPM is Dead",
+      "description": "Why traditional rate limiting fails for LLMs, and how to build adaptive, token-aware limiters that protect your GPU resources.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "inference-systems"
+      ],
+      "words": 961,
+      "digest": "c51b2a4a2d72eced65536fcd897eb12b70380a56e3829e1fa349f9c6e72c1629"
+    },
+    {
+      "sourcePath": "AI/AI-article-analysis/file-over-app/file-over-app-analysis.md",
+      "slug": "ai/ai-article-analysis/file-over-app/file-over-app-analysis",
+      "title": "File Over App: A Deep Analysis of Digital Longevity",
+      "description": "TL;DR: Steph Ango's \"File Over App\" philosophy argues that the files you create are more important than the tools you use to create them. Apps are ephemeral; files can last forever. Choose open formats, store locally,…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 1281,
+      "digest": "b60962951fe55007395dfbb6be3d6d022079d14d8a6a8f544f9fd7ece9802c69"
+    },
+    {
+      "sourcePath": "AI-blogs/claude-code-agent-teams.md",
+      "slug": "ai-blogs/claude-code-agent-teams",
+      "title": "How Claude Code Agent Teams Actually Works - reverse Claude Code Agent Teams use CC",
+      "description": "Created: 2026-02-13 Source: Claude Code Docs, reverse engineering of cli.js (v1.0.34+) Status: Experimental Feature Date: February 2026",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 2670,
+      "digest": "e470a2b8a888ecf72c8e6bf953362b8fead532413d97b85eebc52b242e84b5a1"
+    },
+    {
+      "sourcePath": "AI-blogs/how-to-build-agent-harness.md",
+      "slug": "ai-blogs/how-to-build-agent-harness",
+      "title": "How to Build an Agent Harness: A Practical Guide from Teams Who Actually Did It",
+      "description": "A practical, implementation-level guide to building agent harnesses, synthesized from the hard-won lessons of five production teams: Anthropic (Claude Code), OpenAI (Codex), Manus, LangChain (DeepAgents), and Stripe…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 3510,
+      "digest": "531049951e70b2fc045990c875123c4cec30de7e3d0e18b6c74718413c6e2e74"
+    },
+    {
+      "sourcePath": "AI/kuma-ai-agents/kuma-AI-travel-agent/travel_AI_agent.md",
+      "slug": "ai/kuma-ai-agents/kuma-ai-travel-agent/travel-ai-agent",
+      "title": "Kuma AI Travel Agent",
+      "description": "1. System Prompts: I will design system prompts to guide the LLM's behavior as a travel agent, ensuring it understands its role, constraints, and objectives.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 1608,
+      "digest": "8b2df34e83f84afc12a5f086c5b72dae07ce33b54246349ba219093dbcf470b3"
+    },
+    {
+      "sourcePath": "AI/ai-resources/agent-memory/langchain-agent-builder-memory.md",
+      "slug": "ai/ai-resources/agent-memory/langchain-agent-builder-memory",
+      "title": "LangSmith Agent Builder — Summary",
+      "description": "Source: Harrison Chase Post: How we built Agent Builder’s memory system Date: Jan 15, 2026 URL: How we built Agent Builder’s memory system",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 269,
+      "digest": "533f01a8cdd996224701fbacb5d2472dfdff2f7c5f8bed64eebd5cf7ac9c10ae"
+    },
+    {
+      "sourcePath": "AI-blogs/letta-context-repositories.md",
+      "slug": "ai-blogs/letta-context-repositories",
+      "title": "Letta's Context Repositories: Git-based Memory for Coding Agents",
+      "description": "Letta has introduced a fascinating new concept called Context Repositories, which reimagines how coding agents handle memory. Instead of relying on traditional vector databases or simple file appends, they represent…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 387,
+      "digest": "c4049963825d9e46f30cf5c66f455d3d0b1c5f42f61a6eb2877fef60fd180275"
+    },
+    {
+      "sourcePath": "AI/AI-article-analysis/ai-agent-memory/ai-agent-memory-deep-dive.md",
+      "slug": "ai/ai-article-analysis/ai-agent-memory/ai-agent-memory-deep-dive",
+      "title": "Memory in AI Agents: A Deep Dive into Cognitive Architectures for LLMs",
+      "description": "TL;DR: Memory transforms stateless LLMs into persistent, learning agents. This guide covers the four memory types (working, semantic, episodic, procedural), three major architectures (MemGPT/Letta, Stanford Generative…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 1591,
+      "digest": "fd9112c8eb76132bfd90f427662ab6a70815f69daeffc47771600a2d7ab5ea48"
+    },
+    {
+      "sourcePath": "AI/AI-manga-learnings/memory-in-the-age-of-ai-agent/learning-series.md",
+      "slug": "ai/ai-manga-learnings/memory-in-the-age-of-ai-agent/learning-series",
+      "title": "Memory in the Age of AI Agents: A Learning Series",
+      "description": "Paper: Memory in the Age of AI Agents: A Survey (PDF) Authors: Yuyang Hu et al. (47 researchers from NUS, OPPO, and others) Published: December 2025",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 1126,
+      "digest": "819acf13fd6d33fffe8a4730ddfd3cd74c0f22df95280da8b6d3967a700a60f9"
+    },
+    {
+      "sourcePath": "AI-blogs/paged-attention-explained.md",
+      "slug": "ai-blogs/paged-attention-explained",
+      "title": "PagedAttention: How Virtual Memory Revolutionized LLM Inference",
+      "description": "A deep dive into PagedAttention, the breakthrough memory management technique that enables efficient LLM serving. Learn how borrowing ideas from OS virtual memory solved the KV cache memory problem and enabled 2-4x…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "memory-context",
+        "inference-systems"
+      ],
+      "words": 1763,
+      "digest": "b3b739e89aa2917184efa2d3056c77758208356c46cb283bfa293cd5497b4e73"
+    },
+    {
+      "sourcePath": "AI-blogs/pi-minimal-agent-openclaw.md",
+      "slug": "ai-blogs/pi-minimal-agent-openclaw",
+      "title": "Pi: The Minimal Agent Philosophy — How Less Becomes More",
+      "description": "A deep dive into Pi, the minimal coding agent powering OpenClaw, and why its \"less is more\" philosophy might be the future of AI agents.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 868,
+      "digest": "9a484a309c8e723835589c68f857c5b273c12b8a4f7d68f8852958316f73ca3a"
+    },
+    {
+      "sourcePath": "AI/claude-code/skills-resource.md",
+      "slug": "ai/claude-code/skills-resource",
+      "title": "Skills resource",
+      "description": "A preserved Kuma Blog note from the AI, Agents, and Systems collection.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 60,
+      "digest": "37722117b264784a67cc171babb7f4fbf2cf7f0297b72dc12093ae8e35dd2556"
+    },
+    {
+      "sourcePath": "AI-blogs/speculative-decoding-explained.md",
+      "slug": "ai-blogs/speculative-decoding-explained",
+      "title": "Speculative Decoding: How to Make LLMs 2-3x Faster Without Losing Quality",
+      "description": "A comprehensive guide to speculative decoding, the technique that accelerates LLM inference by 2-3x while maintaining identical output quality. Learn how draft-then-verify works, the math behind acceptance rates, and…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "inference-systems"
+      ],
+      "words": 1711,
+      "digest": "167ee6a7d35747ca7bc870e7713f2d13a9f70201cb3ddfd7c929e62df2d5950b"
+    },
+    {
+      "sourcePath": "AI-blogs/design-chatgpt-ai-inference-platform.md",
+      "slug": "ai-blogs/design-chatgpt-ai-inference-platform",
+      "title": "System Design: ChatGPT — An AI Inference Platform at Scale",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Single Machine / Naive Solution 4. Why Naive Fails (The Math) 5. Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure Modes &…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "inference-systems"
+      ],
+      "words": 6714,
+      "digest": "a8112d9afc545a0dc2a5dccf5b859abe28c9404ac602f72c2674a740ce090121"
+    },
+    {
+      "sourcePath": "AI-blogs/github-actions-architecture-deep-dive.md",
+      "slug": "ai-blogs/github-actions-architecture-deep-dive",
+      "title": "System Design: CI/CD Pipeline Like GitHub Actions",
+      "description": "1. The Problem & Why It's Hard 2. Clarifying Questions 3. Requirements & Scope 4. REST API Design 5. Phase 1: Single Machine CI Runner 6. Why the Naive Approach Fails (The Math) 7. Phase 2: Distributed Architecture 8.…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 7355,
+      "digest": "30cf27284975564bc96a19c72a0e5838971d2bdf736164253e0648fbe8c60317"
+    },
+    {
+      "sourcePath": "AI-blogs/chess-system-design.md",
+      "slug": "ai-blogs/chess-system-design",
+      "title": "System Design: Designing Chess.com",
+      "description": "1. Requirements & Scope 2. Stage 1: Single Server — \"Two Friends Playing Chess\" 3. Stage 2: Shared State — \"Surviving Server Crashes\" 4. Stage 3: Separation of Concerns — \"Real-Time at Scale\" 5. Stage 4: Distributed…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 6658,
+      "digest": "6a615a7aef39a5221e39d2f412d71952db8283a0b643959226cf6767f5810c9d"
+    },
+    {
+      "sourcePath": "AI-blogs/design-crossword-puzzle-solver.md",
+      "slug": "ai-blogs/design-crossword-puzzle-solver",
+      "title": "System Design: Distributed Crossword Puzzle Solver",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. The Algorithm: Constraint Satisfaction Problem 4. Phase 1: Single Machine Solver 5. Why One Machine Fails (The Math) 6. Phase 2: Distributed Architecture 7.…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 4252,
+      "digest": "4398b0d8342d5a2ddcd471d9aad4849bdddeed146844d5b24f4fb98a0949f3b0"
+    },
+    {
+      "sourcePath": "AI-blogs/design-google-calendar.md",
+      "slug": "ai-blogs/design-google-calendar",
+      "title": "System Design: Google Calendar",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Single Machine / Naive Solution 4. Why Naive Fails (The Math) 5. Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure Modes &…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 5644,
+      "digest": "ca5b83290bd781b1bddf2e2e90c40bb4635b178e3f893cb425a06e8780fbec38"
+    },
+    {
+      "sourcePath": "AI-blogs/design-in-memory-database.md",
+      "slug": "ai-blogs/design-in-memory-database",
+      "title": "System Design: In-Memory Database",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Single Machine / Naive Solution 4. Why Naive Fails (The Math) 5. Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure Modes &…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "memory-context"
+      ],
+      "words": 5986,
+      "digest": "be961ecdb058e8a46519f448e33d71448d0e79c5c0078ce3cda87ddb2f4e0bda"
+    },
+    {
+      "sourcePath": "AI-blogs/design-multi-tenant-url-shortener.md",
+      "slug": "ai-blogs/design-multi-tenant-url-shortener",
+      "title": "System Design: Multi-Tenant URL Shortener with Organization Namespaces",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Phase 1: Single Machine Solution 4. Why Naive Fails (The Math) 5. Phase 2+: Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8.…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 6625,
+      "digest": "ad4d607c7588af68f1cbdbe4508db448ef41dd91f9598e7e389de3ccb9ba4091"
+    },
+    {
+      "sourcePath": "AI-blogs/design-online-ide.md",
+      "slug": "ai-blogs/design-online-ide",
+      "title": "System Design: Online IDE",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Single Machine / Naive Solution 4. Why Naive Fails (The Math) 5. Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure Modes &…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 5780,
+      "digest": "938b80fd691edfe3e9505a800f729105335335291d25dfda78a70920fc1c87d9"
+    },
+    {
+      "sourcePath": "AI-blogs/design-payment-system.md",
+      "slug": "ai-blogs/design-payment-system",
+      "title": "System Design: Payment System",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Phase 1: Single Machine Payment Service 4. Why Naive Fails (The Math) 5. Phase 2+: Distributed Payment Architecture 6. Core Component Deep Dives 7. The Scaling…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 5909,
+      "digest": "8e555a50ba9fed91179ab669c575f7243c099f5e7d7309250ab84ca0c549765d"
+    },
+    {
+      "sourcePath": "AI-blogs/design-poi-system.md",
+      "slug": "ai-blogs/design-poi-system",
+      "title": "System Design: Point of Interest (POI) System",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Single Machine / Naive Solution 4. Why Naive Fails (The Math) 5. Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure Modes &…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 6317,
+      "digest": "93eab49a9af3d11d467ea683eb5ac67b4a25dc931cf33b3bf0202cc7fa69b530"
+    },
+    {
+      "sourcePath": "AI-blogs/design-slack-messaging-system.md",
+      "slug": "ai-blogs/design-slack-messaging-system",
+      "title": "System Design: Slack — Enterprise Real-Time Messaging",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Single Machine / Naive Solution 4. Why Naive Fails (The Math) 5. Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure Modes &…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 5408,
+      "digest": "f37df9a7323c35edd581ac70199bb99427504ff99f825103d8f0116b44db0c23"
+    },
+    {
+      "sourcePath": "AI-blogs/design-text-to-video-generation.md",
+      "slug": "ai-blogs/design-text-to-video-generation",
+      "title": "System Design: Text-to-Video Generation Pipeline (Sora-like)",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Phase 1: Single GPU Worker 4. Why Naive Fails (The Math) 5. Phase 2: Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 6351,
+      "digest": "31d10311d297b72f95008447f042286c82a6e6649d8802ac94299f29df9e3656"
+    },
+    {
+      "sourcePath": "AI-blogs/design-webhook-delivery-system.md",
+      "slug": "ai-blogs/design-webhook-delivery-system",
+      "title": "System Design: Webhook Delivery System",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. REST API Design 4. Phase 1: Single Machine Webhook Dispatcher 5. Why the Naive Approach Fails (The Math) 6. Phase 2: Distributed Webhook Delivery Platform 7.…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 6962,
+      "digest": "38222940453b6114aea24cd7f270190d78e665882cc0ffd7275217bd627611f4"
+    },
+    {
+      "sourcePath": "AI-blogs/design-youtube-video-streaming-platform.md",
+      "slug": "ai-blogs/design-youtube-video-streaming-platform",
+      "title": "System Design: YouTube — A Video Streaming Platform at Scale",
+      "description": "1. The Problem & Why It's Hard 2. Requirements & Scope 3. Single Machine / Naive Solution 4. Why Naive Fails (The Math) 5. Distributed Architecture 6. Core Component Deep Dives 7. The Scaling Journey 8. Failure Modes &…",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 6678,
+      "digest": "44e9bb9799db42feab001195dcaf92f9c13dafecad0053434054ac99f2e13744"
+    },
+    {
+      "sourcePath": "AI-blogs/agent-harness-deep-dive.md",
+      "slug": "ai-blogs/agent-harness-deep-dive",
+      "title": "The Agent Harness: The Infrastructure Layer That Makes AI Agents Actually Work",
+      "description": "Created: 2026-02-21 Status: Published Tags: AI Agents, Agent Harness, LLM Infrastructure, Enterprise AI, Anthropic, OpenAI",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 3583,
+      "digest": "16b1086ba4e708a92fc29a0544d251015a35ede1d40e156019994bd9e5d307ba"
+    },
+    {
+      "sourcePath": "AI-blogs/anthropic-skills-guide-summary.md",
+      "slug": "ai-blogs/anthropic-skills-guide-summary",
+      "title": "The Complete Guide to Building Skills for Claude — Summary & Key Takeaways",
+      "description": "Source: The Complete Guide to Building Skills for Claude (PDF) Author: Anthropic Date: 2026-02-12",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [],
+      "words": 1381,
+      "digest": "96a39299cec1420aea7b92419631bcec69ed1299422ace0581342a4b0090916c"
+    },
+    {
+      "sourcePath": "AI/claude-code/top-skills-share.md",
+      "slug": "ai/claude-code/top-skills-share",
+      "title": "Top Available Skills",
+      "description": "A curated list of the most powerful skills available in this workspace for coding, design, creative work, and productivity.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 491,
+      "digest": "64ea4fec946d58587e44513611620b22a00d043a5c645cab24724e84584f4bb3"
+    },
+    {
+      "sourcePath": "AI/claude-code/runbooks/vibetunnel-iphone-setup.md",
+      "slug": "ai/claude-code/runbooks/vibetunnel-iphone-setup",
+      "title": "VibeTunnel: Running Claude Code on iPhone",
+      "description": "This runbook covers setting up VibeTunnel to access Claude Code from your iPhone via Tailscale.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 1300,
+      "digest": "ba5aa17f3ae5f927d3a711d520bb29a32e406cf1602bbbb7b925e28d7a06806a"
+    },
+    {
+      "sourcePath": "AI-blogs/we-are-all-addicted-to-claude-code.md",
+      "slug": "ai-blogs/we-are-all-addicted-to-claude-code",
+      "title": "We're All Addicted To Claude Code",
+      "description": "Created: 2026-02-07 Speaker(s): Garry Tan (Y Combinator), Calvin French-Owen (Segment co-founder, former OpenAI Codex team) Source: YouTube - Y Combinator Lightcone Podcast Date: February 2026 Duration: 45:59",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 1696,
+      "digest": "d6c4b64b54d2033f8bd12fdfe19c5e70b81a118c56fbd8cd7f8eb25e48ffbcb2"
+    },
+    {
+      "sourcePath": "AI/AI-article-analysis/context-engineering/blog-post.md",
+      "slug": "ai/ai-article-analysis/context-engineering/blog-post",
+      "title": "Why Your AI Agent Needs a Filesystem (Not Just a Database)",
+      "description": "Why relying solely on vector databases and context windows is holding your agent back.",
+      "collection": "ai",
+      "collectionLabel": "AI, Agents, and Systems",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 364,
+      "digest": "432550404830470f699c61179312b501e11a1d5591e97c3c5d435461b707674f"
+    },
+    {
+      "sourcePath": "Leetcode/python/000673-Number-of-Longest-Increasing-Subsequence.md",
+      "slug": "leetcode/python/000673-number-of-longest-increasing-subsequence",
+      "title": "# [1,3,5,4,7]",
+      "description": "Given an integer array nums, return the number of longest increasing subsequences.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 223,
+      "digest": "1a8320fb0f7bdb2f3e6a5943dc9d09ef45eba74ef31f2cb30d591df30cae5010"
+    },
+    {
+      "sourcePath": "Leetcode/python/000017-Letter-Combinations-of-a-Phone-Number.md",
+      "slug": "leetcode/python/000017-letter-combinations-of-a-phone-number",
+      "title": "000017 Letter Combinations of a Phone Number",
+      "description": "Given a string containing digits from 2-9 inclusive, return all possible letter combinations that the number could represent. Return the answer in any order.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 166,
+      "digest": "278843c0bd266315fb091d1fba78346952587eb2968f8620964539b157f5893a"
+    },
+    {
+      "sourcePath": "Leetcode/python/000032-Longest-Valid-Parentheses.md",
+      "slug": "leetcode/python/000032-longest-valid-parentheses",
+      "title": "000032 Longest Valid Parentheses",
+      "description": "Given a string containing just the characters '(' and ')', return the length of the longest valid (well-formed) parentheses substring .",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 169,
+      "digest": "00e4aa8197ed8349e55708b9166e43c58baf833b0231d5faf4244a21456dc898"
+    },
+    {
+      "sourcePath": "Leetcode/python/000033-Search-in-Rotated-Sorted-Array.md",
+      "slug": "leetcode/python/000033-search-in-rotated-sorted-array",
+      "title": "000033 Search in Rotated Sorted Array",
+      "description": "There is an integer array nums sorted in ascending order (with distinct values).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 272,
+      "digest": "93234b82f064acf25a5f05b29c0581e9f7ec62e02831f141c7d18238aa07df43"
+    },
+    {
+      "sourcePath": "Leetcode/python/000046-Permutations.md",
+      "slug": "leetcode/python/000046-permutations",
+      "title": "000046 Permutations",
+      "description": "Given an array nums of distinct integers, return all the possible permutations. You can return the answer in any order.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 137,
+      "digest": "cb1aa3b841d830474c84bdee621749aeac11d32cc6a5ce434e99ddc375a4c4b7"
+    },
+    {
+      "sourcePath": "Leetcode/python/000074-Search-a-2D-Matrix.md",
+      "slug": "leetcode/python/000074-search-a-2d-matrix",
+      "title": "000074 Search a 2D Matrix",
+      "description": "You are given an m x n integer matrix matrix with the following two properties:",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 194,
+      "digest": "360a5d7ba9064d4780d3210da3b13912092ed0cbc91c31966ae5f7361f8db764"
+    },
+    {
+      "sourcePath": "Leetcode/python/000077-Combinations.md",
+      "slug": "leetcode/python/000077-combinations",
+      "title": "000077 Combinations",
+      "description": "Given two integers n and k, return all possible combinations of k numbers chosen from the range [1, n].",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 162,
+      "digest": "426dabecbafbf23815a28072cfaec261f21ff5f4d310f2a2a4b9974c5b116352"
+    },
+    {
+      "sourcePath": "Leetcode/python/000081-Search-in-Rotated-Sorted-Array-II.md",
+      "slug": "leetcode/python/000081-search-in-rotated-sorted-array-ii",
+      "title": "000081 Search in Rotated Sorted Array II",
+      "description": "There is an integer array nums sorted in non-decreasing order (not necessarily with distinct values).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 282,
+      "digest": "b93083991735d09f2f0fa2600afe7a6748aeb95e8f4abdf2cb836173954c5065"
+    },
+    {
+      "sourcePath": "Leetcode/python/000137-single-number-ii.md",
+      "slug": "leetcode/python/000137-single-number-ii",
+      "title": "000137 single number ii",
+      "description": "Given an integer array nums where every element appears three times except for one, which appears exactly once. Find the single element and return it.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 141,
+      "digest": "bb168d5ba9c71cb627ba62110fa2315b3a07c8a5451047736acab8ff838281d3"
+    },
+    {
+      "sourcePath": "Leetcode/python/000207-courses-schedule.md",
+      "slug": "leetcode/python/000207-courses-schedule",
+      "title": "000207 courses schedule",
+      "description": "There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course bi first if you…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 271,
+      "digest": "d55de3cf0d8b0ee30b88e646c5d82c619f319bcbef467c149d3968251011406b"
+    },
+    {
+      "sourcePath": "Leetcode/python/000209-Minimum-Size-Subarray-Sum.md",
+      "slug": "leetcode/python/000209-minimum-size-subarray-sum",
+      "title": "000209 Minimum Size Subarray Sum",
+      "description": "Given an array of positive integers nums and a positive integer target, return the minimal length of a subarray whose sum is greater than or equal to target. If there is no such subarray, return 0 instead.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 187,
+      "digest": "351e7c547ed93ebc7e6a9245f59c60a190c2006352995b3b64be092587afa702"
+    },
+    {
+      "sourcePath": "Leetcode/python/000376-wiggle-subsequence.md",
+      "slug": "leetcode/python/000376-wiggle-subsequence",
+      "title": "000376 wiggle subsequence",
+      "description": "A wiggle sequence is a sequence where the differences between successive numbers strictly alternate between positive and negative. The first difference (if one exists) may be either positive or negative. A sequence…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 342,
+      "digest": "f0a8f6b5b98fd21c38ba53ec0f0d7fa188693c5dded317e80daa0a7aec6eb57f"
+    },
+    {
+      "sourcePath": "Leetcode/python/000486-Predict-the-Winner.md",
+      "slug": "leetcode/python/000486-predict-the-winner",
+      "title": "000486 Predict the Winner",
+      "description": "You are given an integer array nums. Two players are playing a game with this array: player 1 and player 2.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 372,
+      "digest": "2a9d1572a439a1cb0dfb404c326f62509e3ca4eb3cbcb4236d567fad4a2b467c"
+    },
+    {
+      "sourcePath": "Leetcode/python/000518-Coin-Change-II.md",
+      "slug": "leetcode/python/000518-coin-change-ii",
+      "title": "000518 Coin Change II",
+      "description": "You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 217,
+      "digest": "29ff6cb959bd48456f9dd33957a616dfde90d7b0d08a5eedc31c477113afe2f3"
+    },
+    {
+      "sourcePath": "Leetcode/python/000688-Knight-Probability-in-Chessboard.md",
+      "slug": "leetcode/python/000688-knight-probability-in-chessboard",
+      "title": "000688 Knight Probability in Chessboard",
+      "description": "On an n x n chessboard, a knight starts at the cell (row, column) and attempts to make exactly k moves. The rows and columns are 0-indexed, so the top-left cell is (0, 0), and the bottom-right cell is (n - 1, n - 1).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 359,
+      "digest": "a9fcc75efa86870ef31042113c35c46232eb503c8a4dc3ab50151a86afc2d60a"
+    },
+    {
+      "sourcePath": "Leetcode/python/000735-Asteroid-Collision.md",
+      "slug": "leetcode/python/000735-asteroid-collision",
+      "title": "000735 Asteroid Collision",
+      "description": "We are given an array asteroids of integers representing asteroids in a row.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 251,
+      "digest": "bcbbf2b45639b6e7694954be6996df578fcbe9de1368837944a46ea033828004"
+    },
+    {
+      "sourcePath": "Leetcode/python/000852-Peak-Index-in-a-Mountain-Array.md",
+      "slug": "leetcode/python/000852-peak-index-in-a-mountain-array",
+      "title": "000852 Peak Index in a Mountain Array",
+      "description": "An array arr a mountain if the following properties hold:",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 246,
+      "digest": "9f35aa28f56c354baccd5985673ef04835d94fe0e41648a60d39815bed52712a"
+    },
+    {
+      "sourcePath": "Leetcode/python/000859-Buddy-Strings.md",
+      "slug": "leetcode/python/000859-buddy-strings",
+      "title": "000859 Buddy Strings",
+      "description": "Given two strings s and goal, return true if you can swap two letters in s so the result is equal to goal, otherwise, return false.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 266,
+      "digest": "aa51afe0ec044167a286a53e38aeff832f9842f0da96e51d77bb7ed6fee73d2d"
+    },
+    {
+      "sourcePath": "Leetcode/python/000864-Shortest-Path-to-Get-All-Keys.md",
+      "slug": "leetcode/python/000864-shortest-path-to-get-all-keys",
+      "title": "000864 Shortest Path to Get All Keys",
+      "description": "'.' is an empty cell. '#' is a wall. '@' is the starting point. Lowercase letters represent keys. Uppercase letters represent locks. You start at the starting point and one move consists of walking one space in one of…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 449,
+      "digest": "20e440b1dbc0a8619fdc3f2977a90ed1df35d9a027208e981d7263cfb899d143"
+    },
+    {
+      "sourcePath": "Leetcode/python/000920-Number-of-Music-Playlists.md",
+      "slug": "leetcode/python/000920-number-of-music-playlists",
+      "title": "000920 Number of Music Playlists",
+      "description": "Your music player contains n different songs. You want to listen to goal songs (not necessarily different) during your trip. To avoid boredom, you will create a playlist so that:",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 290,
+      "digest": "b903265a5f632d2878854ca3e83fdd33a2b89f455209ab19122f520c3494704b"
+    },
+    {
+      "sourcePath": "Leetcode/python/001218-Longest-Arithmetic-Subsequence-of-Given-Difference.md",
+      "slug": "leetcode/python/001218-longest-arithmetic-subsequence-of-given-difference",
+      "title": "001218 Longest Arithmetic Subsequence of Given Difference",
+      "description": "Given an integer array arr and an integer difference, return the length of the longest subsequence in arr which is an arithmetic sequence such that the difference between adjacent elements in the subsequence equals…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 189,
+      "digest": "d3256688fcdaf62e0ff5d3dae4af2021224fec01f2f43d74839efd766b041a14"
+    },
+    {
+      "sourcePath": "Leetcode/python/001235-Maximum-Profit-in-Job-Scheduling.md",
+      "slug": "leetcode/python/001235-maximum-profit-in-job-scheduling",
+      "title": "001235 Maximum Profit in Job Scheduling",
+      "description": "We have n jobs, where every job is scheduled to be done from startTime[i] to endTime[i], obtaining a profit of profit[i].",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 330,
+      "digest": "84fffe6789f2f50aba3f766afe04155adfe1bcb286e7cbe6a2066821e59f6230"
+    },
+    {
+      "sourcePath": "Leetcode/python/001493-Longest-Subarray-of 1-After-Deleting-One-Element.md",
+      "slug": "leetcode/python/001493-longest-subarray-of-1-after-deleting-one-element",
+      "title": "001493 Longest Subarray of 1 After Deleting One Element",
+      "description": "Given a binary array nums, you should delete one element from it.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 223,
+      "digest": "0f115363f05035eb6f6d136add9ba45ade2edbaf9768f8b99d63a4eb10d4c8ad"
+    },
+    {
+      "sourcePath": "Leetcode/python/001514-Path-with-Maximum-Probability.md",
+      "slug": "leetcode/python/001514-path-with-maximum-probability",
+      "title": "001514 Path with Maximum Probability",
+      "description": "You are given an undirected weighted graph of n nodes (0-indexed), represented by an edge list where edges[i] = [a, b] is an undirected edge connecting the nodes a and b with a probability of success of traversing that…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 462,
+      "digest": "a9ca343e730af7ec8c729700eb49b077e0763a4d0a5668be07419d06036240b7"
+    },
+    {
+      "sourcePath": "Leetcode/python/002024-Maximize-the-Confusion-of-an-Exam.md",
+      "slug": "leetcode/python/002024-maximize-the-confusion-of-an-exam",
+      "title": "002024 Maximize the Confusion of an Exam",
+      "description": "A teacher is writing a test with n true/false questions, with 'T' denoting true and 'F' denoting false. He wants to confuse the students by maximizing the number of consecutive questions with the same answer (multiple…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 317,
+      "digest": "8e20f4b80df7f9bd4745259733340afb0c8536e62d0b47f0cd7de11c7899fcdc"
+    },
+    {
+      "sourcePath": "Leetcode/python/002305-Fair-Distribution-of-Cookies.md",
+      "slug": "leetcode/python/002305-fair-distribution-of-cookies",
+      "title": "002305 Fair Distribution of Cookies",
+      "description": "You are given an integer array cookies, where cookies[i] denotes the number of cookies in the ith bag. You are also given an integer k that denotes the number of children to distribute all the bags of cookies to. All…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 385,
+      "digest": "d973b66adacac8f20fce9f3839dcc6f9be5d30b1afc7e43e9e27722c8db65275"
+    },
+    {
+      "sourcePath": "Leetcode/python/002616-Minimize-the-Maximum-Difference-of-Pairs.md",
+      "slug": "leetcode/python/002616-minimize-the-maximum-difference-of-pairs",
+      "title": "002616 Minimize the Maximum Difference of Pairs",
+      "description": "You are given a 0-indexed integer array nums and an integer p. Find p pairs of indices of nums such that the maximum difference amongst all the pairs is minimized. Also, ensure no index appears more than once amongst…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 305,
+      "digest": "7b6de1e94a5857bec22bfcf26967dcf22a61b24abe0add0907e1ec8ae45a1cb8"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/1147.longest-chunked-palindrome-decomposition-cn.md",
+      "slug": "leetcode/中文版解题/1147-longest-chunked-palindrome-decomposition-cn",
+      "title": "1147 longest chunked palindrome decomposition cn",
+      "description": "给定一个字符串，让求出最多可以切成分块的回文，每一个切分可以是一个子字符串，或者单个字符。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 460,
+      "digest": "14dea04ca0267371c41d2c6da40596e88ba2e3dbdb3833654660099e75769f51"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/1168.optimize-water-distribution-in-a-village-cn.md",
+      "slug": "leetcode/中文版解题/1168-optimize-water-distribution-in-a-village-cn",
+      "title": "1168 optimize water distribution in a village cn",
+      "description": "题意，在每个城市打井需要一定的花费，也可以用其他城市的井水，城市之间建立连接管道需要一定的花费，怎么样安排可以花费最少的前灌溉所有城市。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 742,
+      "digest": "670ca3ff8abf1dc5701ce82ca9693110d28dbcc9c6b9a89e71429917982b18fc"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/1168.optimize-water-distribution-in-a-village-en.md",
+      "slug": "leetcode/english-solution/1168-optimize-water-distribution-in-a-village-en",
+      "title": "1168 optimize water distribution in a village en",
+      "description": "From example graph, we can see that this is Shortest path problem/Minimum spanning tree problem. In this problem, in a graph, view cities as nodes, pipe connects two cities as edges with cost. here, wells costs, it is…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 1016,
+      "digest": "0744c298bf6b2dc6a9b1cd2318a19c3a5c6f1cffae875badcd9e668a46ef08d3"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/1177.can-make-palindrome-from-substring-cn.md",
+      "slug": "leetcode/中文版解题/1177-can-make-palindrome-from-substring-cn",
+      "title": "1177 can make palindrome from substring cn",
+      "description": "题中给出的字符串只包含小写字母（26个），让你判断给出的子串通过可重新排列和最多替换K个字母后，该子串是否可以组成回文字符串。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 604,
+      "digest": "f2d15b39a41bd1ecf78064ad51fc4bb9a1aba8a248c7837705789b4f43119e70"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/1177.can-make-palindrome-from-substring-en.md",
+      "slug": "leetcode/english-solution/1177-can-make-palindrome-from-substring-en",
+      "title": "1177 can make palindrome from substring en",
+      "description": "In this problem, there are 2 conditions for checking whether substring is palindrome:",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 989,
+      "digest": "f6664a5513e0eb6af4c50d8e955c011a98ff58dda74c1098045d1502744fc8e3"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/1343.number-of-avg-subarr-sizek-greater-or-equal-threshold.md",
+      "slug": "leetcode/english-solution/1343-number-of-avg-subarr-sizek-greater-or-equal-threshold",
+      "title": "1343 number of avg subarr sizek greater or equal threshold",
+      "description": "1343. Number of Sub-arrays of Size K and Average Greater than or Equal to Threshold",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 448,
+      "digest": "dbf6c10776419425a2f3599ea1bddd158e3c281b8894f1633a407c7616ff55ad"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/1345.jump-game-iv.md",
+      "slug": "leetcode/english-solution/1345-jump-game-iv",
+      "title": "1345 jump game iv",
+      "description": "This problem can use BFS to check, check each level, if already found in last index, then return, after each level, jumps+1. here level means 3 possible options to jump. so that we can find the min jump steps.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 687,
+      "digest": "19995df266aebd17f49d745d034a89ccf6d32ac38f46adac1c4322121e66f2d0"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/215.kth-largest-element-in-an-array-cn.md",
+      "slug": "leetcode/中文版解题/215-kth-largest-element-in-an-array-cn",
+      "title": "215 kth largest element in an array cn",
+      "description": "这道题要求在一个无序的数组中，返回第K大的数。根据时间复杂度不同，这题有3种不同的解法。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 453,
+      "digest": "07562d806a720131eaf95fbd6aac66d925948e9c6ac593aa0d75d2c2ff748849"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/25.reverse-nodes-in-k-groups-cn.md",
+      "slug": "leetcode/中文版解题/25-reverse-nodes-in-k-groups-cn",
+      "title": "25 reverse nodes in k groups cn",
+      "description": "从左往右扫描一遍linked list，扫描过程中，以k为单位把数组分成若干段，对每一段进行翻转。给定首尾nodes，如何对链表进行翻转。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 624,
+      "digest": "1003bd77fd03bc5bfda7c56538108c8350d54fd15ed0bc6030f0da5d90e89a0b"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/25.reverse-nodes-in-k-groups-en.md",
+      "slug": "leetcode/english-solution/25-reverse-nodes-in-k-groups-en",
+      "title": "25 reverse nodes in k groups en",
+      "description": "Traverse linked list from left to right, during traverse, group nodes in k, then reverse each group. How to reverse a linked list given start, end node?",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 894,
+      "digest": "ef11323143bb03bc6f534c2ce8ba6fd679d5164ceea298438fd4bf8ca1dfee96"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/30.substring-with-concatenation-of-all-words-cn.md",
+      "slug": "leetcode/中文版解题/30-substring-with-concatenation-of-all-words-cn",
+      "title": "30 substring with concatenation of all words cn",
+      "description": "题意: 给定一个字符串(String s), 给定n个单词组成的字符串数组(String[] words), 找出所有子串(substring)的起始下标(start index), 使得该子串包含所有的单词, 每个单词的个数也要相同(子串中单词顺序任意).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 793,
+      "digest": "1ce97aee03d637c211555f1b2828fabfd54d9bc137b9a6c0ed12ebe65c427eab"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/4.median-of-two-sorted-array-cn.md",
+      "slug": "leetcode/中文版解题/4-median-of-two-sorted-array-cn",
+      "title": "4 median of two sorted array cn",
+      "description": "首先了解一下Median的概念，一个数组中median就是把数组分成左右等分的中位数。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 533,
+      "digest": "a57d87580111883ebf11643f305519217e23118432eb2e9192e418c25b0b1f9a"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/460.LFU-cache-cn.md",
+      "slug": "leetcode/中文版解题/460-lfu-cache-cn",
+      "title": "460 LFU cache cn",
+      "description": "LFU（Least frequently used) 但内存容量满的情况下，有新的数据进来，需要更多空间的时候，就需要删除被访问频率最少的元素。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 924,
+      "digest": "1ac0ee361b5505b55fa442d030743d73344ab6fec4f7628f7300109597e00454"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/474.ones-and-zeros-cn.md",
+      "slug": "leetcode/中文版解题/474-ones-and-zeros-cn",
+      "title": "474 ones and zeros cn",
+      "description": "题意是给定一个只包含0 和 1 的字符串数组, 求在字符串数组中最多能用m个0和n和1能组成多少个字符串。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 1204,
+      "digest": "18b0737f8d2f9139d0e5b80dba38f85f23ce42a3f5f30942925f1bf13a2a4d8e"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/474.ones-and-zeros-en.md",
+      "slug": "leetcode/english-solution/474-ones-and-zeros-en",
+      "title": "474 ones and zeros en",
+      "description": "When see the requirement of returning maximum number, length etc, and not require to list all possible value. Usually it can be solved by DP.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 1682,
+      "digest": "1c4f02529e658403bf6847041d092f52fc5c1cd31fa1d7411d8c2acc7f9150cb"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/53.maximum-sum-subarray-cn.md",
+      "slug": "leetcode/中文版解题/53-maximum-sum-subarray-cn",
+      "title": "53 maximum sum subarray cn",
+      "description": "求子序列和，那么我们要知道子序列的首尾位置，然后计算首尾之间的序列和。用2个for循环可以枚举所有子序列的首尾位置。 然后用一个for循环求解序列和。这里时间复杂度太高，O(n^3).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 1029,
+      "digest": "05b040a3c7fa73d4291009a26333a68a25559975df7b6b5fa3bf6eb949e01e5e"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/53.maximum-sum-subarray-en.md",
+      "slug": "leetcode/english-solution/53-maximum-sum-subarray-en",
+      "title": "53 maximum sum subarray en",
+      "description": "Below will explain 4 different approaches to solve this problem.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 1579,
+      "digest": "956124802768daeec9351dfa22289b38814afad7e616a0b23a2dc5d89550e55f"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/547.friend-circles-en.md",
+      "slug": "leetcode/english-solution/547-friend-circles-en",
+      "title": "547 friend circles en",
+      "description": "We can view a given matrix as Adjacency Matrix of a graph. In this case, this problem become to find number of connected components in a undirected graph.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 1074,
+      "digest": "4d07a0c1cb4ab889c1de4146d2a488aacef77ef0eef513e297858739fddeb024"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/79.word-search-cn.md",
+      "slug": "leetcode/中文版解题/79-word-search-cn",
+      "title": "79 word search cn",
+      "description": "在2D表中搜索是否有满足给定单词的字符组合，要求所有字符都是相邻的（方向不限). 题中也没有要求字符的起始和结束位置。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 807,
+      "digest": "93292468a8c95af1bf9e6c4114d16a68a1398599d730192073a9b16046d678ca"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/79.word-search-en.md",
+      "slug": "leetcode/english-solution/79-word-search-en",
+      "title": "79 word search en",
+      "description": "This problem does not give start position, or direction restriction, so 1. Scan board, find starting position with matching word first letter 2. From starting position, DFS (4 (up, down, left, right 4 directions) match…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 1180,
+      "digest": "cfc6b4906c70f85f483e5c11dc4e8f2c5ef74acf995e15db5657edca94dd4fca"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/backspace-string-compare.md",
+      "slug": "leetcode/30daychallenge/backspace-string-compare",
+      "title": "Backspace string compare",
+      "description": "In this solution, we build a new string after backspace. From left to right, if curr char != '#', append to newString. If curr char == '#', check newString is null? - if newString is null, do nothing, continue - if…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 510,
+      "digest": "3b67b7560057bc08306b6183b2418ca52263e2462df061234db22eabafff1bce"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/binary-tree-maximum-path-sum.md",
+      "slug": "leetcode/30daychallenge/binary-tree-maximum-path-sum",
+      "title": "Binary tree maximum path sum",
+      "description": "For this problem, we can define a global parameter max and init max = Integer.MINVALUE; personally do not like it, in real industry project, not recommend this way though. Personally perfer to define a class (object)…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 408,
+      "digest": "136e9d32601e103b04ef21bbe79499df100f09f2b3b4d1a57b72c5ccbbbae6f1"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/bitwise-and-number-range.md",
+      "slug": "leetcode/30daychallenge/bitwise-and-number-range",
+      "title": "Bitwise and number range",
+      "description": "This is a Bit operation problem, and I feel helpless every time when I see bit operation... anyway, look at this problem, we can find out that it needed to bit AND to all the number for given range, for example [4,5],…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 228,
+      "digest": "dcca9b900fb41246f693d9807c4079a8685fd6defffc492f387fbf9b6a2a1763"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/check-if-straight-line.md",
+      "slug": "leetcode/may2020challenge/check-if-straight-line",
+      "title": "Check if straight line",
+      "description": "This problem is a math problem, how to calculate slope for any two points.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 312,
+      "digest": "1bb03a84b3120d4ad6990d8581f4a7a3c58e1ead65517bd1c83a23941faf56eb"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/check-string-valid-sequence-from-root-to-leaves-path-in-bst.md",
+      "slug": "leetcode/30daychallenge/check-string-valid-sequence-from-root-to-leaves-path-in-bst",
+      "title": "Check string valid sequence from root to leaves path in bst",
+      "description": "Check If a String Is a Valid Sequence from Root to Leaves Path in a Binary Tree",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 570,
+      "digest": "70a2c5f6d14f438b2fd3a16d1c09b472a0ceffb528ddbc30422b00837d1ef873"
+    },
+    {
+      "sourcePath": "Google/chunked-palindrome-cn.md",
+      "slug": "google/chunked-palindrome-cn",
+      "title": "Chunked palindrome cn",
+      "description": "给定一个字符串，让求出最多可以切成分块的回文，每一个切分可以是一个子字符串，或者单个字符。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 467,
+      "digest": "9735eba479417057f06678c308a8f0122b39703f865f309c6a89fd18647a0514"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/construct-binary-search-tree-from-preorder-traversal.md",
+      "slug": "leetcode/30daychallenge/construct-binary-search-tree-from-preorder-traversal",
+      "title": "Construct binary search tree from preorder traversal",
+      "description": "Construct Binary Search Tree from Preorder Traversal",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 251,
+      "digest": "748194dad6160448b075ccc64eebd7431e8e5cc3937f9306185af1b6f3ee2831"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/contiguous-array.md",
+      "slug": "leetcode/30daychallenge/contiguous-array",
+      "title": "Contiguous array",
+      "description": "Continuous subarray with equal 0 and 1, here counting 0s and 1s. if 0s, count + 1, if 1s, count - 1. if encounter count = 0, then 0s and 1s are equal. then how to find the longest contiguous subarray? using map to keep…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 424,
+      "digest": "4e7d6a1b4114623c726818ecc1ad6df2e11693bd9e0da87a4f94c0ac807ea921"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/counting-elements.md",
+      "slug": "leetcode/30daychallenge/counting-elements",
+      "title": "Counting elements",
+      "description": "A preserved Kuma Blog note from the Algorithms collection.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 207,
+      "digest": "cdee1a6505194ddb22c151866de927eb7e0d2a0b357aabf634591453e1043b49"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/cousins-in-binary-tree.md",
+      "slug": "leetcode/may2020challenge/cousins-in-binary-tree",
+      "title": "Cousins in binary tree",
+      "description": "BFS -- level by level check whether current level encounter both x and y node, is yes, then compare their parents nodes. construct Node to store node x parent(int parent) and whether encountered(boolean isCurr) use…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 483,
+      "digest": "7375661b6c2e1dd646317614ef917839bc4f6a3fc75bc27cd6116a3d6604371a"
+    },
+    {
+      "sourcePath": "Leetcode/English Solution/1171.remove-zero-sum-consecutive-nodes-from-linked-list-en.md",
+      "slug": "leetcode/english-solution/1171-remove-zero-sum-consecutive-nodes-from-linked-list-en",
+      "title": "Definition for singly-linked list.",
+      "description": "This problem is typical prefixSum problem, if prefixSum seen, then all elements between two same prefixSum sum = 0.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 502,
+      "digest": "1eed0adef4a6e95d3102f8d966c7fd1ab18bdb9ef428e794a347d17861a5229f"
+    },
+    {
+      "sourcePath": "Leetcode/python/000445-Add-Two-Numbers-II.md",
+      "slug": "leetcode/python/000445-add-two-numbers-ii",
+      "title": "Definition for singly-linked list.",
+      "description": "You are given two non-empty linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contains a single digit. Add the two numbers and return the sum as a…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 251,
+      "digest": "3eb1417875c1e8ffa6de26db0fe87c03e636856ace130ee46aee1c0850932aab"
+    },
+    {
+      "sourcePath": "Leetcode/中文版解题/1171.remove-zero-sum-consecutive-nodes-from-linked-list-cn.md",
+      "slug": "leetcode/中文版解题/1171-remove-zero-sum-consecutive-nodes-from-linked-list-cn",
+      "title": "Definition for singly-linked list.",
+      "description": "这里可以用HashMap， key为前缀和，value为当前 Node，如果前缀和已经在 HashMap 中，删除两个相同前缀和之间的所有 Nodes， 同时删除 HashMap 中对应的前缀和(prefixSum) 和 Node。",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 381,
+      "digest": "dc9b3a3bece94eba2241ce6dd8a5ff69a023c1b47f6d0ac151d41d05bb21a6ef"
+    },
+    {
+      "sourcePath": "Leetcode/python/00802-Find-Eventual-Safe-States.md",
+      "slug": "leetcode/python/00802-find-eventual-safe-states",
+      "title": "degree = {0:2, 1:2, 2:1, 3:1, 4:1, 5:0, 6:0}",
+      "description": "There is a directed graph of n nodes with each node labeled from 0 to n - 1. The graph is represented by a 0-indexed 2D integer array graph where graph[i] is an integer array of nodes adjacent to node i, meaning there…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 370,
+      "digest": "af7b77556c6f6de34cff07743296fc409e29a34c1ba98338e89df6213f144639"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/diameter-of-binary-tree.md",
+      "slug": "leetcode/30daychallenge/diameter-of-binary-tree",
+      "title": "Diameter of binary tree",
+      "description": "From problem description, longest path mah or may not pass through the root.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 315,
+      "digest": "bef0650804b9239b4cc5992502e2775b8fc6a8807d788f22a13bfeb88c810ea1"
+    },
+    {
+      "sourcePath": "Leetcode/python/000139-Word-Break.md",
+      "slug": "leetcode/python/000139-word-break",
+      "title": "Example \"catsanddog\", wordDict = [\"cats\",\"dog\",\"sand\",\"and\",\"cat\"]",
+      "description": "Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 287,
+      "digest": "f03e3c97814b8a9ffe737ef6150bf3eae2ad4dc1ccf07acaa773fe8709c4edd0"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/find-town-judge.md",
+      "slug": "leetcode/may2020challenge/find-town-judge",
+      "title": "Find town judge",
+      "description": "This problem can be seen as a directed graph，from a -> b, a represent a trust b, as below example pic. so that we can calculate based on the degrees. Use a count array -- count[i] -- the number of people trust people…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 425,
+      "digest": "b6e10216942d102ae1b151108f7af08bf20c8dd8ffce8704cef1a20855a91d68"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/first-bad-version.md",
+      "slug": "leetcode/may2020challenge/first-bad-version",
+      "title": "First bad version",
+      "description": "Naive solution is to iterate [0,n], and call api isFirstBadVersion(i), to check every version start from 0 to n, when isFirstBadVersion(i) is true, then found the first bad version, and return i.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 363,
+      "digest": "6fb77110e6e93ef59553bf825344485ca8746c9de85eff265bf2bcf8ce96ef6e"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/first-unique-character-in-a-string.md",
+      "slug": "leetcode/may2020challenge/first-unique-character-in-a-string",
+      "title": "First unique character in a string",
+      "description": "Straight solution, build a map of frequency, build a map with [char:frequency] as pair iterate through chars in string s, return index of the first char with frequency = 1, map.get(ch)==1",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 175,
+      "digest": "27fe53faa63c584e8b82bd69af3afed83058e91258f064f843befb9b7c99cd64"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/first-unique-number.md",
+      "slug": "leetcode/30daychallenge/first-unique-number",
+      "title": "First unique number",
+      "description": "Using HashMap to keep track of number and the frequency, use Queue to store number in order. (FIFO -- first in first out).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 576,
+      "digest": "101fc61ca63c77c01aaaecf3545c9a1a0da2b5f58306db6e2c2fba427bf1a5b8"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/flood-fill.md",
+      "slug": "leetcode/may2020challenge/flood-fill",
+      "title": "Flood fill",
+      "description": "This problem can use DFS or BFS to solve. it is similar to islands problem.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 670,
+      "digest": "7a0e8e6039e773bf1e1ca7c0aede02d7e92afbf6f4e9ba79c47aa8174335b42d"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/group-anagrams.md",
+      "slug": "leetcode/30daychallenge/group-anagrams",
+      "title": "Group anagrams",
+      "description": "2. sorted string as key, if after sorted, string is the same, put original string into list, group with the same sorted string.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 348,
+      "digest": "15cee8c30fa29a5c0a60977174783534334b7afb62cac9138c20d083d5622aa7"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/implement-trie.md",
+      "slug": "leetcode/may2020challenge/implement-trie",
+      "title": "Implement trie",
+      "description": "First understand what is trie, please read Trie (Wiki).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 452,
+      "digest": "8579bb149c826917f74b6ed2567bd777ff711fec0c4e54155d097d5f08b071a3"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/jewels-and-stones.md",
+      "slug": "leetcode/may2020challenge/jewels-and-stones",
+      "title": "Jewels and stones",
+      "description": "Using Hashset to store all types of jewels from J. iterate stones S, check each stone whether equals to jewels in HashSet, if current stone in set, then count++; if current stone not in set, continue.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 239,
+      "digest": "b77e3af9335300406e76d0ee8ebe9e49d5b35bcb171fb70b80c69cd831af50d2"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/jump-game.md",
+      "slug": "leetcode/30daychallenge/jump-game",
+      "title": "Jump game",
+      "description": "To check whether can jump to the last index, we can iterate through each steps, and keep track of the max index for each jump, for each jump, check whether current index can be jumped from previous steps - if not, then…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 311,
+      "digest": "f83c176ffd6a63eea25f2087437e8336ec03cc406eb67d3dccc47c4c4b9b9164"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/last-stone-weight.md",
+      "slug": "leetcode/30daychallenge/last-stone-weight",
+      "title": "Last stone weight",
+      "description": "From problem description, notice that every time smash 2 heaviest stones, if two heaviest stones weight not equal, put diff into stones array if two heaviest stones are equal, discard both",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 431,
+      "digest": "e7ce5463b4c7e65c14cefff84650b8ecf6ceed3b94f60e83545bae5775871b72"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/leftmost-column-with-at-least-a-one.md",
+      "slug": "leetcode/30daychallenge/leftmost-column-with-at-least-a-one",
+      "title": "Leftmost column with at least a one",
+      "description": "BinaryMatrix row is sorted, and find left most 1, binary search in O(logN), record each row left most column index with 1, each row do binary search, and compare the left most column, keep track of min column number.…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 600,
+      "digest": "a8db28d02e847be89bd10c3f58ce102949f5898f4d7fe983cd40610b799cc61e"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/longest-common-subsequect.md",
+      "slug": "leetcode/30daychallenge/longest-common-subsequect",
+      "title": "Longest common subsequect",
+      "description": "This is LCS, a Dynamic Programming (DP) problem, which can break down into smaller, simpler subproblems, and so on. DP problem usually reuse solutions to lower level subproblems.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 386,
+      "digest": "667407f1deefdd4134489234e32c231b5dff6c0d5783aebbefa5caf888e1462e"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/LRU-cache.md",
+      "slug": "leetcode/30daychallenge/lru-cache",
+      "title": "LRU cache",
+      "description": "Make use of Java library, LinkedHashMap, ordered and keep track of map size. when insert into new (key,value) into map, check map already reach capacity or not: - if reach capacity, then remove last value from map,…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 605,
+      "digest": "4c339754448cd2871a2fa662d8a9c78649526ea4e9e73163a55051d2d7302b3a"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/majority-element.md",
+      "slug": "leetcode/may2020challenge/majority-element",
+      "title": "Majority element",
+      "description": "Using HashMap to store each element with its frequency as pair. iterate through array nums, add each number and its frequency into map after add into map, check whether current element frequency already greater than…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 342,
+      "digest": "f7398e85c075790067e1e20a217067c6657e0e862f5fe903bba2776ab17dbd5d"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/maximal-square.md",
+      "slug": "leetcode/30daychallenge/maximal-square",
+      "title": "Maximal square",
+      "description": "This is dynamic programming, which can solve it by breaking down into smaller subproblems. DP problem, the hard part is to come up with formular function, first we init dp:",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 269,
+      "digest": "4a9735feecc900bf4499f1d7387cd941450e055112b642caa8d6e60cd78f0795"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/maximum-subarray.md",
+      "slug": "leetcode/30daychallenge/maximum-subarray",
+      "title": "Maximum subarray",
+      "description": "// TODO: add divide and conquer solution",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 165,
+      "digest": "10021b8d6bb53c1371e6200de00772235ed64c13177f544f9519324499a98b22"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/maximum-sum-circular-subarray.md",
+      "slug": "leetcode/may2020challenge/maximum-sum-circular-subarray",
+      "title": "Maximum sum circular subarray",
+      "description": "This problem is similar to Maximum Subarray Sum and Minmum Subarray Sum, but in circular, so there are two possible maximum sum subarray:",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 479,
+      "digest": "8cb97ffd8c68c57b1496fa3f58975cb1bd3aa87eaf24c05e49491d2f9c188b5c"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/middle-of-the-linked-list.md",
+      "slug": "leetcode/30daychallenge/middle-of-the-linked-list",
+      "title": "Middle of the linked list",
+      "description": "Idea is to use slow and fast (turtle and rabbit) two nodes from head, slow node move 1 node each time,",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 278,
+      "digest": "44fde68e59150abf5a73e73ced9c47f2c838c8b00c63eca51a97bb6ffa13a972"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/min-stack.md",
+      "slug": "leetcode/30daychallenge/min-stack",
+      "title": "Min stack",
+      "description": "Intuitive solution is to use 2 stacks, one stack to maintain value, and one stack to maintain min value.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 364,
+      "digest": "97ed2d4c57081e1560c67321378ab82fb482b582c80f37a54dd73dcbd70e5749"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/minimun-path-sum.md",
+      "slug": "leetcode/30daychallenge/minimun-path-sum",
+      "title": "Minimun path sum",
+      "description": "This is a simple DP problem, current sum can either come from up or left, since it can only move down or right.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 320,
+      "digest": "5767bd86a169613f227883089d2417159dd3f3c845365f505b899d7fe5d7b146"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/move-zeroes.md",
+      "slug": "leetcode/30daychallenge/move-zeroes",
+      "title": "Move zeroes",
+      "description": "Two pointer (left, right), left keep track most left zero number position, right keep track of left most non-zero number position, then do swap(left, right). Continue the process until the end of array nums.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 232,
+      "digest": "5b61f2e4e02a14cb4df534d3de54534db1b338b6b6f7f2b1dd2d609e66a30bea"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/number-complement.md",
+      "slug": "leetcode/may2020challenge/number-complement",
+      "title": "Number complement",
+      "description": "To find complement number, observe that complete number, the binary only has 1s.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 215,
+      "digest": "ae9ab04903633b3461d54c2c58517886ce02476fb2365dd60740986126c009e9"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/odd-even-linkedlist.md",
+      "slug": "leetcode/may2020challenge/odd-even-linkedlist",
+      "title": "Odd even linkedlist",
+      "description": "This problem is intuitive, gather all odd nodes together, and all even nodes together. then odd list point to even node list.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 420,
+      "digest": "951fe01ef29262a8aa7c532c5a4980adcba88d49cded84cdd9da45ea313bbed2"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/perform-string-shifts.md",
+      "slug": "leetcode/30daychallenge/perform-string-shifts",
+      "title": "Perform string shifts",
+      "description": "Intuitive solution is to iterate through shifts, and perform shift operations. performance in this approach is O(N M).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 451,
+      "digest": "4efcd8fa91bb54b82b8f1c3a1aabbbbf5306633669143896f2db93684380441d"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/product-of-array-except-itself.md",
+      "slug": "leetcode/30daychallenge/product-of-array-except-itself",
+      "title": "Product of array except itself",
+      "description": "Intuitive solution is to product the whole array, result is to divide itself. Notice from problem, without division and solve it in O(n).",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 311,
+      "digest": "d04662a06c72df6aa4ed7ec24e8f1ba98729ff9e05e686b7b04bb43cabb0e81f"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/ransom-note.md",
+      "slug": "leetcode/may2020challenge/ransom-note",
+      "title": "Ransom note",
+      "description": "This problem is to check whether magazine contains all char in ransomNote, if magazine contains all characters in ransomNote, then true otherwise any character in ransomNote but not in magazine, return false.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 281,
+      "digest": "aafcfa7abaab9a4b5c71324426961b46fe19201267866adbf40b78b5004b8cb4"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/remove-k-digits.md",
+      "slug": "leetcode/may2020challenge/remove-k-digits",
+      "title": "Remove k digits",
+      "description": "This problem is a bit tricky, which requires to take care of some cases, using stack to store each character, and for each time, compare the top number with current number, pop out if top > current number, until the…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 451,
+      "digest": "1b77a97c5f039da7230a662c28c1939404bb07c63115d9327b17b0877d02afbd"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/search-in-rotated-sorted-array.md",
+      "slug": "leetcode/30daychallenge/search-in-rotated-sorted-array",
+      "title": "Search in rotated sorted array",
+      "description": "This problem asked to implement in O(logn). Binary search should come into your mind when you see O(logn), sorted and search keywords.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 483,
+      "digest": "eca2153c24714213fe72aae753d703ad02d6cf35a10bd6f24f242ef2ce155906"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/single-element-in-sorted-array.md",
+      "slug": "leetcode/may2020challenge/single-element-in-sorted-array",
+      "title": "Single element in sorted array",
+      "description": "This problem has multiple solutions, first intuitive solution is O(n), scan the array, and check each elements, if element not appear 2 times, return current element.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 501,
+      "digest": "fc5a34a2dd2ed5d9a4ec1e8448a5eb9e196e709f546446901750f1737fd7de7c"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/subarray-sum-equals-k.md",
+      "slug": "leetcode/30daychallenge/subarray-sum-equals-k",
+      "title": "Subarray sum equals k",
+      "description": "Usually when see subarray sum relate problem, preSum should come to your mind. calculate all subarray sum = k, using map to keep track of number of times presum already appear, for each presum, check whether presum - k…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 238,
+      "digest": "d3217dbdeca11d7391be462665c59eba0c33fa8b4c2891a388762fa5221ee608"
+    },
+    {
+      "sourcePath": "Leetcode/30DayChallenge/valid-parenthesis-string.md",
+      "slug": "leetcode/30daychallenge/valid-parenthesis-string",
+      "title": "Valid parenthesis string",
+      "description": "For valid parenthesis problem, left parenthesis must equal to right parenthesis, and left must be before right parenthesis.",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 523,
+      "digest": "9c290181b8ab1c1e3a6d02a4c3866e412301cee58cfac0d7059eb497a3486410"
+    },
+    {
+      "sourcePath": "Leetcode/May2020Challenge/valid-perfect-square.md",
+      "slug": "leetcode/may2020challenge/valid-perfect-square",
+      "title": "Valid perfect square",
+      "description": "This problem can use binary search from [1, N/2], all other numbers (num) square is less than num / 2. expect 1 and 2, for 1 do additional check. if N == 1, return true. define lo = 1; hi = N / 2; check mid = lo + (hi…",
+      "collection": "algorithms",
+      "collectionLabel": "Algorithms",
+      "topics": [],
+      "words": 269,
+      "digest": "c0e9c4506d78c2029147d00962a08b586ce314d8e8839d3fb7448b361fa0ba36"
+    },
+    {
+      "sourcePath": "Books/System-Performance/Chapter2-Methodologies.md",
+      "slug": "books/system-performance/chapter2-methodologies",
+      "title": "Chapter 2: Methodologies",
+      "description": "The Learning objectives of this chapter: Understand key performance metrics: latency, utilization, and saturation Develop a sense for the scale of measured time, down to nanoseconds Learn tuning trade-offs, targets,…",
+      "collection": "books",
+      "collectionLabel": "Books and Readings",
+      "topics": [],
+      "words": 472,
+      "digest": "5fc5f248c5bc9295c7905440ff7bc273e3e8592c4f71da07e9869fbae0f60dbd"
+    },
+    {
+      "sourcePath": "Readings/2020/亲爱的提奥.md",
+      "slug": "readings/2020/亲爱的提奥",
+      "title": "亲爱的提奥",
+      "description": "文森特.梵高…",
+      "collection": "books",
+      "collectionLabel": "Books and Readings",
+      "topics": [],
+      "words": 8,
+      "digest": "063c4313f1602b3088b0c2c1592cfef6c51a0f16e44727ba91231f8c8da7a97a"
+    },
+    {
+      "sourcePath": "Readings/2020/理想国.md",
+      "slug": "readings/2020/理想国",
+      "title": "理想国",
+      "description": "A preserved Kuma Blog note from the Books and Readings collection.",
+      "collection": "books",
+      "collectionLabel": "Books and Readings",
+      "topics": [],
+      "words": 10,
+      "digest": "9cef5b6d07abe24541890367929c03cea5352d65b8dab3b3d3aca137d0c301df"
+    },
+    {
+      "sourcePath": "Books/Designing-Data-Intensive-Applications/Chapter1-Reliability-Scalability-Maintainability-Applications.md",
+      "slug": "books/designing-data-intensive-applications/chapter1-reliability-scalability-maintainability-applications",
+      "title": "第一章 — 可靠性，可扩展性，可维护性的应用程序(Reliable, Scalable, and Maintainable Applications)",
+      "description": "| The Internet was done so well that most people think of it as a natural resource like the Pacific Ocean, rather than something that was man-made. When was the last time a technology with a scale like that was so…",
+      "collection": "books",
+      "collectionLabel": "Books and Readings",
+      "topics": [
+        "evals-reliability"
+      ],
+      "words": 121,
+      "digest": "c65dc01ae0f742c86f7b414695208becd974a1fc54529095e4ae4059e864c1af"
+    },
+    {
+      "sourcePath": "Readings/2020/贫穷的本质.md",
+      "slug": "readings/2020/贫穷的本质",
+      "title": "贫穷的本质",
+      "description": "他们曾被说成是白人的负担，是弱国劣政的牺牲者。他们是最底层的10亿人，生活在每天0.99美元的贫困线之下。数万亿美元的援助未能救他们于水火之中，他们，依然深陷贫穷的陷阱，前路不明。。。…",
+      "collection": "books",
+      "collectionLabel": "Books and Readings",
+      "topics": [],
+      "words": 28,
+      "digest": "a81e8842ea10cf5a78c4f0589b7baa1c368d5e5289100de98ec11a4d2a8c8730"
+    },
+    {
+      "sourcePath": "Setup/linux-vscode-server-docker-setup.md",
+      "slug": "setup/linux-vscode-server-docker-setup",
+      "title": "example: ./runcodeserver.sh /.code-server/config /Project password password",
+      "description": "If you want to code anywhere, with vscode codespace, you can. and if you want to host your own vscode on remote server, this is for you. it is easy to set up with docker. In your linux, create a new bash script file…",
+      "collection": "engineering",
+      "collectionLabel": "Engineering Notes",
+      "topics": [],
+      "words": 417,
+      "digest": "2ca7e7a21fd3f18fb51c64b7eff565edbc86209d4da8de525375b9af49d1936b"
+    },
+    {
+      "sourcePath": "Setup/create-new-user-with-password-and-setup-ssh-key-remote-login.md",
+      "slug": "setup/create-new-user-with-password-and-setup-ssh-key-remote-login",
+      "title": "How to add a new user into Ubuntu and setup ssh key?",
+      "description": "Now you've already created a new user, username: snowan",
+      "collection": "engineering",
+      "collectionLabel": "Engineering Notes",
+      "topics": [],
+      "words": 482,
+      "digest": "08e22c8d58ec50f1fbd21afb5db78bf5c020a3917ed995983615adb2f1dc5a32"
+    },
+    {
+      "sourcePath": "Languages/japanese/japanese-week.md",
+      "slug": "languages/japanese/japanese-week",
+      "title": "Japanese week",
+      "description": "这周学习了日语的星期，发现跟现在中国用的星期不太一样，所以就去了解了一下日语中星期的起源，然后顺便了解一下星期的起源。",
+      "collection": "engineering",
+      "collectionLabel": "Engineering Notes",
+      "topics": [],
+      "words": 39,
+      "digest": "761dfb961954f9072af26c67b955aa8fa10754a45f31b7a5aa1a090cf90843b8"
+    },
+    {
+      "sourcePath": "Entertainment/Animes.md",
+      "slug": "entertainment/animes",
+      "title": "Animes",
+      "description": "1. 石纪元 Dr. Stones 讲述全人类被石化后，3千多年后，人类站在巨人的肩膀上，如何用科学复兴人类的一步一步升级的故事",
+      "collection": "personal",
+      "collectionLabel": "Personal Notes",
+      "topics": [],
+      "words": 68,
+      "digest": "388c1d4b23e5326be0fcacce9efa7e2106ddc5c24589699821eea1ecd8979606"
+    },
+    {
+      "sourcePath": "Entertainment/Movies.md",
+      "slug": "entertainment/movies",
+      "title": "Movies",
+      "description": "A preserved Kuma Blog note from the Personal Notes collection.",
+      "collection": "personal",
+      "collectionLabel": "Personal Notes",
+      "topics": [],
+      "words": 1,
+      "digest": "56683b206a4bc1fa691015afe88a9a42a1e7e65bdcc9e09020db0346eb883767"
+    },
+    {
+      "sourcePath": "Entertainment/TV Shows.md",
+      "slug": "entertainment/tv-shows",
+      "title": "TV Shows",
+      "description": "A preserved Kuma Blog note from the Personal Notes collection.",
+      "collection": "personal",
+      "collectionLabel": "Personal Notes",
+      "topics": [],
+      "words": 2,
+      "digest": "0af9a9d2c8e240a7f35c40f96fe3d0108ca5bf1bfb17dec12f0d2efe630a2ea4"
+    },
+    {
+      "sourcePath": "travels/2025/japan-taiwan/travel-journal.md",
+      "slug": "travels/2025/japan-taiwan/travel-journal",
+      "title": "双城记：古都与宝藏之旅",
+      "description": "A 15-day cultural journey through Japan's ancient temples and Taiwan's treasures with my partner. From Tokyo's energy to Kyoto's zen gardens, Nara's bowing deer, Osaka's food scene, and Taiwan's night markets and…",
+      "collection": "personal",
+      "collectionLabel": "Personal Notes",
+      "topics": [],
+      "words": 1974,
+      "digest": "56371506090b86305052eba608d2019ef12b3f72f3d1a262bd8919ce23b44385"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/anthropic-postmortem-bugs/anthropic-postmortem-bugs.md",
+      "slug": "ai-manga-learnings/anthropic-postmortem-bugs/anthropic-postmortem-bugs",
+      "title": "A Postmortem of Three Recent Issues",
+      "description": "A visual story of how Anthropic's engineering team hunted down three invisible bugs that affected Claude's response quality",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [
+        "evals-reliability"
+      ],
+      "words": 1059,
+      "digest": "916ed2da255773d04b4eb826e0185c407009f39c4d4f12af606c0806c02489b1"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/agentic-memory/agentic-memory.md",
+      "slug": "ai-manga-learnings/agentic-memory/agentic-memory",
+      "title": "Agentic Memory (AgeMem)",
+      "description": "Paper: Agentic Memory: Learning Unified Long-Term and Short-Term Memory Management for LLM Agents Authors: Yi Yu, Liuyi Yao, Yuexiang Xie, Qingquan Tan, Jiaqi Feng, Yaliang Li, Libing Wu Date: January 2026",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 620,
+      "digest": "a0b7b8ccec67f089dafff722b54b9ebe97eb691327d0877c562f43ef6412a949"
+    },
+    {
+      "sourcePath": "AI-slide-learnings/context-graphs-trillion-dollar/context-graph-manga-learning.md",
+      "slug": "ai-slide-learnings/context-graphs-trillion-dollar/context-graph-manga-learning",
+      "title": "AI's Trillion-Dollar Opportunity: Context Graphs",
+      "description": "📖 Source: AI's Trillion-Dollar Opportunity: Context Graphs ✍️ Author: Jaya Gupta, Ashu Garg @ Foundation Capital 📅 Published: December 22, 2025",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [
+        "memory-context"
+      ],
+      "words": 1267,
+      "digest": "2067a5246dff224955aeaad99456dda8dbd803107e79890ec498f4b5c01d12b0"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/panjiu-al128-supernode/panjiu-al128-supernode.md",
+      "slug": "ai-manga-learnings/panjiu-al128-supernode/panjiu-al128-supernode",
+      "title": "In-depth Analysis of Alibaba Cloud Panjiu AL128 Supernode AI Servers and Their Interconnect Architecture",
+      "description": "At the Apsara Conference 2025, Alibaba Cloud unveiled its new-generation Panjiu AI Infra 2.0 AL128 supernode AI servers - a fundamental shift from traditional CPU-centric to GPU-centric architectures designed for…",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [],
+      "words": 438,
+      "digest": "2bdf6b57d93650f7437e6c55fe63c8daca465e259d30aa8411798c15b7f9ea2f"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/openai-data-agent/openai-data-agent.md",
+      "slug": "ai-manga-learnings/openai-data-agent/openai-data-agent",
+      "title": "Inside OpenAI’s in-house data agent",
+      "description": "OpenAI has built a bespoke internal data agent powered by GPT-5.2 to help their employees explore and reason over 600PB of data.",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 516,
+      "digest": "2d41fcc09d5788c5a8df39f0e321ab8c45d4d90288d956ccac6de8c18a2fd90b"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/magma-agentic-memory/magma-agentic-memory.md",
+      "slug": "ai-manga-learnings/magma-agentic-memory/magma-agentic-memory",
+      "title": "Michi Cat Explains MAGMA: AI Memory Magic",
+      "description": "Source: MAGMA Paper Summary: Michi Cat takes you on a journey to explore MAGMA — a magical architecture that gives AI Agents super memory powers. Through adorable character interactions, we'll learn how four \"memory…",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [
+        "agents-harnesses",
+        "memory-context"
+      ],
+      "words": 469,
+      "digest": "b4bba293840389dcc07a140b77b3c345e572a6c7e2e0a45f01e517ba9786e206"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/secure-codebase-indexing/secure-codebase-indexing.md",
+      "slug": "ai-manga-learnings/secure-codebase-indexing/secure-codebase-indexing",
+      "title": "Securely indexing large codebases",
+      "description": "Indexing large codebases efficiently and securely is a major challenge. Cursor addresses this with a multi-layered approach involving Merkle Trees for tracking granular file changes, Simhashes for finding matching…",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [],
+      "words": 337,
+      "digest": "79f905f7c93383ba345f6b5a666978f6e559b22f41f1a0e3401df994627fcebd"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/scaling-agents/scaling-agents.md",
+      "slug": "ai-manga-learnings/scaling-agents/scaling-agents",
+      "title": "The Agent Orchestra: Scaling Autonomous Coding",
+      "description": "A knowledge comic adaptation of Cursor's research on multi-agent coordination",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [
+        "agents-harnesses"
+      ],
+      "words": 892,
+      "digest": "92653e2a3d7b11d99595f6246ae7986c3182eafac40f2280e1e09a0f110ec396"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/future-of-enterprise-software/future-of-enterprise-software.md",
+      "slug": "ai-manga-learnings/future-of-enterprise-software/future-of-enterprise-software",
+      "title": "The Future of Enterprise Software",
+      "description": "Article Title The future of enterprise software",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [],
+      "words": 763,
+      "digest": "e388f88c46414c078f608dbde5647994ea1c52c94ec466d32392f07d04121d32"
+    },
+    {
+      "sourcePath": "AI-manga-learnings/agents-reliability/agents-reliability.md",
+      "slug": "ai-manga-learnings/agents-reliability/agents-reliability",
+      "title": "The State of Agents: The Reliability Gap",
+      "description": "Throughout 2025, a consistent story has emerged from enterprise AI reports: while adoption of 3rd party AI apps (like ChatGPT and Claude) is booming, internal \"Pilot\" agents are struggling to survive.",
+      "collection": "visual-learning",
+      "collectionLabel": "Visual Learning",
+      "topics": [
+        "agents-harnesses",
+        "evals-reliability"
+      ],
+      "words": 439,
+      "digest": "5fec80fa64ca804dd3d5a4b61f74739bb6282159a0424bca1488675c9f2ec86d"
+    }
+  ]
+}

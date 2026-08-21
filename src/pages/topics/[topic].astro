@@ -1,8 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import ContentIndex from "../../components/ContentIndex.astro";
+import LegacyPostList from "../../components/LegacyPostList.astro";
 import SiteLayout from "../../layouts/SiteLayout.astro";
-import { isContentVisible, TOPICS } from "../../lib/site";
+import { legacyPosts } from "../../lib/legacy-content";
+import { isContentVisible, TOPICS, withBase } from "../../lib/site";
 
 export function getStaticPaths() {
   return TOPICS.map((topic) => ({ params: { topic: topic.id }, props: { topic } }));
@@ -21,6 +23,7 @@ const visuals = await getCollection(
   "visuals",
   ({ data }) => isContentVisible(data.status) && data.topic === topic.id,
 );
+const legacy = legacyPosts.filter((post) => post.topics.includes(topic.id));
 ---
 
 <SiteLayout title={topic.label} description={topic.description}>
@@ -35,6 +38,10 @@ const visuals = await getCollection(
       <ContentIndex entries={labNotes} route="lab-notes" emptyMessage="No reviewed lab notes yet." />
       <h2>Visuals</h2>
       <ContentIndex entries={visuals} route="visuals" emptyMessage="No reviewed visuals yet." />
+      <h2>From the legacy library</h2>
+      <p>Earlier notes remain available for discovery and historical context. They are labeled separately from reviewed canonical writing.</p>
+      <LegacyPostList posts={legacy} limit={12} />
+      {legacy.length > 12 && <p><a class="text-link" href={withBase("library/")}>Search all {legacy.length} related legacy posts</a></p>}
     </div>
   </main>
 </SiteLayout>
