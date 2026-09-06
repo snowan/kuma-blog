@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="560" viewBox="0 0 1120 560" role="img" aria-labelledby="title desc">
+  <title id="title">Context changes. The task continues.</title>
+  <desc id="desc">An old context window gives way to a new working context. The new context reads maintained notes and searches prior history. The environment continues independently. Recall of past evidence leads to verification of the current state.</desc>
+  <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 10 5 0 10z" fill="#68ffb5"/></marker></defs>
+  <rect width="1120" height="560" fill="#06100e" rx="12"/>
+  <g font-family="system-ui, sans-serif" fill="#e9fff4">
+    <text x="48" y="48" font-size="14" fill="#91aa9e" letter-spacing="2">KUMA / CODEX CONTEXT LAB</text>
+    <text x="48" y="100" font-size="34" font-weight="600">Context changes. The task continues.</text>
+    <g stroke="#1b4238" stroke-width="2" fill="#0a1714">
+      <rect x="48" y="165" width="265" height="115" rx="8"/>
+      <rect x="430" y="165" width="300" height="115" rx="8" stroke="#68ffb5"/>
+      <rect x="847" y="165" width="225" height="115" rx="8"/>
+      <rect x="365" y="348" width="205" height="108" rx="8"/>
+      <rect x="605" y="348" width="205" height="108" rx="8"/>
+    </g>
+    <g stroke="#68ffb5" stroke-width="2" fill="none" marker-end="url(#arrow)">
+      <path d="M314 222H411"/><path d="M731 222H828"/>
+      <path d="M468 348V301H515V282"/><path d="M708 348V301H655V282"/>
+    </g>
+    <text x="70" y="200" font-size="13" fill="#91aa9e">WINDOW 01</text>
+    <text x="70" y="235" font-size="22">Old working context</text>
+    <text x="328" y="198" font-size="13" fill="#68ffb5">new_context</text>
+    <text x="452" y="200" font-size="13" fill="#68ffb5">WINDOW 02</text>
+    <text x="452" y="235" font-size="22">New working context</text>
+    <text x="869" y="200" font-size="13" fill="#91aa9e">NEXT ACTION</text>
+    <text x="869" y="235" font-size="22">Verify &amp; continue</text>
+    <text x="385" y="381" font-size="20">Notes</text>
+    <text x="385" y="414" font-size="15" fill="#91aa9e">Maintained clues</text>
+    <text x="625" y="381" font-size="20">History</text>
+    <text x="625" y="414" font-size="15" fill="#91aa9e">Search and read</text>
+    <path d="M48 488H1072" stroke="#57cfff" stroke-width="2"/>
+    <text x="48" y="526" font-size="17" fill="#57cfff">ENVIRONMENT CONTINUES</text>
+    <text x="414" y="526" font-size="15" fill="#91aa9e">Files and runtime state persist separately from active context.</text>
+  </g>
+</svg>

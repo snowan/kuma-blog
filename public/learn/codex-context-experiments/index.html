@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="control">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="从 Charles Packer 的问题出发，通过交互图、切窗演示、笔记工坊和历史检索，学习 Codex experimental context management。">
+  <meta name="color-scheme" content="dark light">
+  <meta name="keywords" content="AI, Agents, Context compaction, Codex, experimental context management, new_context, notes, history search, 上下文压缩, 上下文管理">
+  <meta property="og:site_name" content="Kuma Blog">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="Codex Context Experiments · 中文互动学习 Lab">
+  <meta property="og:description" content="七步理解 context compaction、new_context、笔记和历史检索；通过互动图解掌握上下文连续性。">
+  <meta property="og:url" content="https://snowan.github.io/kuma-blog/learn/codex-context-experiments/">
+  <meta property="article:published_time" content="2026-09-06T00:00:00Z">
+  <meta property="article:modified_time" content="2026-09-06T00:00:00Z">
+  <meta property="article:tag" content="AI">
+  <meta property="article:tag" content="Agents">
+  <meta property="article:tag" content="Context compaction">
+  <meta name="twitter:card" content="summary">
+  <link rel="canonical" href="https://snowan.github.io/kuma-blog/learn/codex-context-experiments/">
+  <link rel="icon" type="image/svg+xml" href="/kuma-blog/favicon.svg">
+  <title>Codex Context Experiments · 互动学习 Lab | Kuma Blog</title>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"LearningResource","name":"Codex Context Experiments: An Interactive Learning Lab","description":"七步理解 Codex experimental context management、context compaction、笔记和历史检索。","inLanguage":"zh-CN","learningResourceType":"interactive tutorial","datePublished":"2026-09-06","dateModified":"2026-09-06","keywords":["AI","Agents","Context compaction"],"url":"https://snowan.github.io/kuma-blog/learn/codex-context-experiments/","isAccessibleForFree":true,"publisher":{"@type":"Organization","name":"Kuma Blog","url":"https://snowan.github.io/kuma-blog/"}}</script>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a href="#lesson" class="skip-link">跳到当前课程</a>
+  <header class="masthead">
+    <a class="brand" href="#01" aria-label="Kuma 学习实验室，回到第一课">
+      <svg viewBox="0 0 32 32" width="29" height="29" aria-hidden="true"><path d="M4 4h17v17H4zM11 11h17v17H11z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="11" cy="11" r="3" fill="currentColor"/></svg>
+      <span>KUMA<span class="brand-slash"> / </span><span class="brand-sub">LEARNING LAB</span></span>
+    </a>
+    <div class="header-actions">
+      <a class="blog-return" href="/kuma-blog/visuals/codex-context-experiments/">← Kuma Blog</a>
+      <button type="button" class="text-button" id="sources-open">研究依据 <span aria-hidden="true">↗</span></button>
+      <label class="theme-label"><span class="sr-only">阅读风格</span><select id="theme" aria-label="阅读风格"><option value="control">Control Room</option><option value="journal">Paper Journal</option><option value="mori">Mori Notebook</option></select></label>
+    </div>
+  </header>
+  <div class="shell">
+    <aside class="course-nav" aria-label="课程导航">
+      <div class="course-label mono">FIELD GUIDE <span>026</span></div>
+      <div class="course-title">上下文连续性</div>
+      <p class="course-subtitle">CONTEXT CONTINUITY</p>
+      <nav id="chapter-nav" aria-label="七步学习路径"></nav>
+      <div class="progress-box">
+        <div class="progress-label"><span>练习通过</span><strong id="progress-text">0 / 7</strong></div>
+        <div class="progress-track" role="progressbar" aria-label="课程练习通过数" aria-valuemin="0" aria-valuemax="7" aria-valuenow="0"><span id="progress-fill"></span></div>
+        <p>浏览不计为掌握。<br>答题与操作留下学习证据。</p>
+      </div>
+      <div class="nav-foot"><span class="status-dot"></span> 基于公开文档与源码<br><span>核验于 2026.09.06</span></div>
+    </aside>
+    <main id="main">
+      <div class="page-meta"><span class="eyebrow">CODEX CONTEXT EXPERIMENTS</span><span class="muted">中文互动课 · 约 35 分钟</span></div>
+      <nav class="course-tags" aria-label="课程标签"><a rel="tag" href="/kuma-blog/tags/ai/">AI</a><a rel="tag" href="/kuma-blog/tags/agents/">Agents</a><a rel="tag" href="/kuma-blog/tags/context-compaction/">Context compaction</a></nav>
+      <section id="lesson" tabindex="-1" aria-label="当前课程"></section>
+      <footer class="lesson-footer">
+        <button class="button secondary" id="previous" type="button">← 上一课</button>
+        <span id="lesson-position" class="mono"></span>
+        <button class="button primary" id="next" type="button">下一课 →</button>
+      </footer>
+      <div class="page-foot"><span>Kuma Blog · 2026.09.06 发布 / 更新</span><span>示例均为教学模拟 · 进度仅保存在本浏览器</span></div>
+    </main>
+  </div>
+  <dialog id="sources-dialog" aria-labelledby="sources-title">
+    <div class="dialog-head"><div><span class="eyebrow">SOURCE MAP</span><h2 id="sources-title">哪些是事实，哪些仍是问题？</h2></div><button type="button" class="button secondary" id="sources-close">关闭</button></div>
+    <div id="source-content"></div>
+  </dialog>
+  <div id="announcement" class="sr-only" aria-live="polite"></div>
+  <noscript><section class="nojs"><h1>Codex Context Lab</h1><p>这门课用 JavaScript 演示切换上下文、记笔记与检索历史。核心模型：有限的工作上下文 + 可维护的笔记 + 可回查的历史；new_context 更换工作上下文，环境状态继续保留。</p><p>请启用 JavaScript 参与练习，或阅读 <a href="./sources.md">带来源的研究笔记</a> 和 <a href="./README.md">课程说明</a>。</p></section></noscript>
+</body>
+</html>

@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import SiteLayout from "../../layouts/SiteLayout.astro";
 import { legacyCollections, legacyPosts } from "../../lib/legacy-content";
 import { slugFromId, withBase } from "../../lib/site";
+import { tagLabel, tagSlug } from "../../lib/tags";
 
 interface DirectoryItem {
   kind: "curated" | "legacy";
@@ -12,6 +13,7 @@ interface DirectoryItem {
   collection: string;
   collectionLabel: string;
   topics: string[];
+  tags: string[];
   meta: string;
 }
 
@@ -33,6 +35,7 @@ const curatedItems: DirectoryItem[] = [
   collection: "curated",
   collectionLabel: "Curated Publication",
   topics: [entry.data.topic],
+  tags: entry.data.tags,
   meta: `${section} · Reviewed`,
 }));
 
@@ -44,6 +47,7 @@ const legacyItems: DirectoryItem[] = legacyPosts.map((post) => ({
   collection: post.collection,
   collectionLabel: post.collectionLabel,
   topics: post.topics,
+  tags: [],
   meta: `${post.collectionLabel} · ${Math.max(1, Math.ceil(post.words / 220))} min`,
 }));
 
@@ -82,7 +86,7 @@ const collectionOptions = [
       </div>
       <div class="library-controls" data-pagefind-ignore>
         <label>
-          <span>Filter by title, description, or topic</span>
+          <span>Filter by title, description, topic, or tag</span>
           <input id="post-filter" type="search" placeholder="Try memory, agent harness, LeetCode…" autocomplete="off" />
         </label>
         <label>
@@ -97,7 +101,7 @@ const collectionOptions = [
       <ol id="all-posts-list" class="library-list" data-pagefind-ignore>
         {items.map((item) => (
           <li
-            data-search={`${item.title} ${item.description} ${item.collectionLabel} ${item.topics.join(" ")}`.toLowerCase()}
+            data-search={`${item.title} ${item.description} ${item.collectionLabel} ${item.topics.join(" ")} ${item.tags.map(tagLabel).join(" ")}`.toLowerCase()}
             data-collection={item.collection}
           >
             <article class="library-row">
@@ -109,6 +113,7 @@ const collectionOptions = [
               <ul class="post-chips" aria-label="Post classification">
                 <li>{item.kind === "curated" ? "Curated" : "Legacy"}</li>
                 {item.topics.map((topic) => <li>{topic.replaceAll("-", " ")}</li>)}
+                {item.tags.map((tag) => <li><a rel="tag" href={withBase(`tags/${tagSlug(tag)}/`)}>{tagLabel(tag)}</a></li>)}
               </ul>
             </article>
           </li>
@@ -143,6 +148,8 @@ const collectionOptions = [
   search?.addEventListener("input", applyFilters);
   collection?.addEventListener("change", applyFilters);
   const initialCollection = new URLSearchParams(window.location.search).get("collection");
+  const initialQuery = new URLSearchParams(window.location.search).get("q");
+  if (search && initialQuery) search.value = initialQuery;
   if (collection && initialCollection && Array.from(collection.options).some(({ value }) => value === initialCollection)) {
     collection.value = initialCollection;
   }

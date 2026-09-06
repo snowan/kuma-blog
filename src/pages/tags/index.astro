@@ -1,0 +1,26 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import { withBase } from "../../lib/site";
+import { getTaggedArticles, tagLabel, tagSlug } from "../../lib/tags";
+
+const articles = await getTaggedArticles();
+const tags = new Map<string, { label: string; count: number }>();
+for (const { entry } of articles) {
+  for (const tag of new Set(entry.data.tags.map(tagSlug))) {
+    const current = tags.get(tag);
+    tags.set(tag, { label: tagLabel(tag), count: (current?.count ?? 0) + 1 });
+  }
+}
+const entries = [...tags].sort((a, b) => a[1].label.localeCompare(b[1].label));
+---
+
+<SiteLayout title="Tags" description="Find published Kuma Blog articles by AI, Agents, Context compaction, and other technical labels.">
+  <main id="main-content" class="reading-column">
+    <p class="eyebrow"><a href={withBase("topics/")}>Research topics</a></p>
+    <h1>Browse by tag</h1>
+    <p class="lede">Specific subjects across the reviewed publication.</p>
+    <ul class="article-tags" aria-label="All article tags">
+      {entries.map(([slug, tag]) => <li><a href={withBase(`tags/${slug}/`)}>{tag.label} <span aria-label={`${tag.count} articles`}>({tag.count})</span></a></li>)}
+    </ul>
+  </main>
+</SiteLayout>

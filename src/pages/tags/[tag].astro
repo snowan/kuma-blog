@@ -1,0 +1,30 @@
+---
+import SiteLayout from "../../layouts/SiteLayout.astro";
+import ArticleRow from "../../components/ArticleRow.astro";
+import { formatDate, slugFromId, withBase } from "../../lib/site";
+import { getTaggedArticles, tagLabel, tagSlug } from "../../lib/tags";
+
+export async function getStaticPaths() {
+  const articles = await getTaggedArticles();
+  const tags = new Map(articles.flatMap(({ entry }) => entry.data.tags.map((tag) => [tagSlug(tag), tagLabel(tag)] as const)));
+  return [...tags].map(([slug, label]) => ({
+    params: { tag: slug },
+    props: { label, articles: articles.filter(({ entry }) => entry.data.tags.some((tag) => tagSlug(tag) === slug)) },
+  }));
+}
+
+const { label, articles } = Astro.props;
+---
+
+<SiteLayout title={`${label} articles`} description={`Browse Kuma Blog articles, interactive lessons, and visual guides tagged ${label}.`}>
+  <main id="main-content" class="reading-column">
+    <p class="eyebrow"><a href={withBase("tags/")}>All tags</a></p>
+    <h1>{label}</h1>
+    <p class="lede">{articles.length} published {articles.length === 1 ? "article" : "articles"} with this tag.</p>
+    <ol class="content-list">
+      {articles.map(({ entry, route }) => (
+        <li><ArticleRow href={withBase(`${route}/${slugFromId(entry.id)}/`)} title={entry.data.title} description={entry.data.description} meta={formatDate(entry.data.publishedAt)} /></li>
+      ))}
+    </ol>
+  </main>
+</SiteLayout>
