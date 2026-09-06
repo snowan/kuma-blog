@@ -1,0 +1,15 @@
+---
+import { tagLabel, tagSlug } from "../lib/tags";
+import { withBase } from "../lib/site";
+
+interface Props { tags: string[]; }
+const { tags } = Astro.props;
+---
+
+{tags.length > 0 && (
+  <ul class="article-tags" aria-label="Article tags">
+    {tags.map((tag) => (
+      <li><a rel="tag" data-pagefind-filter="tag" href={withBase(`tags/${tagSlug(tag)}/`)}>{tagLabel(tag)}</a></li>
+    ))}
+  </ul>
+)}

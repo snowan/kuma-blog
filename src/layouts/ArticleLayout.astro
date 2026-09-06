@@ -2,6 +2,7 @@
 import type { CollectionEntry } from "astro:content";
 import SiteLayout from "./SiteLayout.astro";
 import ArticleHeader from "../components/ArticleHeader.astro";
+import ArticleTags from "../components/ArticleTags.astro";
 import SeriesNav from "../components/SeriesNav.astro";
 import TableOfContents from "../components/TableOfContents.astro";
 
@@ -32,6 +33,7 @@ const isDraftPreview = data.status === "draft";
   presentation={data.presentation}
   ogType="article"
   publishedAt={data.publishedAt}
+  tags={data.tags}
 >
   <main id="main-content" data-pagefind-body>
     <article>
@@ -53,6 +55,7 @@ const isDraftPreview = data.status === "draft";
         lastVerified={data.lastVerified}
         readingMinutes={readingMinutes}
       />
+      <div class="reading-column"><ArticleTags tags={data.tags} /></div>
       {data.series && <SeriesNav series={data.series} />}
       <div class="article-grid">
         <TableOfContents headings={headings} />

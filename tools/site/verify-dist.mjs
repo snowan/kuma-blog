@@ -156,8 +156,8 @@ if (!rss.includes("<link>https://snowan.github.io/kuma-blog/</link>")) {
   fail("RSS channel link does not include the project base path");
 }
 const rssItemCount = rss.match(/<item>/g)?.length ?? 0;
-if (rssItemCount !== 11) {
-  fail(`RSS should contain 11 reviewed items, found ${rssItemCount}`);
+if (rssItemCount !== 12) {
+  fail(`RSS should contain 12 reviewed items, found ${rssItemCount}`);
 }
 
 const sitemap = readFileSync(join(dist, "sitemap-0.xml"), "utf8");
@@ -180,7 +180,36 @@ const canonicalRoutes = [
   "writing/filesystem-context-engineering",
   "visuals/agent-harness-control-loop",
   "visuals/agent-memory-learning-series",
+  "visuals/codex-context-experiments",
 ];
+
+const lessonRoute = "learn/codex-context-experiments/";
+const lessonArticleRoute = "visuals/codex-context-experiments/";
+for (const asset of ["index.html", "styles.css", "app.js", "sources.md", "README.md"]) {
+  if (!existsSync(join(dist, lessonRoute, asset))) fail(`missing interactive lesson asset: ${asset}`);
+}
+if (!sitemap.includes(`https://snowan.github.io/kuma-blog/${lessonRoute}`)) {
+  fail("interactive lesson is missing from sitemap");
+}
+if (!rss.includes(`/${lessonArticleRoute}`)) fail("lesson introduction is missing from RSS");
+for (const page of ["index.html", "visuals/index.html", "library/index.html", "topics/memory-context/index.html"]) {
+  if (!readFileSync(join(dist, page), "utf8").includes(`/kuma-blog/${lessonArticleRoute}`)) {
+    fail(`lesson is missing from discovery page: ${page}`);
+  }
+}
+for (const [slug, label] of [["ai", "AI"], ["agents", "Agents"], ["context-compaction", "Context compaction"]]) {
+  const tagPath = join(dist, `tags/${slug}/index.html`);
+  if (!existsSync(tagPath) || !readFileSync(tagPath, "utf8").includes(`/kuma-blog/${lessonArticleRoute}`)) {
+    fail(`lesson is missing from tag: ${label}`);
+  }
+  for (const route of [lessonRoute, lessonArticleRoute]) {
+    const html = readFileSync(join(dist, route, "index.html"), "utf8");
+    if (!html.includes(`href="/kuma-blog/tags/${slug}/"`) || !html.includes(`property="article:tag" content="${label}"`)) {
+      fail(`${route} is missing linked tag and metadata: ${label}`);
+    }
+  }
+}
+if (existsSync(join(dist, "tags/fixture/index.html"))) fail("draft-only tag leaked into public routes");
 
 for (const route of canonicalRoutes) {
   if (!existsSync(join(dist, route, "index.html"))) {

@@ -21,6 +21,7 @@ function topicCount(topic: string) {
 <SiteLayout title="Topics" description="The four primary Kuma Blog research topics.">
   <main id="main-content" data-pagefind-body>
     <h1>Topics</h1>
+    <p><a class="text-link" href={withBase("tags/")}>Browse all article tags →</a></p>
     <div class="topic-grid">
       {
         TOPICS.map((topic) => (

@@ -1,0 +1,88 @@
+---
+title: "Codex Context Experiments: An Interactive Learning Lab"
+description: "Learn Codex experimental context management through seven interactive lessons: context compaction, new_context, notes, history search, and recovery. 中文互动课：用图解、流程演示和练习理解上下文连续性。"
+publishedAt: 2026-09-06
+updatedAt: 2026-09-06
+lastVerified: 2026-09-06
+status: published
+type: visual-explainer
+presentation: control
+topic: memory-context
+tags: [AI, Agents, Context compaction]
+featured: false
+cover:
+  src: ../../../assets/articles/codex-context-experiments/context-continuity.svg
+  alt: "A new working context reconnects to notes and searchable history while the task environment continues."
+---
+
+import diagram from "../../../assets/articles/codex-context-experiments/context-continuity.svg";
+import Figure from "../../../components/Figure.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import { withBase } from "../../../lib/site";
+
+How can an agent continue a long task when its current context window runs out? This Chinese interactive course follows Codex's experimental context management from budget reminders and notes to a new context window, history search, and verification.
+
+<p><a className="button" href={withBase("learn/codex-context-experiments/")}>开始互动学习 · Open the lab →</a></p>
+
+<p lang="zh-CN">七课，建议约 35 分钟。可播放、暂停、重播流程，也可自由跳转；练习和复述保存在当前浏览器，支持导出学习笔记。</p>
+
+<Figure
+  src={diagram.src}
+  alt="The old working window gives way to a new one. The new window can read maintained notes and search prior history. The task environment persists separately. Recall provides past evidence; the agent must still verify the current state."
+  caption="Conceptual map of context continuity. The diagram represents the public client design, not a measured execution trace."
+/>
+
+## The core idea: context, notes, history, environment
+
+<div lang="zh-CN">
+
+模型当前能看到的工作上下文，与任务持续存在的状态，是两回事。实验路径把有限的工作窗口、可维护的笔记、可回查的历史和独立延续的环境连接起来。
+
+公开的 [`new_context` 工具定义](https://github.com/openai/codex/blob/6af345407d9c2a568da9d01b6c4b81a9e61495c0/codex-rs/core/src/tools/handlers/new_context_window_spec.rs#L9) 与[处理器](https://github.com/openai/codex/blob/6af345407d9c2a568da9d01b6c4b81a9e61495c0/codex-rs/core/src/tools/handlers/new_context_window.rs#L14)显示，这条路径请求一次不生成摘要的换窗，并保留环境。旧消息不会因此全部继续出现在活跃上下文中；需要时，通过笔记和历史工具找回线索或原始证据。
+
+课程用“观察预算 → 保存线索 → 切换窗口 → 回查证据 → 继续并验证”组织学习。这是教学选取的工作流，不是强制执行顺序；写什么笔记、何时检索，仍取决于模型行为。
+
+</div>
+
+## Seven steps from intuition to practice
+
+<div lang="zh-CN">
+
+1. **桌面与档案**：点击四种状态，预测换窗后什么还在、什么需要恢复。
+2. **从摘要到回查**：比较滚动摘要、摘要链和 Codex 实验的恢复路径。
+3. **跟着一次切窗**：播放六步因果流程，观察预算、窗口和 fallback 分支。
+4. **给未来的便签**：在有限模拟容量中保留目标、约束、证据出处和下一步。
+5. **找回那条证据**：尝试字面查询、角色过滤和索引延迟，再按消息 ID 阅读。
+6. **边界与故障**：改变实验入口条件，区分过时笔记、空结果和当前验证。
+7. **重建与迁移**：重排恢复流程，把设计迁移到依赖升级场景并复述原理。
+
+每课有可检查的答题或操作条件。浏览页面不计入掌握进度，自由复述不会被关键词或长度自动判为“学会”。
+
+</div>
+
+## What context compaction does—and what remains uncertain
+
+<div lang="zh-CN">
+
+从[公开 history / notes 接口](https://github.com/openai/codex/blob/6af345407d9c2a568da9d01b6c4b81a9e61495c0/codex-rs/ext/history-notes/src/tools.rs#L24)可以确认：笔记使用后端虚拟路径；历史支持窗口和消息列举、按 ID 读取，以及区分大小写的字面子串搜索。接口还说明了写入读取与列举、搜索之间的一致性差异。
+
+这些材料没有公开完整的后端数据库、训练方法，也没有证明性能提升。课程把“源码事实”“设计解读”和“教学模拟”分别标出。窗口预算、便签容量、消息、代码版本和 PASS / FAIL 都是合成例子。
+
+实验的可用性还受起始模型能力、账号、配置和后端等条件影响。详见[官方模型说明](https://learn.chatgpt.com/docs/models#experimental-context-management)、[配置参考](https://learn.chatgpt.com/docs/config-file/config-reference)与[固定版本的激活条件](https://github.com/openai/codex/blob/6af345407d9c2a568da9d01b6c4b81a9e61495c0/codex-rs/core/src/session/token_budget.rs#L21)。课程只模拟这些条件，不会改变你的 Codex 配置。
+
+</div>
+
+## Sources and verification
+
+Research began with [Charles Packer's question about the new context experiments](https://x.com/charlespacker/status/2096046696988119413). Technical explanations are grounded in OpenAI documentation and the public Codex client at [commit `6af3454`](https://github.com/openai/codex/commit/6af345407d9c2a568da9d01b6c4b81a9e61495c0), checked on September 6, 2026.
+
+The lesson's interactions, keyboard navigation, progress persistence, and responsive layouts were checked in a browser, including 390 px and 320 px widths. This validates the teaching page; it is not a provider-backed benchmark or a run of the Codex Rust test suite.
+
+<p><a href={withBase("learn/codex-context-experiments/sources.md")}>Read the source ledger and evidence boundaries</a> · <a href={withBase("learn/codex-context-experiments/README.md")}>Course guide and local-use instructions</a></p>
+
+<p><a className="button" href={withBase("learn/codex-context-experiments/")}>进入第一课 · Start learning →</a></p>
+
+<RelatedArticles articles={[
+  { href: withBase("writing/context-engineering/"), title: "Context Engineering", description: "The wider context-assembly problem. This lab focuses on one Codex experimental implementation." },
+  { href: withBase("writing/agent-memory-deep-dive/"), title: "Agent Memory Deep Dive", description: "Durable memory design beyond continuity within a single task." },
+]} />
