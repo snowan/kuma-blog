@@ -65,3 +65,26 @@ alone do not establish deployment or external search-engine indexing.
 
 Revert the publication commit to remove this entry and its discovery changes.
 The original local learning draft remains independent of the publication copy.
+
+## Architecture overview update
+
+The user requested an additional overview page explaining the whole mechanism
+through architecture diagrams and flows. The update adds
+`public/learn/codex-context-experiments/overview.html` with its dedicated CSS and
+JavaScript, linked from the course navigation and published introduction, and
+included in the sitemap. The local learning copy has the same overview assets.
+
+Seven selectable components explain the model, working context, harness,
+history-notes extension, notes, history, and environment. A six-step flow
+compares normal recovery, missing notes, and delayed search visibility. The
+overview self-check does not contribute to the seven existing lesson scores.
+All mechanism claims retain the fixed source version and evidence boundaries.
+
+Validation: `pnpm verify` passed (495 generated files), followed by a successful
+build, generated-site verification, and script syntax check after the mobile
+inline-detail refinement. Browser checks covered all seven node explanations
+and source links, three recovery scenarios, single-step, pause, replay, automatic
+stop at step six, correct and incorrect feedback, keyboard activation, and the
+preserved 1/7 score after a course-overview-course round trip. All three themes
+at 320, 390, and 1440 CSS pixels had no horizontal overflow; console warnings
+and errors were empty. Reduced-motion handling was checked in source only.

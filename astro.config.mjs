@@ -10,7 +10,10 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      customPages: ["https://snowan.github.io/kuma-blog/learn/codex-context-experiments/"],
+      customPages: [
+        "https://snowan.github.io/kuma-blog/learn/codex-context-experiments/",
+        "https://snowan.github.io/kuma-blog/learn/codex-context-experiments/overview.html",
+      ],
       filter: (page) => !page.endsWith("/404/") && !page.includes("/design-system/"),
     }),
   ],

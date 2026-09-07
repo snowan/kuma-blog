@@ -2,6 +2,11 @@
 
 A Chinese interactive course about Codex experimental context management.
 
+Start with the [architecture overview](./overview.html): inspect seven
+components, play a six-step execution flow, and compare normal recovery,
+missing notes, and delayed search visibility. Its self-check is separate from
+the seven lesson scores; existing learning progress is preserved.
+
 - [Start the interactive course](https://snowan.github.io/kuma-blog/learn/codex-context-experiments/)
 - [Read the Kuma Blog introduction](https://snowan.github.io/kuma-blog/visuals/codex-context-experiments/)
 - Tags: [AI](https://snowan.github.io/kuma-blog/tags/ai/), [Agents](https://snowan.github.io/kuma-blog/tags/agents/), [Context compaction](https://snowan.github.io/kuma-blog/tags/context-compaction/)
