@@ -1,0 +1,70 @@
+---
+title: "Pi Design Lab：用动态流程理解 Agent 的缓存、历史与恢复"
+description: "九节中文互动课，从 Prompt Caching、Compaction 和 Session 可迁移性，到 Lane、持久化与恢复。通过十组动态流程、参数实验与真实 Pi Session 结构理解设计取舍。"
+publishedAt: 2026-09-07
+updatedAt: 2026-09-07
+lastVerified: 2026-09-07
+status: published
+type: visual-explainer
+presentation: control
+topic: memory-context
+tags: [AI, Agents, Pi, Prompt caching, Context compaction]
+featured: false
+cover:
+  src: ../../../assets/articles/pi-design-lab/pi-design-map.svg
+  alt: "Session 树选出一条路径，压缩后构建工作上下文；模型和工具的结果写回历史，执行 Lane 另行持久化操作状态。"
+---
+
+import diagram from "../../../assets/articles/pi-design-lab/pi-design-map.svg";
+import Figure from "../../../components/Figure.astro";
+import RelatedArticles from "../../../components/RelatedArticles.astro";
+import { withBase } from "../../../lib/site";
+
+为什么 Agent 留着完整历史，模型却看不到全部内容？为什么删掉一些消息，反而可能增加下一次请求的计算量？为什么保存了 Session，仍然不能随意重做一次中断的工具调用？
+
+这门中文互动课把这些问题连起来：先跟随一次请求，再操作缓存与压缩实验，最后检查真实 Session 和恢复边界。学习目标是能解释一次设计选择带来的后果。
+
+<p><a className="button" href={withBase("learn/pi-design-lab/")}>开始互动学习 · Open Pi Design Lab →</a></p>
+
+九节课程、十组动态流程。每组支持播放、暂停、单步和重放；可以自由跳转，也可以按顺序完成预测题、排序与复述。答案和笔记保存在当前浏览器。
+
+<Figure src={diagram.src} alt="完整历史、当前模型输入和持久执行状态分别存在：沿 Session 树选择历史，构建有界上下文，执行模型与工具请求，再把结果追加到历史。" caption="教学概念图。箭头表达状态之间的关系；历史 Harness v2 与当前运行时设计的差异在课程中分别说明。" />
+
+## 贯穿课程的三个区别
+
+**历史与当前输入。** Session 保存的内容不等于每次请求都会发送的内容。Pi 的压缩追加摘要条目，再用摘要和保留消息构建后续上下文；旧历史仍可存在。参见固定版本的 [compaction 文档](https://github.com/earendil-works/pi/blob/c1d4c801114545f47c440921d8b3e04aeb1e565d/packages/coding-agent/docs/compaction.md)。
+
+**可读历史与缓存。** 缓存复用取决于输入前缀及 Provider 条件。修改前面的内容，会影响后面仍然相同的内容能否复用。因此，“输入更短”与“本次更便宜”需要分开判断。这是 [Prompt Caching In Agents](https://earendil.com/posts/prompt-caching/) 讨论的重要设计取舍；课程用有明确假设的实验演示，不提供实际账单预测。
+
+**恢复状态与重复副作用。** 恢复记录并不意味着可以重新发送所有工具请求。当外部操作可能已发生、结果却尚未写入时，需要检查重放策略。课程依据[当前 Harness 规范](https://github.com/earendil-works/pi/blob/c1d4c801114545f47c440921d8b3e04aeb1e565d/packages/agent/docs/harness.md)模拟这个不确定窗口，不宣称实现了外部系统的 exactly-once。
+
+## 从直觉到真实记录
+
+1. **全局关系**：区分历史、上下文、KV 缓存和执行状态。
+2. **一次请求**：观察 prefill、decode、tool call 与 tool result 如何衔接。
+3. **稳定前缀**：改变时间戳、工具布局、历史或分支，预测缓存复用范围。
+4. **压缩**：调整预算，判断何时触发，并选择合法的保留切点。
+5. **Session 树**：切换路径，观察共同祖先、保留历史与可选分支摘要。
+6. **可迁移性**：组合摘要、工具证据和工作文件，检查交接缺口。
+7. **Lane 与恢复**：对照历史 v2 和当前设计，模拟未知工具效果的处理。
+8. **真实记录**：筛选三份公开 Session 的 911 条结构记录，定位调用配对、压缩与分叉。
+9. **迁移与复述**：重排恢复步骤，用自己的话解释设计与边界。
+
+## 原文、历史版本与当前实现
+
+课程从 [Prompt Caching In Agents](https://earendil.com/posts/prompt-caching/)、[How Compaction Works in Pi](https://earendil.com/posts/compaction-in-pi/) 和 [The Session You Cannot Take With You](https://earendil.com/posts/session-portability/) 出发，再对照[历史 AgentHarness v2](https://github.com/earendil-works/pi/blob/51b45bc5bcecc37a3538af5b0eb3710cc1e2c3f7/packages/agent/docs/harness-v2.md)及固定提交的当前文档。
+
+这些来源并不处于同一时间截面。例如，压缩检查时机在文章与当前文档之间有差异；旧版 lane records 恢复也不能直接用来描述当前的 total op.state 设计。课程明确标出这些差别，并保留规范中尚未实现项目的边界。
+
+[Pi Real Sessions 数据集](https://huggingface.co/datasets/badlogicgames/pi-mono/tree/dac2a1d3ba12dda597b973a791a77618ccb5f413)使用固定 revision。展示的是三个定向样本的结构投影，不含原始提示、Thinking 文本或工具输出正文，也不是全量统计。这些旧 v3 记录可以帮助理解调用与分支，不能证明新 Harness 的恢复成功。
+
+## 验证范围
+
+课程核心交互、进度恢复、键盘操作与桌面及窄屏布局经过浏览器检查。教学模型和样本结构通过 1,915 个断言，多数属于逐条结构检查。动画和数值均为教学模拟，没有运行 Pi 上游测试或 Provider 基准。笔记下载落盘与清除进度尚未完成验证。
+
+<p><a href={withBase("learn/pi-design-lab/sources.md")}>研究账本与固定版本</a> · <a href={withBase("learn/pi-design-lab/validation.md")}>验证范围</a></p>
+
+<RelatedArticles articles={[
+  { href: withBase("visuals/codex-context-experiments/"), title: "Codex Context Experiments", description: "对照另一种上下文连续性设计：新工作窗口、笔记与历史回查。" },
+  { href: withBase("writing/agent-memory-deep-dive/"), title: "Agent Memory Deep Dive", description: "进一步区分单次任务的 Session 与跨任务长期记忆。" },
+]} />

@@ -11,6 +11,7 @@ export default defineConfig({
     mdx(),
     sitemap({
       customPages: [
+        "https://snowan.github.io/kuma-blog/learn/pi-design-lab/",
         "https://snowan.github.io/kuma-blog/learn/codex-context-experiments/",
         "https://snowan.github.io/kuma-blog/learn/codex-context-experiments/overview.html",
       ],

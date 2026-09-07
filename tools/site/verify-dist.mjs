@@ -156,8 +156,8 @@ if (!rss.includes("<link>https://snowan.github.io/kuma-blog/</link>")) {
   fail("RSS channel link does not include the project base path");
 }
 const rssItemCount = rss.match(/<item>/g)?.length ?? 0;
-if (rssItemCount !== 12) {
-  fail(`RSS should contain 12 reviewed items, found ${rssItemCount}`);
+if (rssItemCount !== 13) {
+  fail(`RSS should contain 13 reviewed items, found ${rssItemCount}`);
 }
 
 const sitemap = readFileSync(join(dist, "sitemap-0.xml"), "utf8");
@@ -299,6 +299,19 @@ for (const { directory, route } of publicCollections) {
       fail(`${status} entry leaked into a discovery feed: ${route}/${slug}`);
     }
   }
+}
+
+
+// Pi publication must remain reachable through the curated site.
+const piCourse = "learn/pi-design-lab/";
+const piArticle = "visuals/pi-design-lab/";
+for (const route of [piCourse, piArticle]) {
+  if (!existsSync(join(dist, route, "index.html"))) fail(`missing Pi route: ${route}`);
+  if (!sitemap.includes(`https://snowan.github.io/kuma-blog/${route}`)) fail(`Pi route missing from sitemap: ${route}`);
+}
+if (!rss.includes(`/${piArticle}`)) fail("Pi introduction missing from RSS");
+for (const page of ["index.html", "visuals/index.html", "library/index.html", "tags/pi/index.html", "topics/memory-context/index.html"]) {
+  if (!existsSync(join(dist, page)) || !readFileSync(join(dist, page), "utf8").includes(`/kuma-blog/${piArticle}`)) fail(`Pi introduction missing from ${page}`);
 }
 
 if (!process.exitCode) {
