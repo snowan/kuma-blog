@@ -12,3 +12,4 @@
 :root .course-tags a { border:1px solid var(--line); padding:5px 10px; font-size:12px; text-decoration:none; color:var(--ink); }
 :root .blog-return { font-size:12px; color:var(--ink); white-space:nowrap; }
 @media(max-width:600px) { .masthead { flex-wrap:wrap; gap:12px; height:auto; min-height:65px; padding-block:14px; } .header-actions { flex-wrap:wrap; } }
+.overview-entry{display:block;padding:12px 10px;margin-bottom:12px;border:1px solid var(--line);font-size:12px;text-decoration:none;color:var(--primary)}

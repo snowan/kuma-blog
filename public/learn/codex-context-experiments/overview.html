@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="control">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codex Context · 架构总览与执行流程 | Kuma Blog</title>
+  <meta name="description" content="用交互架构图和端到端流程理解 Codex experimental context management：模型、harness、当前上下文、笔记、历史检索和环境如何协作。">
+  <link rel="canonical" href="https://snowan.github.io/kuma-blog/learn/codex-context-experiments/overview.html">
+  <meta property="og:title" content="Codex Context · 架构总览与执行流程">
+  <meta property="og:description" content="点击组件、播放执行流程，理解一个任务如何跨过多个上下文窗口继续。">
+  <meta property="og:url" content="https://snowan.github.io/kuma-blog/learn/codex-context-experiments/overview.html">
+  <meta property="og:type" content="article">
+  <meta property="article:tag" content="AI"><meta property="article:tag" content="Agents"><meta property="article:tag" content="Context compaction">
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./overview.css">
+  <script src="./overview.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#overview-main">跳到架构总览</a>
+  <header class="masthead">
+    <a class="brand" href="./index.html"><span>KUMA / CONTEXT LAB</span></a>
+    <div class="header-actions"><a href="./index.html">进入七步课程 →</a><label><span class="sr-only">阅读风格</span><select id="overview-theme" aria-label="阅读风格"><option value="control">Control Room</option><option value="journal">Paper Journal</option><option value="mori">Mori Notebook</option></select></label></div>
+  </header>
+  <main id="overview-main" class="overview-main">
+    <header class="overview-hero">
+      <p class="eyebrow">00 / THE WHOLE SYSTEM · 架构总览</p>
+      <h1>窗口可以换，<br>任务怎样接得上？</h1>
+      <p class="overview-lede">把“模型现在看到什么”与“系统还能找回什么”分开。Codex 实验通过 <strong>工作上下文、笔记、历史和运行环境</strong>协作，让一个任务跨过多个窗口继续。</p>
+      <p class="small-note">沿用 2026-09-06 核验的公开客户端版本 <code>6af3454</code>。图是机制抽象，流程与故障分支是教学模拟；不展示真实任务遥测或后端数据库。</p>
+      <nav class="overview-sections" aria-label="总览章节"><a href="#architecture">01 组件与边界</a><a href="#journey">02 一次完整运行</a><a href="#check">03 检查你的理解</a></nav>
+    </header>
+
+    <section id="architecture" aria-labelledby="architecture-title">
+      <p class="eyebrow">01 / ARCHITECTURE</p><h2 id="architecture-title">模型做选择，harness 执行动作。</h2>
+      <p>当前上下文是模型的输入。模型提出工具调用；客户端处理调用、返回结果，并构建后续输入。笔记和历史通过扩展访问 Codex 后端，文件操作走任务环境。</p>
+      <figure class="figure overview-architecture">
+        <div class="figure-head"><span class="mono">MAP A</span><span>点击组件，查看职责、连接与证据</span></div>
+        <div class="figure-body">
+          <div class="return-path"><span aria-hidden="true">←</span> 读取结果 / 工具结果 → 按需进入后续模型输入</div>
+          <div class="architecture-grid">
+            <div class="architecture-lane"><h3>推理输入与决策</h3>
+              <button disabled class="arch-node" data-node="context"><span>WORKING CONTEXT</span><strong>当前工作上下文</strong><small>指令、近期交互、已取回的内容</small></button>
+              <div class="edge-label">↓ 提供本次输入</div>
+              <button disabled class="arch-node" data-node="model"><span>MODEL</span><strong>模型</strong><small>推理，选择工具与下一步</small></button>
+            </div>
+            <div class="lane-edge" aria-label="模型向客户端提出工具调用">提出调用 <span>→</span></div>
+            <div class="architecture-lane"><h3>Codex 客户端</h3>
+              <button disabled class="arch-node" data-node="harness"><span>HARNESS / SESSION</span><strong>预算与窗口管理</strong><small>提示预算 · 执行 new_context · 构建输入</small></button>
+              <div class="edge-label">↓ 分发 history / notes 调用</div>
+              <button disabled class="arch-node" data-node="adapter"><span>HISTORY-NOTES EXTENSION</span><strong>历史与笔记适配层</strong><small>工具契约 · 身份信息 · 后端请求</small></button>
+            </div>
+            <div class="lane-edge" aria-label="扩展向 Codex 后端发起请求">接口请求 <span>→</span></div>
+            <div class="architecture-lane backend-lane"><h3>Codex 后端接口</h3>
+              <button disabled class="arch-node" data-node="notes"><span>NOTES</span><strong>可维护的笔记</strong><small>虚拟路径 · 读 / 写 / 追加 / 搜索</small></button>
+              <div class="edge-label">两个独立的访问接口</div>
+              <button disabled class="arch-node" data-node="history"><span>HISTORY</span><strong>可回查的历史</strong><small>列窗口 / 消息 · 搜索 · 按 ID 读取</small></button>
+              <p class="backend-limit">公开证据到接口为止；底层存储与索引架构未知。</p>
+            </div>
+          </div>
+          <div class="environment-connection">客户端的文件、执行等工具 ↓ 作用于环境；环境结果 ↑ 返回模型</div>
+          <button disabled class="arch-node environment-node" data-node="environment"><span>ENVIRONMENT</span><strong>文件与运行环境</strong><small>任务状态独立延续。new_context 本身不重置环境。</small></button>
+          <div class="node-inspector" id="node-inspector" aria-live="polite"><p class="eyebrow" id="node-label">WORKING CONTEXT</p><h3 id="node-title">当前可见，不等于全部历史。</h3><p id="node-description">模型本次只使用已组装进来的输入。存储在笔记或历史中的信息，需要成功读取并进入上下文，才成为当前可用的材料。</p><a id="node-source" href="https://github.com/openai/codex/blob/6af345407d9c2a568da9d01b6c4b81a9e61495c0/codex-rs/core/src/session/mod.rs#L4219" target="_blank" rel="noreferrer">查看对应源码 ↗</a></div>
+        </div>
+        <figcaption class="figure-caption">箭头说明调用与信息流向，不表示全部数据自动载入。可选的 thread_hint 可能贡献上下文片段，失败或空值时可跳过；它不是保证恢复完整历史的机制。<a href="https://github.com/openai/codex/blob/6af345407d9c2a568da9d01b6c4b81a9e61495c0/codex-rs/ext/history-notes/src/extension.rs#L105">来源</a></figcaption>
+      </figure>
+    </section>
+
+    <section id="journey" aria-labelledby="journey-title">
+      <p class="eyebrow">02 / END-TO-END FLOW</p><h2 id="journey-title">同一个分页修复，走过 W1 → W2。</h2>
+      <p>固定 <code>pageSize=37</code>；当前 <code>b24</code> 的边界测试失败。观察切窗前后“当前能看到”与“仍可回查”的区别。保存笔记是恢复策略，不是换窗的强制前置条件。</p>
+      <figure class="figure">
+        <div class="figure-head"><span class="mono">FLOW B</span><span>教学模拟 · 点击步骤或自动播放</span></div>
+        <div class="figure-body">
+          <div class="overview-controls"><button disabled id="flow-play" class="button primary">▶ 自动播放</button><button disabled id="flow-next" class="button secondary">单步 →</button><button disabled id="flow-replay" class="button secondary">↺ 重播</button><label>恢复条件 <select id="flow-scenario"><option value="normal">已写笔记，历史可用</option><option value="no-notes">未写笔记，历史可用</option><option value="index-lag">已写笔记，搜索索引延迟</option></select></label></div>
+          <p class="small-note">每步 4 秒；可暂停。换行后从左继续。开启减少动态效果时不自动推进，仍可单步学习。</p>
+          <ol class="overview-timeline" aria-label="六步执行流程">
+            <li><button disabled data-step="0"><span>01</span><strong>执行任务</strong><small>积累需求与证据</small></button></li>
+            <li><button disabled data-step="1"><span>02</span><strong>观察预算</strong><small>准备恢复线索</small></button></li>
+            <li><button disabled data-step="2"><span>03</span><strong>保存笔记</strong><small>留下证据位置</small></button></li>
+            <li><button disabled data-step="3"><span>04</span><strong>切换窗口</strong><small>更换活跃输入</small></button></li>
+            <li><button disabled data-step="4"><span>05</span><strong>找回证据</strong><small>读取、检索、核对</small></button></li>
+            <li><button disabled data-step="5"><span>06</span><strong>继续验证</strong><small>检查当前状态</small></button></li>
+          </ol>
+          <div class="flow-explanation" aria-live="polite"><p class="eyebrow" id="flow-owner">MODEL + ENVIRONMENT · 01 / 06</p><h3 id="flow-title">任务进行中，证据进入 W1。</h3><p id="flow-description">模型读到用户约束和 b24 的 FAIL。a17 曾经 PASS，但不能证明当前代码正确。</p></div>
+          <div class="state-grid" aria-label="四种状态随步骤变化">
+            <article><span>当前输入</span><h4 id="state-context">W1 · 需求与失败结果</h4><p id="context-detail">当前窗口直接看得到相关消息。</p></article>
+            <article><span>笔记</span><h4 id="state-notes">尚未写入</h4><p id="notes-detail">模型还没有维护恢复线索。</p></article>
+            <article><span>历史</span><h4 id="state-history">W1 / m04 可回查</h4><p id="history-detail">过去的工具结果与版本绑定。</p></article>
+            <article><span>环境</span><h4 id="state-environment">文件仍在 · b24</h4><p>切窗不自动修改文件，也不把 FAIL 变成 PASS。</p></article>
+          </div>
+          <div class="overview-branch" id="flow-branch" role="status">正常路径：先保存线索，再切窗，按需读取历史。不是源码保证执行的固定程序。</div>
+        </div>
+        <figcaption class="figure-caption"><code>new_context</code> 路径不生成新的历史摘要。达到限制时也可能走自动 fallback；模型不一定先成功写笔记。<a href="https://github.com/openai/codex/blob/6af345407d9c2a568da9d01b6c4b81a9e61495c0/codex-rs/core/src/compact_token_budget.rs#L22">换窗生命周期源码</a> · <a href="./index.html#03">进入切窗练习</a></figcaption>
+      </figure>
+      <div class="overview-takeaway"><strong>恢复历史，回答“之前发生了什么”。<br>检查环境，回答“现在是否正确”。</strong><p>笔记提供线索，历史提供过去的证据，当前验证决定是否完成。窗口更大、搜到 PASS 或写下“已完成”，都不能替代最后一步。</p></div>
+    </section>
+
+    <section id="check" aria-labelledby="check-title">
+      <p class="eyebrow">03 / TRACE IT BACK</p><h2 id="check-title">你能把四种状态连起来吗？</h2>
+      <p>换窗后，笔记只写着“b24 失败，见 m04”，搜索暂时为空。怎样继续？</p>
+      <div class="choices"><button disabled class="choice" data-check="wrong"><span class="choice-letter">A</span><span>历史一定丢了；用 a17 的 PASS 宣告完成。</span></button><button disabled class="choice" data-check="correct"><span class="choice-letter">B</span><span>按已知 ID 尝试读取 m04，检查查询与可见性；核对版本后，修改并验证当前代码。</span></button></div>
+      <p id="overview-feedback" class="feedback" aria-live="polite">这是总览自查，不会改变七课练习的通过数。</p>
+      <div class="overview-next"><a class="button primary" href="./index.html#01">从第一课开始练习 →</a><a href="./index.html#05">直接练习历史检索 →</a><a href="./sources.md">完整来源与证据边界 ↗</a></div>
+    </section>
+    <footer class="page-foot"><span>Kuma Blog · 架构总览 · 2026.09.06</span><span>固定版本机制图 · 合成教学示例 · 无 Codex API 调用</span></footer>
+    <noscript><p>架构、流程顺序和来源可以直接阅读。启用 JavaScript 后可点击组件、播放状态变化与检查答案。</p></noscript>
+  </main>
+</body>
+</html>

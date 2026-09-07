@@ -185,13 +185,15 @@ const canonicalRoutes = [
 
 const lessonRoute = "learn/codex-context-experiments/";
 const lessonArticleRoute = "visuals/codex-context-experiments/";
-for (const asset of ["index.html", "styles.css", "app.js", "sources.md", "README.md"]) {
+for (const asset of ["index.html", "styles.css", "app.js", "sources.md", "README.md", "overview.html", "overview.css", "overview.js"]) {
   if (!existsSync(join(dist, lessonRoute, asset))) fail(`missing interactive lesson asset: ${asset}`);
 }
 if (!sitemap.includes(`https://snowan.github.io/kuma-blog/${lessonRoute}`)) {
   fail("interactive lesson is missing from sitemap");
 }
 if (!rss.includes(`/${lessonArticleRoute}`)) fail("lesson introduction is missing from RSS");
+if (!sitemap.includes(`https://snowan.github.io/kuma-blog/${lessonRoute}overview.html`)) fail("architecture overview is missing from sitemap");
+if (!readFileSync(join(dist, lessonRoute, "index.html"), "utf8").includes('href="./overview.html"')) fail("course is missing architecture overview navigation");
 for (const page of ["index.html", "visuals/index.html", "library/index.html", "topics/memory-context/index.html"]) {
   if (!readFileSync(join(dist, page), "utf8").includes(`/kuma-blog/${lessonArticleRoute}`)) {
     fail(`lesson is missing from discovery page: ${page}`);
