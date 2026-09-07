@@ -53,6 +53,57 @@ for(const p of ['never','safe'])for(const point of ['settled','complete']){
  check(JSON.stringify(first)===JSON.stringify(again),'Repeated terminal inspection has stable output');
 }
 
+
+// Diagram geometry. These drive the SVG pictures, so a wrong layout is a wrong explanation.
+for(const target of ['D','F','Z']){
+ const g=e.treeGeometry(target,false);
+ check(g.nodes.length===8&&g.edges.length===7,`Tree keeps its full shape for target ${target}`);
+ check(g.nodes.every(n=>n.x>=n.w/2&&n.x+n.w/2<=600&&n.y>=16&&n.y<=290),`Tree nodes stay inside the frame: ${target}`);
+ check(g.nodes.filter(n=>n.leaf).map(n=>n.id).join(',')==='Z,D,F','Only D, F and Z are selectable leaves');
+ const roles=Object.fromEntries(g.nodes.map(n=>[n.id,n.role]));
+ for(const id of g.model.shared)check(roles[id]==='shared',`Shared ancestor is drawn as shared: ${id}/${target}`);
+ for(const id of g.model.to)check(roles[id]==='shared'||roles[id]==='target',`Target path is never drawn as leaving: ${id}/${target}`);
+ for(const id of g.model.leaving)check(roles[id]==='leaving',`The path being left is drawn as leaving: ${id}/${target}`);
+ check(g.edges.every(x=>x.role!=='idle'||!(g.model.to.includes(x.a)&&g.model.to.includes(x.b))),`No target edge is dimmed: ${target}`);
+ check(e.treeStageRole('idle',0)==='idle'&&e.treeStageRole('shared',0)==='target','Before a branch is chosen only the current path is highlighted');
+ check(e.treeStageRole('shared',2)==='shared'&&e.treeStageRole('leaving',2)==='leaving','From the shared-ancestor step the three roles are distinct');
+}
+check(e.treeGeometry('D',false).model.leaving.length===0,'Staying on D leaves no path behind');
+check(e.treeGeometry('Z',false).edges.find(x=>x.a==='A'&&x.b==='B').role==='leaving','Reaching Z leaves the A→B edge behind');
+for(const scenario of ['append','timestamp','tool','deferred','prune','branch','model']){
+ for(const resident of [true,false]){
+  const s=e.prefixSpans(e.cacheModel(scenario,resident));
+  check(s.matched+s.diverged===s.total,`Prefix bar 1 spans the whole input: ${scenario}/${resident}`);
+  check(s.reused+s.recomputed===s.total,`Prefix bar 2 spans the whole input: ${scenario}/${resident}`);
+  check(s.matchRatio>=0&&s.matchRatio<=1&&s.reuseRatio>=0&&s.reuseRatio<=1,`Bar ratios stay drawable: ${scenario}`);
+  check(s.reuseRatio<=s.matchRatio,`Reuse never exceeds the matching prefix: ${scenario}/${resident}`);
+ }
+}
+check(e.prefixSpans(e.cacheModel('append',false)).cacheLost,'An unreachable cache is shown as the two bars disagreeing');
+check(!e.prefixSpans(e.cacheModel('append',true)).cacheLost,'A usable cache keeps the two bars in agreement');
+check(!e.prefixSpans(e.cacheModel('timestamp',false)).cacheLost,'A prefix that already diverged is not reported as a lost cache');
+for(let ctx=40000;ctx<=128000;ctx+=8000){
+ for(let keep=8000;keep<=32000;keep+=4000){
+  const shape=e.shapeModel(e.compactionModel(ctx,keep));
+  check(shape.beforeTotal===ctx,`Pre-compaction shape totals the context: ${ctx}/${keep}`);
+  check(shape.afterTotal===e.compactionModel(ctx,keep).after,`Post-compaction shape matches the budget model: ${ctx}/${keep}`);
+  check(shape.before.every(x=>x.tokens>=0)&&shape.after.every(x=>x.tokens>0),`No negative segment: ${ctx}/${keep}`);
+  check(shape.afterTotal<=shape.beforeTotal,`The drawn post-compaction input is never longer: ${ctx}/${keep}`);
+ }
+}
+for(const point of ['accepted','uncertain','settled','complete']){
+ for(const policy of ['never','safe']){
+  const t=e.recoveryTimelineModel(point,policy);
+  check(t.index>=0&&t.index<t.marks.length,`Crash marker lands on a durable checkpoint: ${point}`);
+  check(t.uncertain===(point==='uncertain'),`The unknown window is drawn only when the effect is unknown: ${point}`);
+  check(t.windowFrom<t.windowTo,'The unknown window has a start before its end');
+  check(t.replays===e.recoveryModel(point,policy).replays,`Timeline replay count matches the recovery model: ${point}/${policy}`);
+ }
+}
+check(e.recoveryTimelineModel('uncertain','never').replays===0,'An unsafe unknown effect draws no replay arc');
+check(e.shapeModel(e.compactionModel(115000,20000)).afterTotal===28000,'At the default settings the drawn input gets much shorter');
+check(e.shapeModel(e.compactionModel(40000,32000)).afterTotal===40000,'At the smallest window and the largest keepRecent this illustration saves nothing, and the picture says so');
+
 const data=JSON.parse(html.match(/<script id="trace-data" type="application\/json">([\s\S]*?)<\/script>/)[1]);
 check(data.map(x=>x.rows.length).join(',')==='33,495,383','The three source projections retain all source rows');
 for(const d of data){
@@ -64,6 +115,12 @@ for(const d of data){
   if(r.type==='compaction')check(ids.has(r.firstKeptEntryId),'Compaction kept boundary exists in the sample');
  }
  check(d.stops.every((x,i)=>x>=0&&x<d.rows.length&&(i===0||x>d.stops[i-1])),'Tour stops follow file order');
+ for(const r of d.rows)check(['user','assistant','tool','compaction','header','config'].includes(e.traceCategory(r)),`Every row gets a map colour: ${r.id}`);
+ check(e.traceCategory(d.rows[0])==='header','The session header is not drawn as a message');
+ check(d.rows.filter(r=>e.traceCategory(r)==='compaction').length===d.stats.compaction,'Map compaction ticks match the counted compactions');
+ check(d.rows.filter(r=>e.traceCategory(r)==='tool').length===d.stats.toolResult,'Map tool ticks match the counted tool results');
+ check(d.rows.filter(r=>e.traceCategory(r)==='assistant').length===d.stats.assistant,'Map assistant ticks match the counted assistant messages');
+ check(d.rows.filter(r=>e.traceCategory(r)==='user').length===d.stats.user,'Map user ticks match the counted user messages');
 }
 const compact=data[1].rows.find(r=>r.type==='compaction');
 check(compact.line===343&&compact.id==='4e5f9956'&&compact.firstKeptEntryId==='fdc4f4ef','Exact compaction evidence');
@@ -79,5 +136,10 @@ check(!/\bfetch\(|XMLHttpRequest|WebSocket|EventSource/.test(app),'The learning 
 check(html.includes('prefers-reduced-motion:reduce')&&app.includes('motion.matches'),'Reduced-motion policy exists');
 check(app.includes('el.dataset.playing=String(this.playing)')&&html.includes('animation-play-state:paused'),'Paused flows also pause decorative flow particles');
 check(html.includes('<noscript>'),'No-JS mechanism explanation exists');
+check(app.includes("aria-keyshortcuts")&&app.includes("e.key==='ArrowRight'"),'Flows can be stepped from the keyboard');
+check(html.includes('.diagram:not(.strip){min-width')&&html.includes('.diagram-wrap{overflow-x:auto}'),'Narrow screens scroll a diagram instead of shrinking its labels');
+check(!/<svg[^>]*class="diagram[^"]*"(?![^>]*role="img")/.test(app),'Every diagram is exposed as an image');
+check((app.match(/<title>\$\{esc\(title\)\}<\/title><desc>/g)||[]).length===1,'Diagrams carry a title and a description');
+check(app.includes('data-branch-node')&&app.includes('class="tree-controls"'),'The tree picture has real buttons behind it');
 for(const file of ['README.md','sources.md','validation.md'])check(existsSync(path.join(dir,file)),`Companion link resolves: ${file}`);
 console.log(JSON.stringify({status:'passed',assertions,scope:'Teaching models and structural projections only; not Pi or provider behavior'},null,2));

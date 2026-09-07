@@ -1,6 +1,6 @@
 ---
 title: "Pi Design Lab：用动态流程理解 Agent 的缓存、历史与恢复"
-description: "九节中文互动课，从 Prompt Caching、Compaction 和 Session 可迁移性，到 Lane、持久化与恢复。通过十组动态流程、参数实验与真实 Pi Session 结构理解设计取舍。"
+description: "九节中文互动课，从 Prompt Caching、Compaction 和 Session 可迁移性，到 Lane、持久化与恢复。通过十组动态流程、五张随控件重画的示意图、参数实验与真实 Pi Session 结构理解设计取舍。"
 publishedAt: 2026-09-07
 updatedAt: 2026-09-07
 lastVerified: 2026-09-07
@@ -26,7 +26,7 @@ import { withBase } from "../../../lib/site";
 
 <p><a className="button" href={withBase("learn/pi-design-lab/")}>开始互动学习 · Open Pi Design Lab →</a></p>
 
-九节课程、十组动态流程。每组支持播放、暂停、单步和重放；可以自由跳转，也可以按顺序完成预测题、排序与复述。答案和笔记保存在当前浏览器。
+九节课程、十组动态流程、五张随控件重画的示意图。每组流程支持播放、暂停、单步和重放，也可以用 ← → 与空格操作；会话树可以直接点选叶子，整份 Session 的结构分布带可以点击定位到某一行。可以自由跳转，也可以按顺序完成预测题、排序与复述。答案和笔记保存在当前浏览器。
 
 <Figure src={diagram.src} alt="完整历史、当前模型输入和持久执行状态分别存在：沿 Session 树选择历史，构建有界上下文，执行模型与工具请求，再把结果追加到历史。" caption="教学概念图。箭头表达状态之间的关系；历史 Harness v2 与当前运行时设计的差异在课程中分别说明。" />
 
@@ -60,7 +60,7 @@ import { withBase } from "../../../lib/site";
 
 ## 验证范围
 
-课程核心交互、进度恢复、键盘操作与桌面及窄屏布局经过浏览器检查。教学模型和样本结构通过 1,915 个断言，多数属于逐条结构检查。动画和数值均为教学模拟，没有运行 Pi 上游测试或 Provider 基准。笔记下载落盘与清除进度尚未完成验证。
+课程核心交互、进度恢复、键盘操作与桌面及窄屏布局经过浏览器检查；新增的示意图在 320 至 1280px 与三种展示下逐节检查，无横向溢出。教学模型、图形几何和样本结构通过 3,324 个断言，多数属于逐条结构检查。动画和数值均为教学模拟，没有运行 Pi 上游测试或 Provider 基准。笔记下载落盘与清除进度尚未完成验证。
 
 <p><a href={withBase("learn/pi-design-lab/sources.md")}>研究账本与固定版本</a> · <a href={withBase("learn/pi-design-lab/validation.md")}>验证范围</a></p>
 
