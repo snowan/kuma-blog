@@ -19,7 +19,7 @@
     "test:dist": "node tools/site/verify-dist.mjs",
     "test:production-boundary": "KUMA_PREVIEW_DRAFTS=1 pnpm run build && pnpm run test:dist",
     "test:contrast": "node tools/site/verify-contrast.mjs",
-    "verify": "pnpm run content:manifest:check && pnpm run check && pnpm run test:contrast && pnpm run build && pnpm run test:dist && pnpm run test:production-boundary",
+    "verify": "node tools/site/verify-pi-lab.mjs && pnpm run content:manifest:check && pnpm run check && pnpm run test:contrast && pnpm run build && pnpm run test:dist && pnpm run test:production-boundary",
     "test": "pnpm run verify"
   },
   "dependencies": {
