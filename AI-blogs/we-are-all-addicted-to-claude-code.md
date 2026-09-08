@@ -10,6 +10,9 @@
 ## TL;DR
 Coding agents like Claude Code, Cursor, and Codex are transforming how developers work—turning managers back into makers and enabling 5x productivity gains. The key differentiator is in **context engineering**: how agents split, manage, and summarize context across sub-agents. CLI-based tools have unexpectedly beaten IDE-integrated solutions due to their sandbox flexibility and composability.
 
+![Claude Code Infographic](../resources/claude_code_infographic.png)
+
+
 ## Key Themes
 - **CLI vs IDE**: CLI-based agents (Claude Code, Codex) beat IDE-integrated tools because they offer cleaner sandbox environments and more composable integrations
 - **Context Engineering**: The superpower of effective coding agents lies in intelligently splitting and delegating context across sub-agents
